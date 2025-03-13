@@ -24,21 +24,20 @@ export function ImpressumModal({ children }: { children?: React.ReactNode }) {
             <div>
               <h3 className="font-semibold mb-1">Angaben gemäß § 5 TMG</h3>
               <p>Jan Wiegmann</p>
-              <p>Musterstraße 123</p>
-              <p>12345 Musterstadt</p>
+              <p>Alpener Straße 368</p>
+              <p>47495 Rheinberg</p>
             </div>
 
             <div>
               <h3 className="font-semibold mb-1">Kontakt</h3>
-              <p>Telefon: +49 123 456789</p>
               <p>E-Mail: jw@jwiegmann.de</p>
             </div>
 
             <div>
               <h3 className="font-semibold mb-1">Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h3>
               <p>Jan Wiegmann</p>
-              <p>Musterstraße 123</p>
-              <p>12345 Musterstadt</p>
+              <p>Alpener Straße 368</p>
+              <p>47495 Rheinberg</p>
             </div>
 
             <div>
