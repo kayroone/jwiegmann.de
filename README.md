@@ -33,7 +33,7 @@ Das Deployment erfolgt automatisiert über **GitHub Actions**.
 
 ## Autor
 
-**Jens Wiegmann**  
+**Jan Wiegmann**  
 [https://jwiegmann.de](https://jwiegmann.de)
 
 ---
