@@ -6,7 +6,7 @@ Die Anwendung wurde mit **Next.js** entwickelt und basiert auf React.
 
 ---
 
-## echnologien
+## Technologien
 
 - [Next.js](https://nextjs.org/)
 - [React](https://react.dev/)
