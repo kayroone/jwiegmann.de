@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from "react"
 import { motion } from "framer-motion"
-import { Github, Mail, FileText } from "lucide-react"
-import { ImpressumModal } from "./impressum-modal"
+import { Github, Mail, User } from "lucide-react"
+import Link from "next/link"
 
 export default function Hero() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -132,11 +132,18 @@ export default function Hero() {
               </div>
             )}
           </div>
-          <ImpressumModal>
-            <div className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-zinc-800 text-white transition-colors hover:bg-zinc-700">
-              <FileText size={20} />
-            </div>
-          </ImpressumModal>
+          <Link
+            href="/about"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-800 text-white transition-colors hover:bg-zinc-700"
+          >
+            <User size={20} />
+          </Link>
+          <Link
+            href="/blog"
+            className="flex h-10 items-center justify-center rounded-full bg-zinc-800 px-4 text-white transition-colors hover:bg-zinc-700"
+          >
+            Blog
+          </Link>
         </motion.div>
       </div>
     </div>
