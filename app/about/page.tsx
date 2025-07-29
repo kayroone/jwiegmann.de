@@ -36,7 +36,7 @@ export default function AboutPage() {
 
             <div className="bg-zinc-900 rounded-lg border border-zinc-800 p-8">
               <p className="text-gray-400 leading-relaxed">
-                I grew up in idyllic village Sevelen, but moved to Duisburg to study business informatics at FOM/VWA. I lived there in the inner harbor for almost seven years, made great friends, and learned a lot. For over a decade, I worked as a software engineer on exciting projects in the fields of insurance and government modernization. For more than a year now, I have been designing innovative and sustainable solutions in the public sector as a software architect at adesso SE. Away from coding, I am a passionate technology fan, anime enthusiast, husband, and proud dad.</p>
+                I grew up in the idyllic village of Sevelen near the Dutch border, but moved to Duisburg to study business informatics at FOM/VWA. I lived there in the inner harbor for almost seven years, made great friends, and learned a lot. For over a decade, I worked as a software engineer on exciting projects in the fields of insurance and government modernization. For more than a year now, I have been designing innovative and sustainable solutions in the public sector as a software architect at adesso SE. Away from coding, I am a passionate technology fan, anime enthusiast, husband, and proud dad.</p>
             </div>
           </div>
         </div>
