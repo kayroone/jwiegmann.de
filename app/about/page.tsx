@@ -36,8 +36,7 @@ export default function AboutPage() {
 
             <div className="bg-zinc-900 rounded-lg border border-zinc-800 p-8">
               <p className="text-gray-400 leading-relaxed">
-                Aufgewachsen im idyllischen Sevelen, zog es mich nach Duisburg, um Wirtschaftsinformatik an der FOM/VWA zu studieren - dort habe ich knapp 7 Jahre im Innenhafen gewohnt, tolle Freunde gefunden und viel dazugelernt. Über ein Jahrzehnt habe ich als Softwareentwickler spannende Projekte in den Bereichen Versicherungen und Staatsmodernisierung realisiert. Seit mehr als einem Jahr gestalte ich nun als Softwarearchitekt bei der adesso SE innovative und nachhaltige Lösungen ebenfalls im Public-Bereich. Abseits des Codes bin ich ein leidenschaftlicher Technikfan, Anime-Enthusiast, Ehemann und stolzer Papa.
-              </p>
+                I grew up in idyllic village Sevelen, but moved to Duisburg to study business informatics at FOM/VWA. I lived there in the inner harbor for almost seven years, made great friends, and learned a lot. For over a decade, I worked as a software engineer on exciting projects in the fields of insurance and government modernization. For more than a year now, I have been designing innovative and sustainable solutions in the public sector as a software architect at adesso SE. Away from coding, I am a passionate technology fan, anime enthusiast, husband, and proud dad.</p>
             </div>
           </div>
         </div>
