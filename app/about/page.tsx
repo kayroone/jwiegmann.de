@@ -36,7 +36,7 @@ export default function AboutPage() {
 
             <div className="bg-zinc-900 rounded-lg border border-zinc-800 p-8">
               <p className="text-gray-400 leading-relaxed">
-                Aufgewachsen im idyllischen Sevelen, zog es mich nach Duisburg, um Wirtschaftsinformatik an der FOM zu studieren - dort habe ich knapp 7 Jahre im Innenhafen gewohnt, tolle Freunde gefunden und viel dazugelernt. Über ein Jahrzehnt habe ich als Softwareentwickler spannende Projekte in den Bereichen Versicherungen und Staatsmodernisierung realisiert. Seit mehr als einem Jahr gestalte ich nun als Softwarearchitekt bei adesso SE innovative und nachhaltige Lösungen ebenfalls im Public-Bereich. Abseits des Codes bin ich ein leidenschaftlicher Technikfan, Anime-Enthusiast, Ehemann und stolzer Papa.
+                Aufgewachsen im idyllischen Sevelen, zog es mich nach Duisburg, um Wirtschaftsinformatik an der FOM/VWA zu studieren - dort habe ich knapp 7 Jahre im Innenhafen gewohnt, tolle Freunde gefunden und viel dazugelernt. Über ein Jahrzehnt habe ich als Softwareentwickler spannende Projekte in den Bereichen Versicherungen und Staatsmodernisierung realisiert. Seit mehr als einem Jahr gestalte ich nun als Softwarearchitekt bei adesso SE innovative und nachhaltige Lösungen ebenfalls im Public-Bereich. Abseits des Codes bin ich ein leidenschaftlicher Technikfan, Anime-Enthusiast, Ehemann und stolzer Papa.
               </p>
             </div>
           </div>
