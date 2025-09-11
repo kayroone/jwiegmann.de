@@ -5,7 +5,7 @@ import { motion } from "framer-motion"
 import { Github, Mail, User } from "lucide-react"
 import Link from "next/link"
 
-export default function Hero() {
+export default function Stars() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [showTooltip, setShowTooltip] = useState(false)
 
@@ -149,4 +149,3 @@ export default function Hero() {
     </div>
   )
 }
-
