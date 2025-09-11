@@ -1,6 +1,7 @@
 import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Calendar, Tag } from "lucide-react"
 import Footer from "../components/footer"
+import { getAllPosts } from "../../lib/blog"
 
 export const metadata = {
   title: "Blog | Jan Wiegmann",
@@ -8,6 +9,8 @@ export const metadata = {
 }
 
 export default function BlogPage() {
+  const allPosts = getAllPosts()
+
   return (
     <main className="min-h-screen bg-black text-white">
       <div className="container mx-auto px-4 py-12">
@@ -26,35 +29,49 @@ export default function BlogPage() {
         </div>
 
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {/* Active "Coming Soon" card */}
-          <div className="bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 hover:border-zinc-700 transition-colors">
-            <div className="p-6 flex flex-col h-full">
-              <h3 className="text-xl font-semibold mb-3">Coming soon...</h3>
-              <p className="text-gray-400 mb-6 flex-grow">
-                Technical articles and insights on software architecture and development will be published here soon.
-              </p>
-              <div className="flex items-center justify-between text-sm text-gray-500 mt-auto">
-                <span>Stay tuned</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Placeholder cards (grayed out) */}
-          {Array.from({ length: 5 }).map((_, index) => (
-            <div key={index} className="bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 opacity-40">
+          {allPosts.map((post) => (
+            <Link
+              key={post.slug}
+              href={`/blog/${post.slug}`}
+              className="bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 hover:border-zinc-700 transition-colors group"
+            >
               <div className="p-6 flex flex-col h-full">
-                <div className="h-4 w-24 bg-zinc-800 rounded mb-4"></div>
-                <div className="h-6 w-3/4 bg-zinc-800 rounded mb-3"></div>
-                <div className="h-4 w-full bg-zinc-800 rounded mb-2"></div>
-                <div className="h-4 w-5/6 bg-zinc-800 rounded mb-2"></div>
-                <div className="h-4 w-4/6 bg-zinc-800 rounded mb-6"></div>
-                <div className="flex items-center justify-between mt-auto">
-                  <div className="h-3 w-16 bg-zinc-800 rounded"></div>
-                  <div className="h-3 w-16 bg-zinc-800 rounded"></div>
+                <h3 className="text-xl font-semibold mb-3 group-hover:text-blue-400 transition-colors">
+                  {post.title}
+                </h3>
+                <p className="text-gray-400 mb-6 flex-grow">
+                  {post.excerpt}
+                </p>
+                <div className="flex items-center justify-between text-sm text-gray-500 mt-auto">
+                  <div className="flex items-center gap-1">
+                    <Calendar size={14} />
+                    <span>{new Date(post.date).toLocaleDateString()}</span>
+                  </div>
+                  {post.tags && post.tags.length > 0 && (
+                    <div className="flex items-center gap-1">
+                      <Tag size={14} />
+                      <span>{post.tags[0]}</span>
+                      {post.tags.length > 1 && <span>+{post.tags.length - 1}</span>}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </Link>
+          ))}
+
+          {allPosts.length === 0 && (
+            <div className="bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800">
+              <div className="p-6 flex flex-col h-full">
+                <h3 className="text-xl font-semibold mb-3">Coming soon...</h3>
+                <p className="text-gray-400 mb-6 flex-grow">
+                  Technical articles and insights on software architecture and development will be published here soon.
+                </p>
+                <div className="flex items-center justify-between text-sm text-gray-500 mt-auto">
+                  <span>Stay tuned</span>
                 </div>
               </div>
             </div>
-          ))}
+          )}
         </div>
       </div>
       <Footer />

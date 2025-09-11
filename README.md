@@ -10,6 +10,8 @@ My minimalistic personal website built with Next.js 15.
 - **Framer Motion** - Animations and transitions
 - **Radix UI** - Accessible UI primitives (Dialog, Aspect Ratio)
 - **Lucide React** - Icon library
+- **Gray Matter** - Frontmatter parser for blog posts
+- **Remark** - Markdown processor and AST parser
 
 ## Structure
 
@@ -23,6 +25,7 @@ components/             # Reusable components
 ├── ui/                 # UI primitives (shadcn/ui components)
 └── theme-provider.tsx  # Theme management
 
+content/blog/           # Markdown blog posts
 hooks/                  # Custom React hooks
 lib/                    # Utilities & helper functions
 ```
@@ -50,7 +53,7 @@ npm run lint
 
 - `/` - Home with animated background and blog preview
 - `/about` - Personal information and background
-- `/blog` - Blog overview (coming soon)
-- `/blog/[slug]` - Individual blog posts (coming soon)
+- `/blog` - Blog overview with Markdown articles
+- `/blog/[slug]` - Individual blog posts rendered from Markdown
 
 Built with ❤️ by Jan
