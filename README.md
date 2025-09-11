@@ -7,7 +7,7 @@ My minimalistic personal website built with Next.js 15.
 - **Next.js 15** - React framework with App Router
 - **React 19** - UI library with TypeScript
 - **Tailwind CSS** - Utility-first styling with custom design system
-- **Framer Motion** - Smooth animations and transitions
+- **Framer Motion** - Animations and transitions
 - **Radix UI** - Accessible UI primitives (Dialog, Aspect Ratio)
 - **Lucide React** - Icon library
 
@@ -48,7 +48,7 @@ npm run lint
 
 ## Pages
 
-- `/` - Home with animated hero and blog preview
+- `/` - Home with animated background and blog preview
 - `/about` - Personal information and background
 - `/blog` - Blog overview (coming soon)
 - `/blog/[slug]` - Individual blog posts (coming soon)
