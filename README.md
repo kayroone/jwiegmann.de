@@ -1,6 +1,6 @@
 # Jan Wiegmann - Personal Website
 
-My minimalist personal website built with Next.js 15 and clean architecture principles.
+My minimalistic personal website built with Next.js 15 and clean architecture principles.
 
 ## Tech Stack
 
