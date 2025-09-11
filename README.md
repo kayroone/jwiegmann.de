@@ -56,4 +56,28 @@ npm run lint
 - `/blog` - Blog overview with Markdown articles
 - `/blog/[slug]` - Individual blog posts rendered from Markdown
 
+## Markdown Processing Pipeline
+
+This is how I publish my blog-posts. From markdown to HTML:
+
+```
+📁 first-post.md
+    ↓ fs.readFileSync()
+"---\ntitle: Test\n---\n# Hello\n**bold**"
+    ↓ matter()
+{ data: {title: "Test"}, content: "# Hello\n**bold**" }
+    ↓ remark()
+AST: { type: 'root', children: [heading, paragraph] }
+    ↓ remarkBreaks
+AST + Zeilenumbrüche als <br>
+    ↓ remarkRehype  
+HTML AST: { type: 'element', tagName: 'h1' }
+    ↓ rehypeHighlight
+HTML AST + <span class="hljs-keyword">
+    ↓ rehypeStringify
+"<h1>Hello</h1><p><strong>bold</strong></p>"
+    ↓ dangerouslySetInnerHTML
+🌐 Gerenderte HTML-Seite
+```
+
 Built with ❤️ by Jan
