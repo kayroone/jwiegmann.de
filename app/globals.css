@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Syntax highlighting theme */
+@import 'highlight.js/styles/atom-one-dark.css';
+
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
