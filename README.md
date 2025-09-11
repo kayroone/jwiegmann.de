@@ -1,6 +1,6 @@
 # Jan Wiegmann - Personal Website
 
-A modern, minimalist personal website built with Next.js 15 and clean architecture principles.
+My minimalist personal website built with Next.js 15 and clean architecture principles.
 
 ## Tech Stack
 
@@ -11,13 +11,11 @@ A modern, minimalist personal website built with Next.js 15 and clean architectu
 - **Radix UI** - Accessible UI primitives (Dialog, Aspect Ratio)
 - **Lucide React** - Icon library
 
-## Architecture
-
-Clean, backend-inspired structure for maintainability:
+## Structure
 
 ```
-app/                     # Next.js App Router
-├── components/          # Page-specific components
+app/                    # Next.js App Router
+├── components/         # Page-specific components
 ├── about/              # About page
 └── blog/               # Blog pages with dynamic routing
 
