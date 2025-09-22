@@ -19,7 +19,7 @@ Der Kundenauftrag sah vor, dass eine unbekannte Anzahl an Clients an einen unser
 
 Natürlich gingen mir sofort die gängigen Fragen durch den Kopf:
 
-- Wie überträgt man zuverlässig so große Datenmengen? Ist Streaming eine Option?
+- Wie überträgt man zuverlässig so große Datenmengen? Ist Streaming eine Option?Ich 
 - Was passiert bei Netzwerkfehlern?
 - Wie stellt man Datenkonsistenz sicher? Stichwort Idempotenz.
 - Gebe ich den Clients eine Option Fehler eigenständig zu korrigieren?
@@ -35,7 +35,7 @@ Repository: https://github.com/kayroone/rest-ndjson-poc
 ## Das Konzept: Rest-Phase-Based-Upload
 
 [Hier erklärst du die Grundidee des phasenbasierten Uploads]
-
+Wie sieht das aus? Wenn 
 ## Die Architektur
 
 [Hier beschreibst du das Inbox Pattern und die Upload-Phasen]
