@@ -48,7 +48,7 @@ welche der 50.000 Datensätze bereits übertragen wurden, um im Fehlerfall dort 
 Anforderung, dass einzelne Payloads bei Fehlern erneut hochgeladen werden können sollen.
 
 Hinzu kam ein weiteres Problem: Da der Backend-Service horizontal skaliert ist, würde jeder Upload an einen spezifischen
-Pod gebunden sein - unabhängig von dessen Größe. Während der Upload läuft, ist kein Load-Balancing möglich. Startet der Pod neu oder fällt aus, ist der
+Pod gebunden sein. Während der Upload läuft, ist kein Load-Balancing möglich. Startet der Pod neu oder fällt aus, ist der
 Upload ebenfalls verloren. Das war für mich ein klarer Single Point of Failure, den ich nicht akzeptieren wollte. Also
 zurück ans Zeichenbrett.
 
