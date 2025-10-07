@@ -49,13 +49,19 @@ Anforderung, dass einzelne Payloads bei Fehlern erneut hochgeladen werden könne
 
 Hinzu kam ein weiteres Problem: Da der Backend-Service horizontal skaliert ist, würde jeder Upload an einen spezifischen
 Pod gebunden sein. Während der Upload läuft, ist kein Load-Balancing möglich. Startet der Pod neu oder fällt aus, ist der
-Upload ebenfalls verloren. Das war für mich ein klarer Single Point of Failure, den ich nicht akzeptieren wollte. Also
-zurück ans Zeichenbrett.
+Upload ebenfalls verloren. Also alles zurück auf Null und nochmal ins Brainstorming.
 
 ## Das Konzept: Rest-Phase-Based-Upload
 
-[Hier erklärst du die Grundidee des phasenbasierten Uploads]
-Wie sieht das aus? Wenn 
+Was hat mir der PoC mit dem NDJSON-Ansatz gezeigt? Zunächst einmal, dass ich auf einzelne autarke Requests setzen sollte,
+damit zum einen das Load-Balancing funktioniert und ich mehrere Pods ansteuern kann. Zum anderen aber auch, dass die
+einzelnen Requests nicht zu groß sein dürfen, da ich sonst vor derselben Problematik stehe wie beim NDJSON-Ansatz. Es
+müssen also autarke Requests sein, die eine maximale Größe nicht überschreiten - trotzdem kann es vorkommen, dass diese
+Requests voneinander abhängen, weil die Gesamtmenge an Daten die maximale Request-Größe sprengt und über mehrere Requests
+verteilt werden muss. Die Payloads mehrerer Requests können dann aufeinander aufbauen und somit fachlich zusammengehören.
+Die Idee war also, pro Upload einen backendseitigen isolierten Kontext zu schaffen - eine Art Session, die gezielt für
+einen Upload bestehend aus mehreren Requests verantwortlich ist.
+
 ## Die Architektur
 
 [Hier beschreibst du das Inbox Pattern und die Upload-Phasen]
