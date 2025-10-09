@@ -64,3 +64,9 @@ Uses shadcn/ui with Tailwind CSS:
 - TypeScript in strict mode with path aliases
 - Deployment via GitHub Actions to personal server
 - Images are unoptimized for static deployment
+
+## Commit Message Guidelines
+
+- Use clean, professional commit messages without Claude Code signatures
+- Do not include "🤖 Generated with [Claude Code]" or "Co-Authored-By: Claude" in commit messages
+- Keep commits focused and descriptive
