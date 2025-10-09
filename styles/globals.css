@@ -94,3 +94,12 @@ article li {
   margin-bottom: 0.25rem;
 }
 
+article a {
+  color: #60a5fa;
+  text-decoration: underline;
+}
+
+article a:hover {
+  color: #3b82f6;
+}
+
