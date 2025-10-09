@@ -11,7 +11,7 @@ export function ImpressumModal({ children }: { children?: React.ReactNode }) {
   return (
     <>
       <div onClick={() => setOpen(true)} className="cursor-pointer">
-        {children || <span className="text-gray-400 hover:text-white">Impressum</span>}
+        {children || <span className="text-sm text-gray-400 hover:text-white">Impressum</span>}
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
