@@ -51,7 +51,7 @@ Hinzu kam ein weiteres Problem: Da der Backend-Service horizontal skaliert ist, 
 Pod gebunden sein. Während der Upload läuft, ist kein Load-Balancing möglich. Startet der Pod neu oder fällt aus, ist der
 Upload ebenfalls verloren. Also alles zurück auf Null und nochmal ins Brainstorming.
 
-## Das Konzept: Rest-Phase-Based-Upload
+## Das Konzept: Rest-Phase-Based-Upload mit Inbox-Pattern
 
 Was hat mir der PoC mit dem NDJSON-Ansatz gezeigt? Zunächst einmal, dass ich auf einzelne autarke Requests setzen sollte,
 damit zum einen das Load-Balancing funktioniert und ich mehrere Pods ansteuern kann. Zum anderen aber auch, dass die
@@ -60,7 +60,15 @@ müssen also autarke Requests sein, die eine maximale Größe nicht überschreit
 Requests voneinander abhängen, weil die Gesamtmenge an Daten die maximale Request-Größe sprengt und über mehrere Requests
 verteilt werden muss. Die Payloads mehrerer Requests können dann aufeinander aufbauen und somit fachlich zusammengehören.
 Die Idee war also, pro Upload einen backendseitigen isolierten Kontext zu schaffen - eine Art Session, die gezielt für
-einen Upload bestehend aus mehreren Requests verantwortlich ist.
+einen Upload bestehend aus mehreren Requests verantwortlich ist. 
+
+Innerhalb dieser "Upload-Session" können dann Requests mit n Payloads als Batches hochgeladen werden. Soweit so gut - das
+ist der Happy Path. Was aber, wenn während eines Uploads die Verbindung unterbrochen wird? Und wie gehen wir damit um,
+wenn derselbe Request mit denselben Payloads doppelt verschickt wird? Neben dem Happy Path muss ich solche Fehlerszenarien
+mitberücksichtigen - das bedeutet für mich, ich muss backendseitig eine idempotente Verarbeitung gewährleisten. Idempotent
+bedeutet, dass der Datenbestand durch das mehrmalige Einlesen derselben Daten unverändert bleibt, sprich, dass wir keine
+Daten doppelt verarbeiten und auch keine bereits eingelesenen Daten verändern. Hier kommt das sogenannte Inbox-Pattern ins
+Spiel.
 
 ## Die Architektur
 
