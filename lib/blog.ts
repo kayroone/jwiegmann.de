@@ -5,6 +5,7 @@ import { remark } from 'remark'
 import remarkBreaks from 'remark-breaks'
 import remarkRehype from 'remark-rehype'
 import rehypeHighlight from 'rehype-highlight'
+import rehypeMermaid from 'rehype-mermaid'
 import rehypeStringify from 'rehype-stringify'
 
 const postsDirectory = join(process.cwd(), 'content/blog')
@@ -53,6 +54,7 @@ export async function markdownToHtml(markdown: string) {
   const result = await remark()
     .use(remarkBreaks)
     .use(remarkRehype, { allowDangerousHtml: true })
+    .use(rehypeMermaid)
     .use(rehypeHighlight)
     .use(rehypeStringify)
     .process(markdown)

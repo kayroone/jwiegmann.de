@@ -77,7 +77,41 @@ Spiel.
 
 ## Die Architektur
 
-[Hier beschreibst du das Inbox Pattern und die Upload-Phasen]
+Wie sieht das Ganze nun in der Praxis aus? Am besten lässt sich das anhand des Upload-Flows zeigen, der drei zentrale
+Phasen durchläuft, die in dem folgenden Mermaid Sequenzdiagramm dargestellt und anschließend erläutert werden.
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Backend
+    participant Inbox
+    participant Kafka
+
+    Note over Client,Kafka: Phase 1: Initialisierung
+    Client->>Backend: POST /initUpload
+    Backend->>Inbox: Erstelle Upload-Session
+    Inbox-->>Backend: uploadId
+    Backend-->>Client: uploadId
+
+    Note over Client,Kafka: Phase 2: Batch-Upload (wiederholt für n Batches)
+    Client->>Backend: POST /batchUpload(uploadId, seqNo, payloads)
+    Backend->>Inbox: Prüfe Duplikat (uploadId + seqNo)
+    alt Batch bereits vorhanden
+        Inbox-->>Backend: Duplikat erkannt
+        Backend-->>Client: 200 OK (idempotent)
+    else Neuer Batch
+        Inbox->>Inbox: Speichere Batch
+        Inbox-->>Backend: Batch gespeichert
+        Backend-->>Client: 200 OK
+    end
+
+    Note over Client,Kafka: Phase 3: Abschluss & Verarbeitung
+    Client->>Backend: POST /completeUpload(uploadId)
+    Backend->>Inbox: Markiere Upload als vollständig
+    Backend->>Kafka: Sende Batches zur Verarbeitung
+    Kafka-->>Backend: ACK
+    Backend-->>Client: 200 OK
+```
 
 ## Technische Umsetzung
 
