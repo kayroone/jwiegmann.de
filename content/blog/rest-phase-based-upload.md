@@ -63,16 +63,73 @@ Die letzte Phase wird durch `POST /uploads/{uploadId}/complete` eingeleitet. Hie
 
 ## Technische Umsetzung
 
-[Hier gehst du auf die Spring Boot Implementation ein]
+Die Implementierung des Phase-Based-Upload-Systems basiert auf Spring Boot und folgt einer klassischen mehrschichtigen Architektur - dem Entity-Control-Boundary (ECB) Pattern. Das folgende Sequenzdiagramm zeigt das Zusammenspiel der einzelnen Klassen:
 
-Repository: https://github.com/kayroone/rest-phase-based-upload-poc
+![Klassendiagramm](/blog-images/rest-phase-based-upload-class-diagram.svg)
 
-## Robustheit durch Idempotenz
+Das Diagramm zeigt den Ablauf über alle drei Phasen hinweg und verdeutlicht, wie die verschiedenen Schichten miteinander interagieren. Die Architektur gliedert sich in folgende Layer:
 
-[Hier erklärst du die Fehlerbehandlung und fachliche Idempotenz durch Hashabgleich]
+**Boundary Layer**
+
+Der `UploadController` ist der Einstiegspunkt für alle HTTP-Requests und stellt die drei REST-Endpunkte bereit:
+- `POST /uploads/init` - Initialisiert einen neuen Upload und gibt die uploadId zurück
+- `POST /uploads/{uploadId}/batch` - Nimmt Batch-Uploads entgegen und verarbeitet die Payloads
+- `POST /uploads/{uploadId}/complete` - Schließt den Upload ab und startet die Weiterverarbeitung
+
+**Control Layer**
+
+Der `UploadService` enthält die komplette Business-Logik und orchestriert die Verarbeitung:
+- Erstellt und verwaltet Upload-Sessions mit verschiedenen Status (INITIALIZED, SEALED, DONE, FAILED)
+- Prüft Idempotenz anhand von uploadId und seqNo
+- Validiert eingehende Payloads und gibt detailliertes Feedback
+- Koordiniert das Verschieben der Daten von der Inbox in die Zieltabellen
+
+**Entity Layer**
+
+Drei Repositories kapseln den Datenbankzugriff:
+- `UploadRepository` - Verwaltet Upload-Sessions und deren Status
+- `BatchRepository` - Speichert Batch-Metadaten zur Idempotenzprüfung
+- `InboxRepository` - Hält die hochgeladenen Payloads temporär vor der finalen Verarbeitung
+
+Das **Inbox-Pattern** ist dabei der Schlüssel zur Robustheit: Eingehende Daten landen zunächst in einer separaten Inbox-Tabelle, werden validiert und erst nach erfolgreichem Complete in die Zieltabellen verschoben. So können fehlerhafte Payloads gezielt nachgeliefert werden, ohne den gesamten Upload zu wiederholen.
+
+Den vollständigen PoC mit allen Details zur Implementierung findet ihr in meinem GitHub Repository:
+
+[rest-phase-based-upload-poc](https://github.com/kayroone/rest-phase-based-upload-poc)
+
+## Erfüllt diese Architektur die Anforderungen?
+
+In diesem Abschnitt würde ich gerne nochmal auf die initial genannten Anforderungen eingehen und die beschriebene Architektur hinsichtlich deren Erfüllung bewerten:
+
+**40-50 Millionen Datensätze pro Jahr / Bis zu 50.000 Datensätze pro fachlicher Einheit**
+
+Durch die Aufteilung in Batches können auch große Datenmengen in handhabbaren Portionen übertragen werden. Die Batch-Größe ist konfigurierbar und kann an die Netzwerkbedingungen angepasst werden. Jeder Batch wird einzeln validiert und persistiert, wodurch selbst bei 50.000 Datensätzen pro Upload keine monolithischen Requests entstehen.
+
+**Zwingend REST-Schnittstelle**
+
+Die Lösung nutzt ausschließlich REST-Endpunkte via HTTP. Keine Message-Broker, kein WebSocket - nur klassisches Request-Response über HTTP.
+
+**Datensätze können voneinander abhängig sein**
+
+Die Sequenznummer (`seqNo`) gewährleistet, dass Batches in der korrekten Reihenfolge verarbeitet werden können. Durch den Upload-Kontext werden alle zusammengehörigen Daten unter einer `uploadId` gruppiert, sodass fachliche Abhängigkeiten erhalten bleiben.
+
+**Alle Datensätze haben einen zusammengehörigen fachlichenOkay, du  Identifier**
+
+Der `businessId` wird beim Init-Request übergeben und mit dem Upload-Kontext verknüpft. Alle nachfolgenden Batches gehören zu dieser fachlichen Einheit und können später entsprechend gruppiert abgerufen werden.
+
+**Möglichkeit einzelne Payloads erneut hochzuladen bei Fehlern**
+
+Durch das Inbox-Pattern und die detaillierte Fehlerrückmeldung pro Batch weiß der Client genau, welche Payloads fehlgeschlagen sind. Diese können gezielt korrigiert und mit derselben `seqNo` erneut hochgeladen werden - die Idempotenzprüfung stellt sicher, dass bereits erfolgreiche Payloads nicht doppelt verarbeitet werden.
+
+Zusätzlich zur Erfüllung der Anforderungen bringt die Architektur weitere Vorteile mit sich: Sie ist horizontal skalierbar, da einzelne Requests unabhängig voneinander verarbeitet werden können. Die Trennung in Init-, Upload- und Complete-Phase ermöglicht ein robustes Error-Handling. Und durch den Upload-Status kann der Fortschritt jederzeit transparent nachvollzogen werden.
 
 ## Learnings & Fazit
 
-- Reine Payload Obergrenze pro Request reicht nicht aus - es muss eine Obergrenze in MB pro Request sein.
+**Payload-Anzahl vs. Datengröße**
 
-[Hier fasst du zusammen, was du gelernt hast]
+Initial hatte ich die Batch-Größe rein über die Anzahl der Payloads begrenzt - beispielsweise maximal 1000 Payloads pro Batch. Das Problem: Ein Payload kann 1 KB groß sein, ein anderer 500 KB. Bei 1000 großen Payloads entstanden dadurch Requests von mehreren hundert MB, die zu Timeouts und Memory-Problemen führten. Die Lösung: Eine MB-basierte Obergrenze pro Request (z.B. 10 MB), kombiniert mit einer maximalen Payload-Anzahl. So bleibt die Request-Größe kalkulierbar und der Client kann die Batches entsprechend aufteilen.
+
+Unabhängig von dieser Architektur war das hier mein erster Blog-Artikel. Von daher vergebt mir bitte, wenn er stellenweise noch nicht ausgepfeilt oder vielleicht zu umfangreich (mein persönliches Gefühl) ist. Wenn ihr Kritik oder Anmerkungen habt, lasst es mich gerne wissen. 
+
+Vielen Dank fürs Lesen!
+Jan
