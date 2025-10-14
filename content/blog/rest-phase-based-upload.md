@@ -111,13 +111,15 @@ Die Lösung nutzt ausschließlich REST-Endpunkte via HTTP. Keine Message-Broker,
 
 Die Sequenznummer (`seqNo`) gewährleistet, dass Batches in der korrekten Reihenfolge verarbeitet werden können. Durch den Upload-Kontext werden alle zusammengehörigen Daten unter einer `uploadId` gruppiert, sodass fachliche Abhängigkeiten erhalten bleiben.
 
-**Alle Datensätze haben einen zusammengehörigen fachlichenOkay, du  Identifier**
+**Alle Datensätze haben einen zusammengehörigen fachlichen Identifier**
 
 Der `businessId` wird beim Init-Request übergeben und mit dem Upload-Kontext verknüpft. Alle nachfolgenden Batches gehören zu dieser fachlichen Einheit und können später entsprechend gruppiert abgerufen werden.
 
 **Möglichkeit einzelne Payloads erneut hochzuladen bei Fehlern**
 
-Durch das Inbox-Pattern und die detaillierte Fehlerrückmeldung pro Batch weiß der Client genau, welche Payloads fehlgeschlagen sind. Diese können gezielt korrigiert und mit derselben `seqNo` erneut hochgeladen werden - die Idempotenzprüfung stellt sicher, dass bereits erfolgreiche Payloads nicht doppelt verarbeitet werden.
+Durch das Inbox-Pattern und die detaillierte Fehlerrückmeldung pro Batch weiß der Client genau, welche Payloads fehlgeschlagen sind. Diese können gezielt korrigiert und mit derselben `seqNo` erneut hochgeladen werden - die Idempotenzprüfung via `uploadId` + `seqNo` stellt sicher, dass bereits erfolgreiche Payloads nicht doppelt verarbeitet werden.
+
+**Wichtig zur Idempotenz:** Die beschriebene Idempotenz bezieht sich ausschließlich auf die technische Ebene innerhalb einer Upload-Session. Das bedeutet: Wird ein Batch mit derselben `seqNo` innerhalb derselben `uploadId` mehrfach gesendet, wird er nur einmal verarbeitet. Das schützt jedoch nicht davor, dass derselbe fachliche Payload in einer neuen Session (neue `uploadId`) erneut hochgeladen wird. Eine solche fachliche Idempotenz über Sessions hinweg ließe sich nur durch Hash-Abgleich der Payload-Inhalte realisieren - allerdings ist dies sehr performanceintensiv und wurde im PoC bewusst nicht umgesetzt.
 
 Zusätzlich zur Erfüllung der Anforderungen bringt die Architektur weitere Vorteile mit sich: Sie ist horizontal skalierbar, da einzelne Requests unabhängig voneinander verarbeitet werden können. Die Trennung in Init-, Upload- und Complete-Phase ermöglicht ein robustes Error-Handling. Und durch den Upload-Status kann der Fortschritt jederzeit transparent nachvollzogen werden.
 
