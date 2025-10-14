@@ -1,6 +1,6 @@
 ---
 title: "Von NDJSON zu Rest-Phase-Based-Upload: Robuste Systeme für große Datenmengen"
-date: "2024-09-12"
+date: "2025-10-14"
 excerpt: "Wie ich durch iterative Ansätze ein phasenbasiertes Upload-System entwickelt habe, das große Datentransfers robust und fehlertolerant macht"
 tags: [ "spring-boot", "rest-api", "upload", "architecture", "poc", "ndjson" ]
 ---
