@@ -49,6 +49,18 @@ Wie sieht das Ganze nun in der Praxis aus? Am besten lässt sich das anhand des 
 
 ![Upload-Flow Sequenzdiagramm](/blog-images/rest-phase-based-upload-sequence.svg)
 
+**Phase 1: Initialisierung**
+
+Der Upload-Prozess beginnt mit einem `POST /uploads/init`-Request. Hier übergibt der Client einen fachlichen Identifier, der alle Datensätze dieses Uploads zusammenfasst. Der Service erstellt daraufhin einen Upload-Kontext in der Datenbank und gibt eine eindeutige `uploadId` zurück. Diese `uploadId` ist das Herzstück des gesamten Flows - sie referenziert den isolierten Kontext, in dem alle nachfolgenden Batch-Uploads stattfinden. Wichtig: In dieser Phase werden noch keine Daten übertragen, es wird lediglich die "Session" für den Upload vorbereitet.
+
+**Phase 2: Batch-Upload**
+
+In der zweiten Phase erfolgt die eigentliche Datenübertragung via `POST /uploads/{uploadId}/batch`. Der Client kann nun beliebig viele Batch-Requests absetzen, wobei jeder Request ein Array von Payloads sowie eine fortlaufende Sequenznummer (`seqNo`) enthält. Die Sequenznummer ist entscheidend für die Idempotenz: Kommt derselbe Batch mit derselben `seqNo` mehrfach an, wird er nur einmal verarbeitet. Die Payloads werden zunächst in der Inbox-Tabelle persistiert - also nicht direkt in die Zieltabellen. Das ermöglicht es, fehlerhafte Batches zu identifizieren und gezielt neu hochzuladen, ohne den gesamten Upload zu wiederholen. Der Service validiert die Daten und gibt für jeden Batch ein detailliertes Feedback zurück: Welche Payloads wurden erfolgreich gespeichert, welche sind fehlgeschlagen? Mit diesen Informationen kann der Client dann z.B. fehlerhafte Payloads korrigieren und gezielt neu hochladen.
+
+**Phase 3: Abschluss**
+
+Die letzte Phase wird durch `POST /uploads/{uploadId}/complete` eingeleitet. Hier prüft der Service, ob alle Batches vollständig und fehlerfrei übertragen wurden. Ist das der Fall, startet die Weiterverarbeitung: Die validierten Daten aus der Inbox werden in die finalen Zieltabellen überführt und können dann beispielsweise via Kafka an nachgelagerte Services weitergereicht werden. Der Upload-Kontext wird als abgeschlossen (SEALED) markiert. Sind noch fehlerhafte Batches vorhanden, schlägt der Complete-Request fehl und der Client erhält konkrete Informationen darüber, welche Batches (identifiziert durch ihre `seqNo`) erneut hochgeladen werden müssen. Im SEALED Status ist der Re-Upload von fehlerhaften Payloads erlaubt. Nachdem alle Payloads erfolgreich hochgeladen wurden, startet die asynchrone Verarbeitung. Ist diese ebenfalls erfolgreich, wird die Upload-Session mit dem Status DONE markiert und ist damit abgeschlossen.
+
 ## Technische Umsetzung
 
 [Hier gehst du auf die Spring Boot Implementation ein]
