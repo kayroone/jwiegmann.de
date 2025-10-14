@@ -27,7 +27,11 @@ Mit diesen Fragen begab ich mich ins Brainstorming.
 
 ## Erste Lösungsansätze
 
-Mein erster Gedanke war, dass ich bei diesen Datenmengen auf Streaming setzen könnte, da auch die weiterverarbeitenden Systeme am Backend-Service bereits auf Streaming via Kafka ausgelegt sind. Die naheliegende Lösung wäre also gewesen, das externe System direkt an Kafka anzubinden. Jedoch gab es die Compliance-Regel, dass für externe Schnittstellen ausschließlich REST bzw. HTTP verwendet werden darf. Nach einer längeren Recherchearbeit bin ich letztlich auf NDJSON gestoßen. NDJSON (Newline Delimited JSON) ist ein Format, bei dem jede Zeile ein eigenständiges JSON-Objekt enthält - also bestens geeignet für Streaming-Szenarien via HTTP, da die Daten Zeile für Zeile über eine offene HTTP-Verbindung übertragen werden können. NDJSON schien auf den ersten Blick gut zu den Anforderungen zu passen. Da ich die Technologie noch nicht kannte, kam die Idee auf, das Ganze in einem PoC zu vertesten. Den PoC findet ihr in meinem folgenden Repository:
+Mein erster Gedanke war, dass ich bei diesen Datenmengen auf Streaming setzen könnte, da auch die weiterverarbeitenden Systeme am Backend-Service bereits auf Streaming via Kafka ausgelegt sind. Die naheliegende Lösung wäre also gewesen, das externe System direkt an Kafka anzubinden. Jedoch gab es die Compliance-Regel, dass für externe Schnittstellen ausschließlich REST bzw. HTTP verwendet werden darf. Nach einer längeren Recherchearbeit bin ich letztlich auf NDJSON gestoßen.
+
+> **ℹ️ Info:** NDJSON (Newline Delimited JSON) ist ein Format, bei dem jede Zeile ein eigenständiges JSON-Objekt enthält - also bestens geeignet für Streaming-Szenarien via HTTP, da die Daten Zeile für Zeile über eine offene HTTP-Verbindung übertragen werden können.
+
+NDJSON schien auf den ersten Blick gut zu den Anforderungen zu passen. Da ich die Technologie noch nicht kannte, kam die Idee auf, das Ganze in einem PoC zu vertesten. Den PoC findet ihr in meinem folgenden Repository:
 
 Mein GitHub Repo dazu: [rest-ndjson-poc](https://github.com/kayroone/rest-ndjson-poc)
 
@@ -91,7 +95,7 @@ Drei Repositories kapseln den Datenbankzugriff:
 - `BatchRepository` - Speichert Batch-Metadaten zur Idempotenzprüfung
 - `InboxRepository` - Hält die hochgeladenen Payloads temporär vor der finalen Verarbeitung
 
-Das **Inbox-Pattern** ist dabei der Schlüssel zur Robustheit: Eingehende Daten landen zunächst in einer separaten Inbox-Tabelle, werden validiert und erst nach erfolgreichem Complete in die Zieltabellen verschoben. So können fehlerhafte Payloads gezielt nachgeliefert werden, ohne den gesamten Upload zu wiederholen.
+> **ℹ️ Info:** Das Inbox-Pattern ist dabei der Schlüssel zur Robustheit: Eingehende Daten landen zunächst in einer separaten Inbox-Tabelle, werden validiert und erst nach erfolgreichem Complete in die Zieltabellen verschoben. So können fehlerhafte Payloads gezielt nachgeliefert werden, ohne den gesamten Upload zu wiederholen.
 
 Den vollständigen PoC mit allen Details zur Implementierung findet ihr in meinem GitHub Repository:
 
