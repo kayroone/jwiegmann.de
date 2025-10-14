@@ -5,8 +5,6 @@ excerpt: "Wie ich durch iterative Ansätze ein phasenbasiertes Upload-System ent
 tags: [ "spring-boot", "rest-api", "upload", "architecture", "poc", "ndjson" ]
 ---
 
-# Von NDJSON zu Rest-Phase-Based-Upload: Eine REST-Schnittstelle für große Datenmengen
-
 ## Einleitung
 
 Der Kundenauftrag sah vor, dass eine unbekannte Anzahl an Clients an einen unserer Services andocken sollte. Diese Clients sind deutschlandweit verteilt und liefern Zahlungsdatensätze. Man merkt schon, sehr vage formulierte Anforderungen - ganz typisch. Ich habe hier mal alles aufgelistet, was ich zu Beginn wusste:
