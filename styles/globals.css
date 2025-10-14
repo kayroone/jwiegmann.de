@@ -103,3 +103,15 @@ article a:hover {
   color: #3b82f6;
 }
 
+article blockquote {
+  background-color: #27272a;
+  border-left: 4px solid #52525b;
+  padding: 1rem;
+  margin: 1.5rem 0;
+  border-radius: 0.375rem;
+}
+
+article blockquote p {
+  margin: 0;
+}
+
