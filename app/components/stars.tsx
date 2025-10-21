@@ -145,8 +145,8 @@ export default function Stars() {
     }
 
     // Spawn invaders periodically
-    let lastInvaderSpawn = Date.now()
-    const invaderSpawnInterval = 2000 // spawn every 2 seconds
+    let lastInvaderSpawn = Date.now() - 4000 // Start with offset so first invader spawns immediately
+    const invaderSpawnInterval = 4000 // spawn every 4 seconds
 
     function animate() {
       if (!ctx) return
