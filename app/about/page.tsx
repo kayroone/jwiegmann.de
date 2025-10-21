@@ -5,7 +5,8 @@ import Footer from "../components/footer"
 
 export const metadata = {
   title: "About Me | Jan Wiegmann",
-  description: "Learn more about Jan Wiegmann, Software Architect",
+  description: "Jan Wiegmann - Software Architect at adesso SE with over a decade of experience in software engineering. Specializing in public sector, insurance, and government modernization projects.",
+  keywords: ["Jan Wiegmann", "adesso SE", "Software Architect", "Software Engineer", "Public Sector", "Government Modernization", "Insurance", "Business Informatics", "Duisburg", "FOM"],
 }
 
 export default function AboutPage() {
