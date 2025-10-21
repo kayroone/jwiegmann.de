@@ -21,6 +21,7 @@ export default function Stars() {
 
     const particles: Particle[] = []
     const particleCount = 100
+    const invaders: SpaceInvader[] = []
 
     class Particle {
       x: number
@@ -56,17 +57,124 @@ export default function Stars() {
       }
     }
 
+    class SpaceInvader {
+      x: number
+      y: number
+      size: number
+      speed: number
+      type: number
+      isAlive: boolean
+
+      // Classic Space Invader pixel patterns (11x8)
+      static patterns = [
+        // Type 1
+        [
+          [0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0],
+          [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+          [0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+          [0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+          [1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1],
+          [0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0],
+        ],
+        // Type 2
+        [
+          [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+          [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0],
+          [0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0],
+          [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        ],
+        // Type 3
+        [
+          [0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0],
+          [0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+          [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+          [1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+          [0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+          [0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0],
+        ],
+      ]
+
+      constructor() {
+        this.x = Math.random() * (canvas.width - 44) + 22
+        this.y = canvas.height + 20
+        this.size = 4 // pixel size
+        this.speed = 0.5 + Math.random() * 0.5
+        this.type = Math.floor(Math.random() * SpaceInvader.patterns.length)
+        this.isAlive = true
+      }
+
+      update() {
+        this.y -= this.speed
+
+        if (this.y < -40) {
+          this.isAlive = false
+        }
+      }
+
+      draw() {
+        if (!ctx) return
+        const pattern = SpaceInvader.patterns[this.type]
+
+        ctx.fillStyle = "rgba(255, 255, 255, 1)"
+
+        for (let row = 0; row < pattern.length; row++) {
+          for (let col = 0; col < pattern[row].length; col++) {
+            if (pattern[row][col] === 1) {
+              ctx.fillRect(
+                this.x + col * this.size,
+                this.y + row * this.size,
+                this.size,
+                this.size
+              )
+            }
+          }
+        }
+      }
+    }
+
     for (let i = 0; i < particleCount; i++) {
       particles.push(new Particle())
     }
+
+    // Spawn invaders periodically
+    let lastInvaderSpawn = Date.now()
+    const invaderSpawnInterval = 7000 // spawn every 7 seconds
 
     function animate() {
       if (!ctx) return
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
+      // Spawn new invader
+      const now = Date.now()
+      if (now - lastInvaderSpawn > invaderSpawnInterval) {
+        invaders.push(new SpaceInvader())
+        lastInvaderSpawn = now
+      }
+
+      // Update and draw particles
       for (const particle of particles) {
         particle.update()
         particle.draw()
+      }
+
+      // Update and draw invaders
+      for (let i = invaders.length - 1; i >= 0; i--) {
+        const invader = invaders[i]
+        invader.update()
+        invader.draw()
+
+        // Remove dead invaders
+        if (!invader.isAlive) {
+          invaders.splice(i, 1)
+        }
       }
 
       requestAnimationFrame(animate)
