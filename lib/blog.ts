@@ -1,3 +1,7 @@
+/**
+ * Blog processing pipeline: Markdown → remark → rehype → HTML
+ */
+
 import fs from 'fs'
 import { join } from 'path'
 import matter from 'gray-matter'
@@ -19,12 +23,21 @@ export type BlogPost = {
   tags?: string[]
 }
 
+/**
+ * Get all blog post slugs from the content/blog directory
+ * @returns Array of slugs (filenames without .md extension)
+ */
 export function getPostSlugs() {
   return fs.readdirSync(postsDirectory)
     .filter((file) => file.endsWith('.md'))
     .map((file) => file.replace(/\.md$/, ''))
 }
 
+/**
+ * Load a single blog post by slug
+ * @param slug - Post identifier (filename without .md)
+ * @returns BlogPost with metadata and raw markdown content
+ */
 export function getPostBySlug(slug: string): BlogPost {
   const realSlug = slug.replace(/\.md$/, '')
   const fullPath = join(postsDirectory, `${realSlug}.md`)
@@ -41,15 +54,23 @@ export function getPostBySlug(slug: string): BlogPost {
   }
 }
 
+/**
+ * Load all blog posts sorted by date (newest first)
+ * @returns Array of BlogPost objects
+ */
 export function getAllPosts(): BlogPost[] {
   const slugs = getPostSlugs()
   const posts = slugs
     .map((slug) => getPostBySlug(slug))
-    // Sort posts by date in descending order
     .sort((post1, post2) => (post1.date > post2.date ? -1 : 1))
   return posts
 }
 
+/**
+ * Convert markdown to HTML with syntax highlighting
+ * @param markdown - Raw markdown string
+ * @returns HTML string ready for rendering
+ */
 export async function markdownToHtml(markdown: string) {
   const result = await remark()
     .use(remarkBreaks)
