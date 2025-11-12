@@ -5,9 +5,13 @@ import { motion } from "framer-motion"
 import { Github, Mail, User } from "lucide-react"
 import Link from "next/link"
 
+/**
+ * Landing page component with animated starfield background and rising Space Invaders
+ */
 export default function Stars() {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [showTooltip, setShowTooltip] = useState(false)
+
+    const canvasRef = useRef<HTMLCanvasElement>(null)
+    const [showTooltip, setShowTooltip] = useState(false)
 
   useEffect(() => {
     if (!canvasRef.current) return
@@ -16,6 +20,7 @@ export default function Stars() {
     const ctx = canvas.getContext("2d")
     if (!ctx) return
 
+    // Set canvas to full window size
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
 
@@ -23,6 +28,9 @@ export default function Stars() {
     const particleCount = 100
     const invaders: SpaceInvader[] = []
 
+    /**
+     * Particle class - represents stars floating in the background
+     */
     class Particle {
       x: number
       y: number
@@ -42,6 +50,7 @@ export default function Stars() {
         this.x += this.speedX
         this.y += this.speedY
 
+        // Wrap around screen edges for infinite scrolling effect
         if (this.x > canvas.width) this.x = 0
         if (this.x < 0) this.x = canvas.width
         if (this.y > canvas.height) this.y = 0
@@ -57,6 +66,9 @@ export default function Stars() {
       }
     }
 
+    /**
+     * SpaceInvader class - represents pixel art invaders that rise from bottom to top
+     */
     class SpaceInvader {
       x: number
       y: number
@@ -65,7 +77,7 @@ export default function Stars() {
       type: number
       isAlive: boolean
 
-      // Classic Space Invader pixel patterns (11x8)
+      // Classic Space Invader pixel patterns (11x8) - three different enemy types
       static patterns = [
         // Type 1
         [
@@ -104,7 +116,7 @@ export default function Stars() {
 
       constructor() {
         this.x = Math.random() * (canvas.width - 44) + 22
-        this.y = canvas.height + 20
+        this.y = canvas.height + 20 // Start below screen
         this.size = 4 // pixel size
         this.speed = 0.5 + Math.random() * 0.5
         this.type = Math.floor(Math.random() * SpaceInvader.patterns.length)
@@ -112,8 +124,9 @@ export default function Stars() {
       }
 
       update() {
-        this.y -= this.speed
+        this.y -= this.speed // Move upward
 
+        // Mark as dead when off-screen
         if (this.y < -40) {
           this.isAlive = false
         }
@@ -125,6 +138,7 @@ export default function Stars() {
 
         ctx.fillStyle = "rgba(255, 255, 255, 1)"
 
+        // Draw pixel-by-pixel based on pattern matrix
         for (let row = 0; row < pattern.length; row++) {
           for (let col = 0; col < pattern[row].length; col++) {
             if (pattern[row][col] === 1) {
@@ -140,38 +154,42 @@ export default function Stars() {
       }
     }
 
+    // Initialize background particles (stars)
     for (let i = 0; i < particleCount; i++) {
       particles.push(new Particle())
     }
 
-    // Spawn invaders periodically
-    let lastInvaderSpawn = Date.now() - 4000 // Start with offset so first invader spawns immediately
-    const invaderSpawnInterval = 4000 // spawn every 4 seconds
+    // Invader spawn timing
+    let lastInvaderSpawn = Date.now() - 4000 // Offset so first spawns immediately
+    const invaderSpawnInterval = 4000 // New invader every 4 seconds
 
+    /**
+     * Main animation loop - runs continuously via requestAnimationFrame
+     */
     function animate() {
       if (!ctx) return
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-      // Spawn new invader
+      // Spawn new invader periodically
       const now = Date.now()
       if (now - lastInvaderSpawn > invaderSpawnInterval) {
         invaders.push(new SpaceInvader())
         lastInvaderSpawn = now
       }
 
-      // Update and draw particles
+      // Update and draw background stars
       for (const particle of particles) {
         particle.update()
         particle.draw()
       }
 
-      // Update and draw invaders
+      // Update and draw invaders (iterate backwards for safe removal)
       for (let i = invaders.length - 1; i >= 0; i--) {
         const invader = invaders[i]
         invader.update()
         invader.draw()
 
-        // Remove dead invaders
+        // Remove invaders that have left the screen
         if (!invader.isAlive) {
           invaders.splice(i, 1)
         }
@@ -182,6 +200,7 @@ export default function Stars() {
 
     animate()
 
+    // Handle window resize to keep canvas full-screen
     const handleResize = () => {
       if (!canvasRef.current) return
       canvasRef.current.width = window.innerWidth
@@ -189,6 +208,8 @@ export default function Stars() {
     }
 
     window.addEventListener("resize", handleResize)
+
+    // Cleanup: remove event listener when component unmounts
     return () => window.removeEventListener("resize", handleResize)
   }, [])
 
