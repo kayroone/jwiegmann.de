@@ -5,7 +5,7 @@ import { getAllPosts } from "../../lib/blog"
 
 export const metadata = {
   title: "Blog | Jan Wiegmann",
-  description: "Technical articles and insights on software architecture and development",
+  description: "Technische Artikel und Einblicke zu Softwarearchitektur und -entwicklung",
 }
 
 export default function BlogPage() {
@@ -17,14 +17,14 @@ export default function BlogPage() {
         <div className="mb-8">
           <Link href="/" className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
             <ArrowLeft size={16} />
-            Back to home
+            Zurück zur Startseite
           </Link>
         </div>
 
         <div className="mb-12">
           <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl mb-4">Blog</h1>
           <p className="text-gray-400 max-w-2xl">
-            Thoughts, insights, and technical deep-dives on software architecture and development.
+            Gedanken, Einblicke und technische Deep-Dives zu Softwarearchitektur und -entwicklung.
           </p>
         </div>
 
@@ -62,12 +62,12 @@ export default function BlogPage() {
           {allPosts.length === 0 && (
             <div className="bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800">
               <div className="p-6 flex flex-col h-full">
-                <h3 className="text-xl font-semibold mb-3">Coming soon...</h3>
+                <h3 className="text-xl font-semibold mb-3">Bald verfügbar...</h3>
                 <p className="text-gray-400 mb-6 flex-grow">
-                  Technical articles and insights on software architecture and development will be published here soon.
+                  Technische Artikel und Einblicke zu Softwarearchitektur und -entwicklung werden hier bald veröffentlicht.
                 </p>
                 <div className="flex items-center justify-between text-sm text-gray-500 mt-auto">
-                  <span>Stay tuned</span>
+                  <span>Bleibt gespannt</span>
                 </div>
               </div>
             </div>
