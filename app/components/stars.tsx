@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { motion } from "framer-motion"
-import { Github, Mail, User } from "lucide-react"
+import { Github, Mail, User, Rss } from "lucide-react"
 import Link from "next/link"
 
 /**
@@ -261,6 +261,15 @@ export default function Stars() {
               </div>
             )}
           </div>
+          <a
+            href="/feed.xml"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-800 text-white transition-colors hover:bg-zinc-700"
+            aria-label="RSS Feed abonnieren"
+          >
+            <Rss size={20} />
+          </a>
           <Link
             href="/about"
             className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-800 text-white transition-colors hover:bg-zinc-700"

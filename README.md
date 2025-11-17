@@ -49,12 +49,24 @@ npm run start
 npm run lint
 ```
 
+## Features
+
+- 🎨 **Space Invader Animation** - Custom canvas-based starfield with rising pixel art invaders
+- 📝 **Markdown Blog** - Full blog system with frontmatter, syntax highlighting, and Mermaid diagrams
+- 🔍 **SEO Optimized** - Dynamic sitemap, robots.txt, OpenGraph metadata, and structured data
+- 📡 **RSS Feed** - Subscribe to new posts at `/feed.xml`
+- 🎯 **Static Generation** - Pre-rendered pages for optimal performance
+- ♿ **Accessible** - Semantic HTML and ARIA labels
+
 ## Pages
 
 - `/` - Home with animated background and blog preview
 - `/about` - Personal information and background
 - `/blog` - Blog overview with Markdown articles
 - `/blog/[slug]` - Individual blog posts rendered from Markdown
+- `/sitemap.xml` - Dynamically generated sitemap for search engines
+- `/robots.txt` - Crawler configuration
+- `/feed.xml` - RSS feed for blog subscribers
 
 ## Markdown Processing Pipeline
 
