@@ -51,12 +51,12 @@ npm run lint
 
 ## Features
 
-- 🎨 **Space Invader Animation** - Custom canvas-based starfield with rising pixel art invaders
-- 📝 **Markdown Blog** - Full blog system with frontmatter, syntax highlighting, and Mermaid diagrams
-- 🔍 **SEO Optimized** - Dynamic sitemap, robots.txt, OpenGraph metadata, and structured data
-- 📡 **RSS Feed** - Subscribe to new posts at `/feed.xml`
-- 🎯 **Static Generation** - Pre-rendered pages for optimal performance
-- ♿ **Accessible** - Semantic HTML and ARIA labels
+- **Space Invader Animation** - Custom canvas-based starfield with rising pixel art invaders
+- **Markdown Blog** - Full blog system with frontmatter, syntax highlighting, and Mermaid diagrams
+- **SEO Optimized** - Dynamic sitemap, robots.txt, OpenGraph metadata, and structured data
+- **RSS Feed** - Subscribe to new posts at `/feed.xml`
+- **Static Generation** - Pre-rendered pages for optimal performance
+- **Accessible** - Semantic HTML and ARIA labels
 
 ## Pages
 
