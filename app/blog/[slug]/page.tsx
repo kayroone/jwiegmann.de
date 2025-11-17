@@ -17,6 +17,14 @@ export async function generateMetadata({ params }: BlogPostParams) {
     return {
       title: `${post.title} | Jan Wiegmann`,
       description: post.excerpt || "Technical article on software architecture and development",
+      openGraph: {
+        title: post.title,
+        description: post.excerpt,
+        type: 'article',
+        publishedTime: post.date,
+        authors: ['Jan Wiegmann'],
+        tags: post.tags,
+      },
     }
   } catch {
     return {
