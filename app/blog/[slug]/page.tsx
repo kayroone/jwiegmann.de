@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: BlogPostParams) {
     const post = getPostBySlug(slug)
     return {
       title: `${post.title} | Jan Wiegmann`,
-      description: post.excerpt || "Technical article on software architecture and development",
+      description: post.excerpt || "Technischer Artikel zu Softwarearchitektur und -entwicklung",
       openGraph: {
         title: post.title,
         description: post.excerpt,
@@ -28,8 +28,8 @@ export async function generateMetadata({ params }: BlogPostParams) {
     }
   } catch {
     return {
-      title: "Article Not Found | Jan Wiegmann",
-      description: "The requested article could not be found",
+      title: "Artikel nicht gefunden | Jan Wiegmann",
+      description: "Der angeforderte Artikel konnte nicht gefunden werden",
     }
   }
 }
@@ -61,7 +61,7 @@ export default async function BlogPost({ params }: BlogPostParams) {
             className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
           >
             <ArrowLeft size={16} />
-            Back to all articles
+            Zurück zu allen Artikeln
           </Link>
         </div>
 

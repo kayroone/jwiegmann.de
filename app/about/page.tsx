@@ -4,9 +4,9 @@ import { ArrowLeft } from "lucide-react"
 import Footer from "../components/footer"
 
 export const metadata = {
-  title: "About Me | Jan Wiegmann",
-  description: "Jan Wiegmann - Software Architect at adesso SE with over a decade of experience in software engineering. Specializing in public sector, insurance, and government modernization projects.",
-  keywords: ["Jan Wiegmann", "adesso SE", "Software Architect", "Software Engineer", "Public Sector", "Government Modernization", "Insurance", "Business Informatics", "Duisburg", "FOM"],
+  title: "Über mich | Jan Wiegmann",
+  description: "Jan Wiegmann - Software Architect bei adesso SE mit über einem Jahrzehnt Erfahrung in der Softwareentwicklung. Spezialisiert auf öffentlichen Sektor, Versicherungen und Behördenmodernisierung.",
+  keywords: ["Jan Wiegmann", "adesso SE", "Software Architect", "Software Engineer", "Öffentlicher Sektor", "Behördenmodernisierung", "Versicherungen", "Wirtschaftsinformatik", "Duisburg", "FOM"],
 }
 
 export default function AboutPage() {
@@ -16,12 +16,12 @@ export default function AboutPage() {
           <div className="mb-8">
             <Link href="/" className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
               <ArrowLeft size={16} />
-              Back to home
+              Zurück zur Startseite
             </Link>
           </div>
 
           <div className="max-w-3xl mx-auto space-y-12">
-            <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl">About Me</h1>
+            <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl">Über mich</h1>
 
             <div className="flex justify-center">
               <div className="relative w-72 h-72 rounded-full overflow-hidden border-4 border-zinc-700">
@@ -37,7 +37,8 @@ export default function AboutPage() {
 
             <div className="bg-zinc-900 rounded-lg border border-zinc-800 p-8">
               <p className="text-gray-400 leading-relaxed">
-                I grew up in the idyllic village of Sevelen near the Dutch border, but moved to Duisburg to study business informatics at FOM/VWA. I lived there in the inner harbor for almost seven years, made great friends, and learned a lot. For over a decade, I worked as a software engineer on exciting projects in the fields of insurance and government modernization. For more than a year now, I have been designing innovative and sustainable solutions in the public sector as a software architect at adesso SE. Away from coding, I am a passionate technology fan, anime enthusiast, husband, and proud dad.</p>
+                Aufgewachsen bin ich in dem idyllischen Örtchen Sevelen nahe der niederländischen Grenze, zog jedoch nach Duisburg, um an der FOM/VWA Wirtschaftsinformatik zu studieren. Dort habe ich fast sieben Jahre im Innenhafen gelebt, tolle Freunde gefunden und viel gelernt. Über ein Jahrzehnt lang arbeitete ich als Software Engineer an spannenden Projekten im Versicherungswesen und der Behördenmodernisierung. Seit gut einem Jahr gestalte ich als Software Architect bei adesso SE innovative und nachhaltige Lösungen im öffentlichen Sektor. Fernab vom Coden bin ich leidenschaftlicher Technik-Fan, Anime-Enthusiast, Ehemann und stolzer Papa.
+              </p>
             </div>
           </div>
         </div>
