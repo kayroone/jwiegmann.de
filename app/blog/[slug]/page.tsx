@@ -4,6 +4,7 @@ import Footer from "../../components/footer"
 import { getPostBySlug, markdownToHtml, getAllPosts } from "../../../lib/blog"
 import { notFound } from "next/navigation"
 import MermaidRenderer from "../../../components/mermaid-renderer"
+import MermaidZoom from "../../../components/mermaid-zoom"
 
 interface BlogPostParams {
   params: Promise<{
@@ -56,6 +57,7 @@ export default async function BlogPost({ params }: BlogPostParams) {
   return (
     <main className="min-h-screen bg-black text-white">
       <MermaidRenderer />
+      <MermaidZoom />
       <article className="container mx-auto px-4 py-12">
         <div className="mb-8">
           <Link
