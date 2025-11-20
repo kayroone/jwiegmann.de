@@ -1,6 +1,6 @@
 ---
 title: "Confluent Schema Registry: Automatische Schema-Validierung in Kafka-Systemen"
-date: "2025-01-20"
+date: "2025-11-20"
 excerpt: "Wie die Confluent Schema Registry dabei hilft, die Datenqualität in Kafka-basierten Event-Streaming-Architekturen durch automatische Schema-Validierung und Versionierung sicherzustellen"
 tags: ["kafka", "schema-registry", "spring-boot", "event-driven", "confluent", "poc"]
 ---
