@@ -41,6 +41,10 @@ Mit diesem PoC wollte ich herausfinden:
 - Wie gehe ich mit Schema-Evolution um und welche Compatibility Modes gibt es?
 - Wie kann ich Validierungsfehler elegant behandeln?
 
+Den vollständigen PoC mit allen Details zur Implementierung findet ihr in meinem GitHub Repository:
+
+Mein GitHub Repo dazu: [kafka-schema-registry-poc](https://github.com/kayroone/kafka-schema-registry-poc)
+
 ## Die Lösung: Confluent Schema Registry
 
 Im Projekt wird bereits die Confluent Platform mit all ihren Komponenten eingesetzt. Die Confluent Platform enthält neben Kafka Brokern, dem Control Center und Client Libraries für Consumer und Producer auch die Schema Registry. Die Schema Registry ist eine zentrale Komponente, die sich nahtlos in den Confluent Stack integriert. Sie dient der zentralen Verwaltung von Schemas und unterstützt neben Avro und Protobuf auch JSON Schema – genau das Format, das wir im Projekt verwenden.
