@@ -251,23 +251,17 @@ Der PoC bildet den für das Kundenprojekt spezifischen Workflow einer Komponente
 ```mermaid
 sequenceDiagram
     participant Producer
-    participant Serializer as KafkaJsonSchemaSerializer
     participant Registry as Schema Registry
-    participant Kafka as Kafka Topic
-    participant Deserializer as KafkaJsonSchemaDeserializer
     participant Consumer
 
-    Producer->>Serializer: send(PaymentEvent)
-    Serializer->>Registry: GET /subjects/PaymentEvent/versions/latest
-    Registry-->>Serializer: Schema v2 (ID: 87)
-    Serializer->>Serializer: Validiere gegen Schema
-    Serializer->>Kafka: Nachricht + Schema-ID: 87 (Header)
+    Producer->>Registry: GET /subjects/PaymentEvent/versions/latest
+    Registry-->>Producer: Schema v2 (ID: 87)
+    Producer->>Producer: Validiere & serialisiere
+    Producer->>Consumer: Kafka Message + Schema-ID: 87
 
-    Kafka->>Deserializer: Nachricht (Schema-ID: 87)
-    Deserializer->>Registry: GET /schemas/ids/87
-    Registry-->>Deserializer: Schema v2
-    Deserializer->>Deserializer: Validiere & deserialisiere
-    Deserializer->>Consumer: PaymentEvent Object
+    Consumer->>Registry: GET /schemas/ids/87
+    Registry-->>Consumer: Schema v2
+    Consumer->>Consumer: Validiere & deserialisiere
 ```
 
 **Der Flow im Detail:**
@@ -339,7 +333,7 @@ class SchemaCompatibilityIntegrationTest {
         // Producer serialisiert gegen Schema Registry
         PaymentEvent event = new PaymentEvent(/* ... */);
 
-        // Serializer holt automatisch latest Schema aus der Registry
+        // Serializer holt automatisch latest Schema aus der RegistryHey 
         byte[] serialized = serializer.serialize("payments", event);
 
         assertThat(serialized).isNotNull();
@@ -350,14 +344,17 @@ class SchemaCompatibilityIntegrationTest {
     void consumerCanDeserializeProducerMessages() {
         // Producer sendet Nachricht
         PaymentEvent producerEvent = new PaymentEvent(/* ... */);
-        byte[] message = producerSerializer.serialize("payments", producerEvent);
+        byte[] message = producerSerializer.serialize("payments", 
+                producerEvent);
 
         // Consumer deserialisiert
-        PaymentEvent consumerEvent = consumerDeserializer.deserialize("payments", message);
+        PaymentEvent consumerEvent = consumerDeserializer.deserialize("payments", 
+                message);
 
         assertThat(consumerEvent).isNotNull();
-        assertThat(consumerEvent.getPaymentId()).isEqualTo(producerEvent.getPaymentId());
-        // Consumer kann Producer-Nachricht verarbeiten ✅
+        assertThat(consumerEvent.getPaymentId()).isEqualTo(
+                producerEvent.getPaymentId());
+        // Consumer kann Producer-Nachricht verarbeiten
     }
 }
 ```
