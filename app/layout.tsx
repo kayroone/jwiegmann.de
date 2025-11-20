@@ -1,4 +1,5 @@
 import "@/styles/globals.css"
+import "highlight.js/styles/tokyo-night-dark.css"
 import { Inter } from "next/font/google"
 import type React from "react"
 import type { Metadata } from "next"

@@ -8,6 +8,7 @@ import matter from 'gray-matter'
 import { remark } from 'remark'
 import remarkBreaks from 'remark-breaks'
 import remarkRehype from 'remark-rehype'
+import rehypeRaw from 'rehype-raw'
 import rehypeHighlight from 'rehype-highlight'
 import rehypeStringify from 'rehype-stringify'
 
@@ -74,6 +75,7 @@ export async function markdownToHtml(markdown: string) {
   const result = await remark()
     .use(remarkBreaks)
     .use(remarkRehype, { allowDangerousHtml: true })
+    .use(rehypeRaw)
     .use(rehypeHighlight)
     .use(rehypeStringify)
     .process(markdown)
