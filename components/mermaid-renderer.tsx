@@ -36,7 +36,17 @@ export default function MermaidRenderer() {
         // Create a container for the Mermaid diagram
         const container = document.createElement("div")
         container.className = "mermaid-container"
-        container.style.cssText = "background: #0a0a0a; padding: 2rem; border-radius: 0.5rem; margin: 1.5rem 0;"
+        container.style.cssText = "background: #0a0a0a; padding: 2rem; border-radius: 0.5rem; margin: 1.5rem 0; transition: all 0.2s; border: 2px solid transparent;"
+
+        // Add hover effect
+        container.onmouseenter = () => {
+          container.style.borderColor = "#3b82f6"
+          container.style.boxShadow = "0 0 20px rgba(59, 130, 246, 0.3)"
+        }
+        container.onmouseleave = () => {
+          container.style.borderColor = "transparent"
+          container.style.boxShadow = "none"
+        }
 
         // Create mermaid element
         const mermaidDiv = document.createElement("div")
