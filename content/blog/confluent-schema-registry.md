@@ -152,15 +152,21 @@ Die Schema Registry löst dieses Problem durch **Compatibility Modes** – Regel
 
 Neue Schema-Versionen können von alten Consumern gelesen werden.
 
-```
-Erlaubt:
+<div style="background: #0a1f1a; border-left: 4px solid #059669; padding: 1rem; border-radius: 0.5rem; margin: 1rem 0;">
+
+**Erlaubt:**
 - Felder hinzufügen (mit Default-Werten)
 - Felder entfernen (die optional waren)
 
-Verboten:
+</div>
+
+<div style="background: #1a0a0a; border-left: 4px solid #dc2626; padding: 1rem; border-radius: 0.5rem; margin: 1rem 0;">
+
+**Verboten:**
 - Required-Felder hinzufügen
 - Feld-Typen ändern
-```
+
+</div>
 
 **Deployment-Reihenfolge:** Consumer zuerst, dann Producer
 **Use Case:** Standard-Fall – Consumer werden typischerweise vor Producern deployed
@@ -169,15 +175,21 @@ Verboten:
 
 Alte Schema-Versionen können von neuen Consumern gelesen werden.
 
-```
-Erlaubt:
+<div style="background: #0a1f1a; border-left: 4px solid #059669; padding: 1rem; border-radius: 0.5rem; margin: 1rem 0;">
+
+**Erlaubt:**
 - Felder entfernen
 - Optional Felder hinzufügen
 
-Verboten:
+</div>
+
+<div style="background: #1a0a0a; border-left: 4px solid #dc2626; padding: 1rem; border-radius: 0.5rem; margin: 1rem 0;">
+
+**Verboten:**
 - Required-Felder hinzufügen
 - Feld-Typen ändern
-```
+
+</div>
 
 **Deployment-Reihenfolge:** Producer zuerst, dann Consumer
 **Use Case:** Wenn Producer schneller deployed werden als Consumer
@@ -186,14 +198,20 @@ Verboten:
 
 Kombination aus BACKWARD und FORWARD – die strengste Variante.
 
-```
-Erlaubt:
+<div style="background: #0a1f1a; border-left: 4px solid #059669; padding: 1rem; border-radius: 0.5rem; margin: 1rem 0;">
+
+**Erlaubt:**
 - Nur optional Felder mit Defaults hinzufügen
 - Optional Felder entfernen
 
-Verboten:
+</div>
+
+<div style="background: #1a0a0a; border-left: 4px solid #dc2626; padding: 1rem; border-radius: 0.5rem; margin: 1rem 0;">
+
+**Verboten:**
 - Fast alles andere
-```
+
+</div>
 
 **Deployment-Reihenfolge:** Beliebig
 **Use Case:** Maximale Sicherheit, wenn Deployment-Reihenfolge unklar ist
@@ -348,8 +366,8 @@ class SchemaCompatibilityIntegrationTest {
                 producerEvent);
 
         // Consumer deserialisiert
-        PaymentEvent consumerEvent = consumerDeserializer.deserialize("payments", 
-                message);
+        PaymentEvent consumerEvent = consumerDeserializer.deserialize(
+                "payments", message);
 
         assertThat(consumerEvent).isNotNull();
         assertThat(consumerEvent.getPaymentId()).isEqualTo(
