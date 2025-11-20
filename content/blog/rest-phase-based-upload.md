@@ -51,7 +51,42 @@ Innerhalb dieser "Upload-Session" können dann Requests mit n Payloads als Batch
 
 Wie sieht das Ganze nun in der Praxis aus? Am besten lässt sich das anhand des Upload-Flows zeigen, der drei zentrale Phasen durchläuft, die in dem folgenden Sequenzdiagramm dargestellt und anschließend erläutert werden.
 
-![Upload-Flow Sequenzdiagramm](/blog-images/rest-phase-based-upload-sequence.svg)
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Backend
+    participant Inbox
+    participant Kafka
+
+    Note over Client,Kafka: Phase 1: Initialisierung
+
+    Client->>Backend: POST /initUpload
+    Backend->>Inbox: Erstelle Upload-Session
+    Inbox-->>Backend: uploadId
+    Backend-->>Client: uploadId
+
+    Note over Client,Kafka: Phase 2: Batch-Upload (wiederholt für n Batches)
+
+    Client->>Backend: POST /batchUpload(uploadId, seqNo, payloads)
+    Backend->>Inbox: Prüfe Duplikat (uploadId + seqNo)
+
+    alt Batch bereits vorhanden
+        Inbox-->>Backend: Duplikat erkannt
+        Backend-->>Client: 200 OK (idempotent)
+    else Neuer Batch
+        Inbox->>Inbox: Speichere Batch
+        Inbox-->>Backend: Batch gespeichert
+        Backend-->>Client: 200 OK
+    end
+
+    Note over Client,Kafka: Phase 3: Abschluss & Verarbeitung
+
+    Client->>Backend: POST /completeUpload(uploadId)
+    Backend->>Inbox: Markiere Upload als vollständig
+    Backend->>Kafka: Sende Batches zur Verarbeitung
+    Kafka-->>Backend: ACK
+    Backend-->>Client: 200 OK
+```
 
 **Phase 1: Initialisierung**
 
@@ -69,7 +104,49 @@ Die letzte Phase wird durch `POST /uploads/{uploadId}/complete` eingeleitet. Hie
 
 Die Implementierung des Phase-Based-Upload-Systems basiert auf Spring Boot und folgt einer klassischen mehrschichtigen Architektur - dem Entity-Control-Boundary (ECB) Pattern. Das folgende Sequenzdiagramm zeigt das Zusammenspiel der einzelnen Klassen:
 
-![Klassendiagramm](/blog-images/rest-phase-based-upload-class-diagram.svg)
+```mermaid
+sequenceDiagram
+    participant Client
+    participant UploadController
+    participant UploadService
+    participant UploadRepository
+    participant BatchRepository
+    participant InboxRepository
+
+    Note over Client,InboxRepository: Initialization Phase
+
+    Client->>UploadController: POST /uploads/init
+    UploadController->>UploadService: createUpload(businessId)
+    UploadService->>UploadRepository: save(Upload)
+    UploadRepository-->>UploadService: Upload (INITIALIZED)
+    UploadService-->>UploadController: uploadId
+    UploadController-->>Client: uploadId
+
+    Note over Client,InboxRepository: Batch Upload Phase
+
+    Client->>UploadController: POST /uploads/:id/batch
+    UploadController->>UploadService: processBatch(uploadId, seqNo, payloads)
+    UploadService->>BatchRepository: findByUploadIdAndSeqNo()
+    BatchRepository-->>UploadService: Batch (idempotency check)
+    UploadService->>InboxRepository: saveAll(Inbox entries)
+    InboxRepository-->>UploadService: persisted
+    UploadService->>BatchRepository: save(Batch)
+    BatchRepository-->>UploadService: Batch (SUCCESS/PARTIAL/FAILED)
+    UploadService-->>UploadController: BatchResult
+    UploadController-->>Client: status + errors
+
+    Note over Client,InboxRepository: Complete Phase
+
+    Client->>UploadController: POST /uploads/:id/complete
+    UploadController->>UploadService: completeUpload(uploadId)
+    UploadService->>BatchRepository: findAllByUploadId()
+    BatchRepository-->>UploadService: all batches
+    UploadService->>UploadRepository: update status to SEALED
+    UploadService->>InboxRepository: process + move to target tables
+    UploadService->>UploadRepository: update status to DONE
+    UploadService-->>UploadController: CompleteResult
+    UploadController-->>Client: success
+```
 
 Das Diagramm zeigt den Ablauf über alle drei Phasen hinweg und verdeutlicht, wie die verschiedenen Schichten miteinander interagieren. Die Architektur gliedert sich in folgende Layer:
 

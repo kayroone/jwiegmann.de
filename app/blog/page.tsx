@@ -45,7 +45,7 @@ export default function BlogPage() {
                 <div className="flex items-center justify-between text-sm text-gray-500 mt-auto">
                   <div className="flex items-center gap-1">
                     <Calendar size={14} />
-                    <span>{new Date(post.date).toLocaleDateString()}</span>
+                    <span>{new Date(post.date).toLocaleDateString('de-DE')}</span>
                   </div>
                   {post.tags && post.tags.length > 0 && (
                     <div className="flex items-center gap-1">

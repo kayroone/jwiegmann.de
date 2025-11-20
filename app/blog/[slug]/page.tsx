@@ -73,7 +73,7 @@ export default async function BlogPost({ params }: BlogPostParams) {
             <div className="flex items-center gap-4 text-gray-400 mb-4">
               <div className="flex items-center gap-1">
                 <Calendar size={16} />
-                <span>{new Date(post.date).toLocaleDateString()}</span>
+                <span>{new Date(post.date).toLocaleDateString('de-DE')}</span>
               </div>
               {post.tags && post.tags.length > 0 && (
                 <div className="flex items-center gap-2">
