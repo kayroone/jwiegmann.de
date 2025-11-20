@@ -5,6 +5,16 @@ excerpt: "Wie die Confluent Schema Registry dabei hilft, die Datenqualität in K
 tags: ["kafka", "schema-registry", "spring-boot", "event-driven", "confluent", "poc"]
 ---
 
+## Inhaltsverzeichnis
+
+1. [Einleitung](#einleitung)
+2. [Die Lösung: Confluent Schema Registry](#die-lösung-confluent-schema-registry)
+3. [Client-Konfiguration: Anbindung an die Schema Registry](#client-konfiguration-anbindung-an-die-schema-registry)
+4. [Schema Evolution & Compatibility Modes](#schema-evolution--compatibility-modes)
+5. [Die Architektur des PoC](#die-architektur-des-poc)
+6. [Schema-Management in der Praxis: Kommunikation & Validierung im Team](#schema-management-in-der-praxis-kommunikation--validierung-im-team)
+7. [Learnings & Fazit](#learnings--fazit)
+
 ## Einleitung
 
 In meinem aktuellen Kundenprojekt gibt es mehr als 20 fachliche Komponenten, die über Kafka-Schnittstellen miteinander kommunizieren. Die Datenmodelle sind klar definiert, ändern sich aber fast täglich, da die fachliche Spezifikation noch nicht abgeschlossen ist. Ein Stakeholderkreis entwickelt diese Datenmodelle und pflegt für jede Eingangs- und Ausgangsschnittstelle ein JSON-Schema-File, das die Kafka-Payloads validiert. Die Validierung selbst ist aktuell eine custom Implementierung je Komponente. Der gesamte Prozess für Schema-Updates läuft dabei wie folgt ab:
@@ -30,15 +40,6 @@ Mit diesem PoC wollte ich herausfinden:
 - Was sind Subject Naming Strategies und welche passt zu unserem Use Case?
 - Wie gehe ich mit Schema-Evolution um und welche Compatibility Modes gibt es?
 - Wie kann ich Validierungsfehler elegant behandeln?
-
-## Inhaltsverzeichnis
-
-1. [Die Lösung: Confluent Schema Registry](#die-lösung-confluent-schema-registry)
-2. [Client-Konfiguration: Anbindung an die Schema Registry](#client-konfiguration-anbindung-an-die-schema-registry)
-3. [Schema Evolution & Compatibility Modes](#schema-evolution--compatibility-modes)
-4. [Die Architektur des PoC](#die-architektur-des-poc)
-5. [Schema-Management in der Praxis: Kommunikation & Validierung im Team](#schema-management-in-der-praxis-kommunikation--validierung-im-team)
-6. [Learnings & Fazit](#learnings--fazit)
 
 ## Die Lösung: Confluent Schema Registry
 
@@ -285,6 +286,7 @@ sequenceDiagram
 **Der Flow im Detail:**
 
 **Producer-Seite:**
+
 1. Producer erstellt ein `PaymentEvent`-Objekt
 2. `KafkaJsonSchemaSerializer` fragt Registry nach neuester Version des Subjects "PaymentEvent"
 3. Registry gibt Schema Version 2 mit globaler Schema-ID 87 zurück
@@ -292,6 +294,7 @@ sequenceDiagram
 5. Bei erfolgreicher Validierung: JSON + Schema-ID 87 im Message-Header → Kafka Topic
 
 **Consumer-Seite:**
+
 6. Consumer liest Nachricht aus Kafka Topic
 7. `KafkaJsonSchemaDeserializer` liest Schema-ID 87 aus dem Message-Header
 8. Deserializer fragt Registry nach Schema mit ID 87
