@@ -7,7 +7,6 @@ import { join } from 'path'
 import matter from 'gray-matter'
 import { remark } from 'remark'
 import remarkBreaks from 'remark-breaks'
-import remarkMermaid from 'remark-mermaid'
 import remarkRehype from 'remark-rehype'
 import rehypeHighlight from 'rehype-highlight'
 import rehypeStringify from 'rehype-stringify'
@@ -74,7 +73,6 @@ export function getAllPosts(): BlogPost[] {
 export async function markdownToHtml(markdown: string) {
   const result = await remark()
     .use(remarkBreaks)
-    .use(remarkMermaid)
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeHighlight)
     .use(rehypeStringify)
