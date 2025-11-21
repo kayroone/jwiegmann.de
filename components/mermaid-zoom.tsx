@@ -30,20 +30,28 @@ export default function MermaidZoom() {
           const svgElement = mermaidDiv as SVGElement
           const svgClone = svgElement.cloneNode(true) as SVGElement
 
-          // Make SVG larger in modal - responsive scaling
-          const originalWidth = svgClone.viewBox.baseVal.width || 800
-          const originalHeight = svgClone.viewBox.baseVal.height || 600
-
-          // Scale based on viewport width (1.3x for desktop, 1.1x for mobile)
+          // Make SVG responsive in modal
           const isMobile = window.innerWidth < 768
-          const scaleFactor = isMobile ? 1.1 : 1.3
-          const scaledWidth = originalWidth * scaleFactor
-          const scaledHeight = originalHeight * scaleFactor
 
-          svgClone.setAttribute("width", scaledWidth.toString())
-          svgClone.setAttribute("height", scaledHeight.toString())
-          svgClone.style.maxWidth = "100%"
-          svgClone.style.height = "auto"
+          if (isMobile) {
+            // Mobile: Make SVG fully responsive, no fixed size
+            svgClone.removeAttribute("width")
+            svgClone.removeAttribute("height")
+            svgClone.style.width = "100%"
+            svgClone.style.height = "auto"
+            svgClone.style.maxWidth = "100%"
+          } else {
+            // Desktop: Scale up 1.3x
+            const originalWidth = svgClone.viewBox.baseVal.width || 800
+            const originalHeight = svgClone.viewBox.baseVal.height || 600
+            const scaledWidth = originalWidth * 1.3
+            const scaledHeight = originalHeight * 1.3
+
+            svgClone.setAttribute("width", scaledWidth.toString())
+            svgClone.setAttribute("height", scaledHeight.toString())
+            svgClone.style.maxWidth = "100%"
+            svgClone.style.height = "auto"
+          }
 
           setDiagramSvg(svgClone.outerHTML)
           setIsOpen(true)
