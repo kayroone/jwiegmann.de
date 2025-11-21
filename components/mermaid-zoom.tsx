@@ -30,11 +30,15 @@ export default function MermaidZoom() {
           const svgElement = mermaidDiv as SVGElement
           const svgClone = svgElement.cloneNode(true) as SVGElement
 
-          // Make SVG larger in modal (1.3x scale)
+          // Make SVG larger in modal - responsive scaling
           const originalWidth = svgClone.viewBox.baseVal.width || 800
           const originalHeight = svgClone.viewBox.baseVal.height || 600
-          const scaledWidth = originalWidth * 1.3
-          const scaledHeight = originalHeight * 1.3
+
+          // Scale based on viewport width (1.3x for desktop, 1.1x for mobile)
+          const isMobile = window.innerWidth < 768
+          const scaleFactor = isMobile ? 1.1 : 1.3
+          const scaledWidth = originalWidth * scaleFactor
+          const scaledHeight = originalHeight * scaleFactor
 
           svgClone.setAttribute("width", scaledWidth.toString())
           svgClone.setAttribute("height", scaledHeight.toString())
@@ -52,18 +56,18 @@ export default function MermaidZoom() {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-8"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 md:p-8"
       onClick={() => setIsOpen(false)}
     >
       <button
-        className="absolute top-4 right-4 p-2 rounded-full bg-zinc-800 hover:bg-zinc-700 transition-colors z-10"
+        className="absolute top-2 right-2 md:top-4 md:right-4 p-2 rounded-full bg-zinc-800 hover:bg-zinc-700 transition-colors z-10"
         onClick={() => setIsOpen(false)}
         aria-label="Schließen"
       >
-        <X size={24} className="text-white" />
+        <X size={20} className="text-white md:w-6 md:h-6" />
       </button>
       <div
-        className="bg-zinc-900 rounded-lg p-8 overflow-auto max-w-[90vw] max-h-[90vh]"
+        className="bg-zinc-900 rounded-lg p-4 md:p-8 overflow-auto max-w-[95vw] max-h-[95vh]"
         onClick={(e) => e.stopPropagation()}
       >
         <div dangerouslySetInnerHTML={{ __html: diagramSvg }} />

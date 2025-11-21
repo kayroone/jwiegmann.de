@@ -9,6 +9,7 @@ import { remark } from 'remark'
 import remarkBreaks from 'remark-breaks'
 import remarkRehype from 'remark-rehype'
 import rehypeRaw from 'rehype-raw'
+import rehypeSlug from 'rehype-slug'
 import rehypeHighlight from 'rehype-highlight'
 import rehypeStringify from 'rehype-stringify'
 
@@ -67,7 +68,7 @@ export function getAllPosts(): BlogPost[] {
 }
 
 /**
- * Convert markdown to HTML with syntax highlighting
+ * Convert markdown to HTML with syntax highlighting and heading IDs
  * @param markdown - Raw markdown string
  * @returns HTML string ready for rendering
  */
@@ -76,6 +77,7 @@ export async function markdownToHtml(markdown: string) {
     .use(remarkBreaks)
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeRaw)
+    .use(rehypeSlug)
     .use(rehypeHighlight)
     .use(rehypeStringify)
     .process(markdown)
