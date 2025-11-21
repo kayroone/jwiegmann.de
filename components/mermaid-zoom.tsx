@@ -14,44 +14,36 @@ export default function MermaidZoom() {
   useEffect(() => {
     // Find all rendered Mermaid diagrams
     const mermaidContainers = document.querySelectorAll(".mermaid-container")
+    const isMobile = window.innerWidth < 768
+
+    // Skip zoom functionality on mobile - users can use pinch-to-zoom
+    if (isMobile) return
 
     mermaidContainers.forEach((container) => {
       const mermaidDiv = container.querySelector(".mermaid svg")
 
       if (mermaidDiv) {
-        // Make container clickable
+        // Make container clickable (desktop only)
         const containerEl = container as HTMLElement
         containerEl.style.cursor = "pointer"
         containerEl.title = "Klicken zum Vergrößern"
 
-        // Add click handler
+        // Add click handler (desktop only)
         containerEl.onclick = () => {
           // Get the rendered SVG
           const svgElement = mermaidDiv as SVGElement
           const svgClone = svgElement.cloneNode(true) as SVGElement
 
-          // Make SVG responsive in modal
-          const isMobile = window.innerWidth < 768
+          // Desktop: Scale up 1.3x
+          const originalWidth = svgClone.viewBox.baseVal.width || 800
+          const originalHeight = svgClone.viewBox.baseVal.height || 600
+          const scaledWidth = originalWidth * 1.3
+          const scaledHeight = originalHeight * 1.3
 
-          if (isMobile) {
-            // Mobile: Make SVG fully responsive, no fixed size
-            svgClone.removeAttribute("width")
-            svgClone.removeAttribute("height")
-            svgClone.style.width = "100%"
-            svgClone.style.height = "auto"
-            svgClone.style.maxWidth = "100%"
-          } else {
-            // Desktop: Scale up 1.3x
-            const originalWidth = svgClone.viewBox.baseVal.width || 800
-            const originalHeight = svgClone.viewBox.baseVal.height || 600
-            const scaledWidth = originalWidth * 1.3
-            const scaledHeight = originalHeight * 1.3
-
-            svgClone.setAttribute("width", scaledWidth.toString())
-            svgClone.setAttribute("height", scaledHeight.toString())
-            svgClone.style.maxWidth = "100%"
-            svgClone.style.height = "auto"
-          }
+          svgClone.setAttribute("width", scaledWidth.toString())
+          svgClone.setAttribute("height", scaledHeight.toString())
+          svgClone.style.maxWidth = "100%"
+          svgClone.style.height = "auto"
 
           setDiagramSvg(svgClone.outerHTML)
           setIsOpen(true)
