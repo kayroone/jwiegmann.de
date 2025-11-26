@@ -12,44 +12,60 @@ export default function MermaidZoom() {
   const [diagramSvg, setDiagramSvg] = useState<string>("")
 
   useEffect(() => {
-    // Find all rendered Mermaid diagrams
-    const mermaidContainers = document.querySelectorAll(".mermaid-container")
     const isMobile = window.innerWidth < 768
 
     // Skip zoom functionality on mobile - users can use pinch-to-zoom
     if (isMobile) return
 
-    mermaidContainers.forEach((container) => {
-      const mermaidDiv = container.querySelector(".mermaid svg")
+    // Wait for Mermaid diagrams to be fully rendered
+    const setupZoom = () => {
+      const mermaidContainers = document.querySelectorAll(".mermaid-container")
 
-      if (mermaidDiv) {
-        // Make container clickable (desktop only)
-        const containerEl = container as HTMLElement
-        containerEl.style.cursor = "pointer"
-        containerEl.title = "Klicken zum Vergrößern"
+      mermaidContainers.forEach((container) => {
+        const mermaidDiv = container.querySelector(".mermaid svg")
 
-        // Add click handler (desktop only)
-        containerEl.onclick = () => {
-          // Get the rendered SVG
-          const svgElement = mermaidDiv as SVGElement
-          const svgClone = svgElement.cloneNode(true) as SVGElement
+        if (mermaidDiv) {
+          // Make container clickable (desktop only)
+          const containerEl = container as HTMLElement
 
-          // Desktop: Scale up 1.3x
-          const originalWidth = svgClone.viewBox.baseVal.width || 800
-          const originalHeight = svgClone.viewBox.baseVal.height || 600
-          const scaledWidth = originalWidth * 1.3
-          const scaledHeight = originalHeight * 1.3
+          // Skip if already setup
+          if (containerEl.dataset.zoomEnabled === "true") return
 
-          svgClone.setAttribute("width", scaledWidth.toString())
-          svgClone.setAttribute("height", scaledHeight.toString())
-          svgClone.style.maxWidth = "100%"
-          svgClone.style.height = "auto"
+          containerEl.style.cursor = "pointer"
+          containerEl.title = "Klicken zum Vergrößern"
+          containerEl.dataset.zoomEnabled = "true"
 
-          setDiagramSvg(svgClone.outerHTML)
-          setIsOpen(true)
+          // Add click handler (desktop only)
+          containerEl.onclick = () => {
+            // Get the rendered SVG
+            const svgElement = mermaidDiv as SVGElement
+            const svgClone = svgElement.cloneNode(true) as SVGElement
+
+            // Desktop: Scale up 1.3x
+            const originalWidth = svgClone.viewBox.baseVal.width || 800
+            const originalHeight = svgClone.viewBox.baseVal.height || 600
+            const scaledWidth = originalWidth * 1.3
+            const scaledHeight = originalHeight * 1.3
+
+            svgClone.setAttribute("width", scaledWidth.toString())
+            svgClone.setAttribute("height", scaledHeight.toString())
+            svgClone.style.maxWidth = "100%"
+            svgClone.style.height = "auto"
+
+            setDiagramSvg(svgClone.outerHTML)
+            setIsOpen(true)
+          }
         }
-      }
-    })
+      })
+    }
+
+    // Setup immediately
+    setupZoom()
+
+    // Also setup after a delay to catch any late-rendered diagrams
+    const timeoutId = setTimeout(setupZoom, 500)
+
+    return () => clearTimeout(timeoutId)
   }, [])
 
   if (!isOpen) return null
