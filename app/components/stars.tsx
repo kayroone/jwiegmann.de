@@ -218,12 +218,60 @@ export default function Stars() {
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full bg-black" />
       <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center">
         <motion.h1
-          className="mb-6 text-6xl font-bold tracking-tighter sm:text-7xl lg:text-8xl"
+          className="mb-6 text-6xl font-bold tracking-tighter sm:text-7xl lg:text-8xl relative"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          JAN WIEGMANN
+          <span className="relative inline-block">
+            J
+            <canvas
+              className="absolute sm:-top-10 lg:-top-12"
+              style={{
+                transform: "rotate(-10deg)",
+                transformOrigin: "center",
+                top: "-0.5rem",
+                left: "1.0rem"
+              }}
+              ref={(canvas) => {
+                if (canvas) {
+                  const ctx = canvas.getContext("2d")
+                  if (!ctx) return
+
+                  // Santa hat pixel pattern (11x9) - flipped horizontally
+                  const pattern = [
+                    [0,0,0,0,0,2,0,0,0,0,0], // pompom
+                    [0,0,0,0,2,2,2,0,0,0,0],
+                    [0,0,0,0,0,1,0,0,0,0,0],
+                    [0,0,0,0,1,1,1,0,0,0,0], // hat tip
+                    [0,0,0,1,1,1,1,1,0,0,0],
+                    [0,0,1,1,1,1,1,1,1,0,0],
+                    [0,1,1,1,1,1,1,1,1,1,0],
+                    [1,1,1,1,1,1,1,1,1,1,1],
+                    [2,2,2,2,2,2,2,2,2,2,2], // white trim
+                  ].map(row => row.reverse()) // Flip horizontally
+
+                  const pixelSize = 4
+                  canvas.width = pattern[0].length * pixelSize
+                  canvas.height = pattern.length * pixelSize
+
+                  pattern.forEach((row, y) => {
+                    row.forEach((pixel, x) => {
+                      if (pixel === 1) {
+                        ctx.fillStyle = "#DC2626" // red
+                      } else if (pixel === 2) {
+                        ctx.fillStyle = "#FFFFFF" // white
+                      } else {
+                        return
+                      }
+                      ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize)
+                    })
+                  })
+                }
+              }}
+            />
+          </span>
+          AN WIEGMANN
         </motion.h1>
         <motion.p
           className="max-w-[600px] text-lg text-gray-400 sm:text-xl"
