@@ -223,55 +223,7 @@ export default function Stars() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <span className="relative inline-block">
-            J
-            <canvas
-              className="absolute sm:-top-10 lg:-top-12"
-              style={{
-                transform: "rotate(-10deg)",
-                transformOrigin: "center",
-                top: "-0.5rem",
-                left: "1.0rem"
-              }}
-              ref={(canvas) => {
-                if (canvas) {
-                  const ctx = canvas.getContext("2d")
-                  if (!ctx) return
-
-                  // Santa hat pixel pattern (11x9) - flipped horizontally
-                  const pattern = [
-                    [0,0,0,0,0,2,0,0,0,0,0], // pompom
-                    [0,0,0,0,2,2,2,0,0,0,0],
-                    [0,0,0,0,0,1,0,0,0,0,0],
-                    [0,0,0,0,1,1,1,0,0,0,0], // hat tip
-                    [0,0,0,1,1,1,1,1,0,0,0],
-                    [0,0,1,1,1,1,1,1,1,0,0],
-                    [0,1,1,1,1,1,1,1,1,1,0],
-                    [1,1,1,1,1,1,1,1,1,1,1],
-                    [2,2,2,2,2,2,2,2,2,2,2], // white trim
-                  ].map(row => row.reverse()) // Flip horizontally
-
-                  const pixelSize = 4
-                  canvas.width = pattern[0].length * pixelSize
-                  canvas.height = pattern.length * pixelSize
-
-                  pattern.forEach((row, y) => {
-                    row.forEach((pixel, x) => {
-                      if (pixel === 1) {
-                        ctx.fillStyle = "#DC2626" // red
-                      } else if (pixel === 2) {
-                        ctx.fillStyle = "#FFFFFF" // white
-                      } else {
-                        return
-                      }
-                      ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize)
-                    })
-                  })
-                }
-              }}
-            />
-          </span>
-          AN WIEGMANN
+          JAN WIEGMANN
         </motion.h1>
         <motion.p
           className="max-w-[600px] text-lg text-gray-400 sm:text-xl"
