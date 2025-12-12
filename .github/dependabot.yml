@@ -23,9 +23,3 @@ updates:
           - "patch"
     # Always create separate PRs for security updates
     versioning-strategy: "increase"
-    labels:
-      - "dependencies"
-      - "security"
-    # Reviewers (optional - ersetze mit deinem GitHub Username)
-    reviewers:
-      - "jwiegmann"
