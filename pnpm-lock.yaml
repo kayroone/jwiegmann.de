@@ -9,22 +9,22 @@ dependencies:
     specifier: latest
     version: 1.4.0
   '@radix-ui/react-alert-dialog':
-    specifier: ^1.1.4
+    specifier: ^1.1.15
     version: 1.1.15(@types/react-dom@19.2.3)(@types/react@19.2.7)(react-dom@19.2.3)(react@19.2.3)
   '@radix-ui/react-aspect-ratio':
-    specifier: ^1.1.1
+    specifier: ^1.1.8
     version: 1.1.8(@types/react-dom@19.2.3)(@types/react@19.2.7)(react-dom@19.2.3)(react@19.2.3)
   '@radix-ui/react-dialog':
     specifier: ^1.1.4
     version: 1.1.15(@types/react-dom@19.2.3)(@types/react@19.2.7)(react-dom@19.2.3)(react@19.2.3)
   '@radix-ui/react-label':
-    specifier: ^2.1.1
+    specifier: ^2.1.8
     version: 2.1.8(@types/react-dom@19.2.3)(@types/react@19.2.7)(react-dom@19.2.3)(react@19.2.3)
   '@radix-ui/react-slot':
-    specifier: ^1.1.1
+    specifier: ^1.2.4
     version: 1.2.4(@types/react@19.2.7)(react@19.2.3)
   autoprefixer:
-    specifier: ^10.4.20
+    specifier: ^10.4.22
     version: 10.4.22(postcss@8.5.6)
   class-variance-authority:
     specifier: ^0.7.1
@@ -39,10 +39,10 @@ dependencies:
     specifier: ^4.0.3
     version: 4.0.3
   lucide-react:
-    specifier: ^0.454.0
-    version: 0.454.0(react@19.2.3)
+    specifier: ^0.561.0
+    version: 0.561.0(react@19.2.3)
   mermaid:
-    specifier: ^11.12.1
+    specifier: ^11.12.2
     version: 11.12.2
   next:
     specifier: ^16.0.10
@@ -51,10 +51,10 @@ dependencies:
     specifier: ^0.4.4
     version: 0.4.6(react-dom@19.2.3)(react@19.2.3)
   react:
-    specifier: ^19.2.1
+    specifier: ^19.2.3
     version: 19.2.3
   react-dom:
-    specifier: ^19.2.1
+    specifier: ^19.2.3
     version: 19.2.3(react@19.2.3)
   rehype-highlight:
     specifier: ^7.0.2
@@ -1212,8 +1212,8 @@ packages:
     resolution: {integrity: sha512-0xO6mYd7JB2YesxDKplafRpsiOzPt9V02ddPCLbY1xYGPOX24NTyN50qnUxgCPcSoYMhKpAuBTjQoRZCAkUDRw==}
     dev: false
 
-  /baseline-browser-mapping@2.9.6:
-    resolution: {integrity: sha512-v9BVVpOTLB59C9E7aSnmIF8h7qRsFpx+A2nugVMTszEOMcfjlZMsXRm4LF23I3Z9AJxc8ANpIvzbzONoX9VJlg==}
+  /baseline-browser-mapping@2.9.7:
+    resolution: {integrity: sha512-k9xFKplee6KIio3IDbwj+uaCLpqzOwakOgmqzPezM0sFJlFKcg30vk2wOiAJtkTSfx0SSQDSe8q+mWA/fSH5Zg==}
     hasBin: true
     dev: false
 
@@ -1232,7 +1232,7 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      baseline-browser-mapping: 2.9.6
+      baseline-browser-mapping: 2.9.7
       caniuse-lite: 1.0.30001760
       electron-to-chromium: 1.5.267
       node-releases: 2.0.27
@@ -2109,10 +2109,10 @@ packages:
       highlight.js: 11.11.1
     dev: false
 
-  /lucide-react@0.454.0(react@19.2.3):
-    resolution: {integrity: sha512-hw7zMDwykCLnEzgncEEjHeA6+45aeEzRYuKHuyRSOPkhko+J3ySGjGIzu+mmMfDFG1vazHepMaYFYHbTFAZAAQ==}
+  /lucide-react@0.561.0(react@19.2.3):
+    resolution: {integrity: sha512-Y59gMY38tl4/i0qewcqohPdEbieBy7SovpBL9IFebhc2mDd8x4PZSOsiFRkpPcOq6bj1r/mjH/Rk73gSlIJP2A==}
     peerDependencies:
-      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0-rc
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
     dependencies:
       react: 19.2.3
     dev: false
