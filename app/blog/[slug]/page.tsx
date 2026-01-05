@@ -80,13 +80,13 @@ export default async function BlogPost({ params }: BlogPostParams) {
                 <span>{new Date(post.date).toLocaleDateString('de-DE')}</span>
               </div>
               {post.tags && post.tags.length > 0 && (
-                <div className="flex items-center gap-2">
-                  <Tag size={16} />
-                  <div className="flex gap-2">
+                <div className="flex items-center gap-2 min-w-0 overflow-x-auto">
+                  <Tag size={16} className="flex-shrink-0" />
+                  <div className="flex gap-2 flex-nowrap">
                     {post.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="px-2 py-1 text-xs bg-zinc-800 rounded-full"
+                        className="px-2 py-1 text-xs bg-zinc-800 rounded-full whitespace-nowrap flex-shrink-0"
                       >
                         {tag}
                       </span>
@@ -105,7 +105,8 @@ export default async function BlogPost({ params }: BlogPostParams) {
                        [&>h3]:text-xl [&>h3]:font-semibold [&>h3]:mb-3 [&>h3]:mt-6
                        [&>pre]:bg-zinc-900 [&>pre]:border [&>pre]:border-zinc-700 [&>pre]:rounded-lg [&>pre]:p-4 [&>pre]:mb-6
                        [&>code]:bg-zinc-800 [&>code]:px-2 [&>code]:py-1 [&>code]:rounded [&>code]:text-sm
-                       [&_table]:block [&_table]:overflow-x-auto [&_table]:w-full [&_table]:border-collapse [&_table]:my-6
+                       [&_.table-wrapper]:overflow-x-auto [&_.table-wrapper]:my-6
+                       [&_table]:w-full [&_table]:min-w-full [&_table]:border-collapse
                        [&_th]:bg-zinc-800 [&_th]:border [&_th]:border-zinc-700 [&_th]:px-4 [&_th]:py-2 [&_th]:text-left [&_th]:font-semibold
                        [&_td]:border [&_td]:border-zinc-700 [&_td]:px-4 [&_td]:py-2
                        [&_tr:hover]:bg-zinc-800/50"
