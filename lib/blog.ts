@@ -6,6 +6,7 @@ import fs from 'fs'
 import { join } from 'path'
 import matter from 'gray-matter'
 import { remark } from 'remark'
+import remarkGfm from 'remark-gfm'
 import remarkBreaks from 'remark-breaks'
 import remarkRehype from 'remark-rehype'
 import rehypeRaw from 'rehype-raw'
@@ -74,6 +75,7 @@ export function getAllPosts(): BlogPost[] {
  */
 export async function markdownToHtml(markdown: string) {
   const result = await remark()
+    .use(remarkGfm)
     .use(remarkBreaks)
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeRaw)

@@ -51,7 +51,7 @@ npm run lint
 
 ## Features
 
-- **Space Invader Animation** - Custom canvas-based starfield with rising pixel art invaders
+- **Pixel Vine Animation** - Custom canvas-based animation with growing pixel art vines and blooming flowers
 - **Markdown Blog** - Full blog system with frontmatter, syntax highlighting, and Mermaid diagrams
 - **SEO Optimized** - Dynamic sitemap, robots.txt, OpenGraph metadata, and structured data
 - **RSS Feed** - Subscribe to new posts at `/feed.xml`
@@ -73,7 +73,7 @@ npm run lint
 This is how I publish my blog-posts. From markdown to HTML:
 
 ```
-📁 first-post.md
+ first-post.md
     ↓ fs.readFileSync()
 "---\ntitle: Test\n---\n# Hello\n**bold**"
     ↓ matter()
@@ -89,7 +89,89 @@ HTML AST + <span class="hljs-keyword">
     ↓ rehypeStringify
 "<h1>Hello</h1><p><strong>bold</strong></p>"
     ↓ dangerouslySetInnerHTML
-🌐 Gerenderte HTML-Seite
+ Gerenderte HTML-Seite
+```
+
+## Background Animation
+
+The landing page (`app/components/stars.tsx`) supports two animated themes that can be toggled independently:
+
+| Theme | Description |
+|-------|-------------|
+| **Stars** | Floating white particles drifting across the screen |
+| **Vines** | Pixel art vines growing from bottom to top with blooming flowers |
+
+### Configuration
+
+Toggle themes at the top of `stars.tsx`:
+
+```typescript
+const ENABLE_STARS = false  // Floating particles
+const ENABLE_VINES = true   // Growing pixel vines
+```
+
+### How Vines Work
+
+Each vine goes through a lifecycle:
+
+1. **Spawn** - Appears at screen bottom (left or right side to avoid text)
+2. **Grow** - Rises upward with a gentle sine-wave motion, occasionally sprouting leaves
+3. **Bloom** - Reaches target height and flower opens in 3 stages (bud → petals → full bloom)
+4. **Fade** - Gradually disappears, then a new vine spawns
+
+### Code Structure
+
+The animation uses the HTML Canvas API with `requestAnimationFrame` for smooth 60fps rendering.
+
+**Classes:**
+
+| Class | Purpose |
+|-------|---------|
+| `Particle` | Single floating star with position, size, and velocity |
+| `PixelVine` | Growing vine with segments, leaves, bloom state, and fade logic |
+
+**PixelVine Properties:**
+
+```typescript
+segments[]      // Array of {x, y, hasLeaf, leafSide} - the vine's path
+currentY        // Current growth position (decreases as vine grows upward)
+targetY         // Height where blooming starts
+bloomState      // 0=growing, 1-3=bloom stages, 4=fading
+fadeOpacity     // 1.0 → 0.0 during fade phase
+```
+
+**Pixel Patterns:**
+
+Flowers and leaves are 2D arrays where each number maps to a color:
+
+```typescript
+// Example: 0=transparent, 1=orange, 2=yellow
+static flowerStages = [
+  [0, 0, 2, 2, 2, 0, 0],
+  [0, 2, 1, 1, 1, 2, 0],
+  [2, 1, 1, 1, 1, 1, 2],
+  // ...
+]
+```
+
+**Animation Loop:**
+
+```typescript
+function animate() {
+  ctx.clearRect(...)           // Clear canvas
+
+  if (ENABLE_VINES) {
+    // Spawn new vine if < maxVines
+    // For each vine: update() + draw()
+    // Remove dead vines (fadeOpacity <= 0)
+  }
+
+  if (ENABLE_STARS) {
+    // For each particle: update() + draw()
+  }
+
+  requestAnimationFrame(animate)  // Next frame
+}
 ```
 
 Built with ❤️ by Jan
