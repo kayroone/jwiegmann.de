@@ -5,6 +5,7 @@ import { getPostBySlug, markdownToHtml, getAllPosts } from "../../../lib/blog"
 import { notFound } from "next/navigation"
 import MermaidRenderer from "../../../components/mermaid-renderer"
 import MermaidZoom from "../../../components/mermaid-zoom"
+import StaticVine from "../../../components/static-vine"
 
 interface BlogPostParams {
   params: Promise<{
@@ -55,10 +56,11 @@ export default async function BlogPost({ params }: BlogPostParams) {
   const content = await markdownToHtml(post.content)
 
   return (
-    <main className="min-h-screen bg-black text-white">
+    <main className="min-h-screen bg-black text-white relative">
+      <StaticVine />
       <MermaidRenderer />
       <MermaidZoom />
-      <article className="container mx-auto px-4 py-12">
+      <article className="container mx-auto px-4 py-12 relative z-10">
         <div className="mb-8">
           <Link
             href="/blog"
@@ -95,14 +97,18 @@ export default async function BlogPost({ params }: BlogPostParams) {
             </div>
           </div>
 
-          <div 
-            className="prose prose-invert prose-lg max-w-none 
-                       [&>p]:mb-6 
+          <div
+            className="prose prose-invert prose-lg max-w-none
+                       [&>p]:mb-6
                        [&>h1]:text-3xl [&>h1]:font-bold [&>h1]:mb-6 [&>h1]:mt-8
-                       [&>h2]:text-2xl [&>h2]:font-semibold [&>h2]:mb-4 [&>h2]:mt-8 
+                       [&>h2]:text-2xl [&>h2]:font-semibold [&>h2]:mb-4 [&>h2]:mt-8
                        [&>h3]:text-xl [&>h3]:font-semibold [&>h3]:mb-3 [&>h3]:mt-6
                        [&>pre]:bg-zinc-900 [&>pre]:border [&>pre]:border-zinc-700 [&>pre]:rounded-lg [&>pre]:p-4 [&>pre]:mb-6
-                       [&>code]:bg-zinc-800 [&>code]:px-2 [&>code]:py-1 [&>code]:rounded [&>code]:text-sm"
+                       [&>code]:bg-zinc-800 [&>code]:px-2 [&>code]:py-1 [&>code]:rounded [&>code]:text-sm
+                       [&_table]:w-full [&_table]:border-collapse [&_table]:my-6
+                       [&_th]:bg-zinc-800 [&_th]:border [&_th]:border-zinc-700 [&_th]:px-4 [&_th]:py-2 [&_th]:text-left [&_th]:font-semibold
+                       [&_td]:border [&_td]:border-zinc-700 [&_td]:px-4 [&_td]:py-2
+                       [&_tr:hover]:bg-zinc-800/50"
             dangerouslySetInnerHTML={{ __html: content }}
           />
         </div>

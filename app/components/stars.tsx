@@ -5,13 +5,16 @@ import { motion } from "framer-motion"
 import { Github, Mail, User, Rss } from "lucide-react"
 import Link from "next/link"
 
+// Feature toggles - set to true/false to enable/disable
+const ENABLE_STARS = false
+const ENABLE_VINES = true
+
 /**
- * Landing page component with animated starfield background and rising Space Invaders
+ * Landing page component with animated starfield background and growing pixel vines
  */
 export default function Stars() {
-
-    const canvasRef = useRef<HTMLCanvasElement>(null)
-    const [showTooltip, setShowTooltip] = useState(false)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [showTooltip, setShowTooltip] = useState(false)
 
   useEffect(() => {
     if (!canvasRef.current) return
@@ -26,7 +29,7 @@ export default function Stars() {
 
     const particles: Particle[] = []
     const particleCount = 100
-    const invaders: SpaceInvader[] = []
+    const vines: PixelVine[] = []
 
     /**
      * Particle class - represents stars floating in the background
@@ -67,87 +70,252 @@ export default function Stars() {
     }
 
     /**
-     * SpaceInvader class - represents pixel art invaders that rise from bottom to top
+     * PixelVine class - represents pixel art vines growing from bottom to top with blooming flower
      */
-    class SpaceInvader {
-      x: number
-      y: number
-      size: number
-      speed: number
-      type: number
-      isAlive: boolean
+    class PixelVine {
+      // Configuration constants
+      static readonly BLOOM_HEIGHT_RATIO = 0.28   // How high vines grow (0 = top, 1 = bottom)
+      static readonly WAVE_FREQUENCY = 0.02      // Sine wave frequency for vine curve
+      static readonly LEAF_PROBABILITY = 0.03   // Chance per segment to spawn a leaf
+      static readonly FLOWER_OFFSET_X = 10      // Horizontal offset to center flower (21x21 pattern)
+      static readonly FLOWER_OFFSET_Y = 10      // Vertical offset - center flower on vine tip
 
-      // Classic Space Invader pixel patterns (11x8) - three different enemy types
-      static patterns = [
-        // Type 1
+      startX: number
+      currentY: number
+      targetY: number
+      segments: { x: number; y: number; hasLeaf: boolean; leafSide: number; leafGray: number }[]
+      pixelSize: number
+      growSpeed: number
+      isAlive: boolean
+      bloomState: number // 0 = growing, 1-3 = bloom stages, 4 = fading
+      bloomProgress: number
+      fadeOpacity: number
+      waveOffset: number
+      waveAmplitude: number
+
+      // Flower patterns (21x21) - 0=transparent, 1=gray center, 2=white petals
+      // 4 cross-shaped petals with gray center - grows in 3 stages
+      static flowerStages = [
+        // Stage 1: Small bud
         [
-          [0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0],
-          [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
-          [0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-          [0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0],
-          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-          [1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1],
-          [1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1],
-          [0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 1, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         ],
-        // Type 2
+        // Stage 2: Medium - petals forming
         [
-          [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
-          [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-          [1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1],
-          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-          [0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0],
-          [0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0],
-          [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0],
+          [0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0],
+          [0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 1, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0],
+          [0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0],
+          [0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         ],
-        // Type 3
+        // Stage 3: Full bloom - 4 cross-shaped petals
         [
-          [0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0],
-          [0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-          [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-          [1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1],
-          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-          [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-          [0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-          [0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0],
+          [0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0],
+          [0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0],
+          [0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 1, 0, 0, 2, 2, 2, 2, 2, 2, 2, 0],
+          [0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0],
+          [0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0],
+          [0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         ],
       ]
 
+      // Leaf patterns (5x4) - more plant-like
+      static leafLeft = [
+        [0, 1, 1, 0, 0],
+        [1, 1, 1, 1, 0],
+        [0, 1, 1, 0, 0],
+        [0, 0, 1, 0, 0],
+      ]
+      static leafRight = [
+        [0, 0, 1, 1, 0],
+        [0, 1, 1, 1, 1],
+        [0, 0, 1, 1, 0],
+        [0, 0, 1, 0, 0],
+      ]
+
       constructor() {
-        this.x = Math.random() * (canvas.width - 44) + 22
-        this.y = canvas.height + 20 // Start below screen
-        this.size = 4 // pixel size
-        this.speed = 0.5 + Math.random() * 0.5
-        this.type = Math.floor(Math.random() * SpaceInvader.patterns.length)
+        // Spawn vines only on left or right side, avoiding center text area
+        const spawnOnLeft = Math.random() < 0.5
+        if (spawnOnLeft) {
+          this.startX = Math.random() * (canvas.width * 0.2) + canvas.width * 0.05
+        } else {
+          this.startX = Math.random() * (canvas.width * 0.2) + canvas.width * 0.75
+        }
+        this.currentY = canvas.height
+        this.targetY = canvas.height * PixelVine.BLOOM_HEIGHT_RATIO
+        this.segments = []
+        this.pixelSize = 4
+        this.growSpeed = 0.8
         this.isAlive = true
+        this.bloomState = 0
+        this.bloomProgress = 0
+        this.fadeOpacity = 1
+        this.waveOffset = Math.random() * Math.PI * 2
+        this.waveAmplitude = 15 + Math.random() * 10
       }
 
       update() {
-        this.y -= this.speed // Move upward
+        if (this.bloomState === 0) {
+          // Growing phase
+          this.currentY -= this.growSpeed
 
-        // Mark as dead when off-screen
-        if (this.y < -40) {
-          this.isAlive = false
+          // Add new segment with sine-wave offset
+          const waveX = Math.sin((canvas.height - this.currentY) * PixelVine.WAVE_FREQUENCY + this.waveOffset) * this.waveAmplitude
+          const hasLeaf = Math.random() < PixelVine.LEAF_PROBABILITY && this.segments.length > 10
+          const leafSide = Math.random() < 0.5 ? -1 : 1
+          const leafGray = 100 + Math.floor(Math.random() * 100) // Random gray 100-200
+
+          this.segments.push({
+            x: this.startX + waveX,
+            y: this.currentY,
+            hasLeaf,
+            leafSide,
+            leafGray
+          })
+
+          // Start blooming when reaching target height
+          if (this.currentY <= this.targetY) {
+            this.bloomState = 1
+          }
+        } else if (this.bloomState < 4) {
+          // Blooming phase
+          this.bloomProgress += 0.02
+          if (this.bloomProgress >= 1) {
+            this.bloomProgress = 0
+            this.bloomState++
+          }
+        } else {
+          // Fading phase
+          this.fadeOpacity -= 0.003
+          if (this.fadeOpacity <= 0) {
+            this.isAlive = false
+          }
         }
       }
 
       draw() {
         if (!ctx) return
-        const pattern = SpaceInvader.patterns[this.type]
 
-        ctx.fillStyle = "rgba(255, 255, 255, 1)"
+        // Slightly transparent base, fades further when dying
+        const opacity = this.fadeOpacity * 0.2
 
-        // Draw pixel-by-pixel based on pattern matrix
-        for (let row = 0; row < pattern.length; row++) {
-          for (let col = 0; col < pattern[row].length; col++) {
-            if (pattern[row][col] === 1) {
-              ctx.fillRect(
-                this.x + col * this.size,
-                this.y + row * this.size,
-                this.size,
-                this.size
-              )
+        // Monochrome color palette
+        const stemColor = `rgba(255, 255, 255, ${opacity})`        // White vine
+        const flowerOpacity = Math.min(opacity * 3, this.fadeOpacity * 0.6) // Flower more visible
+        const flowerCenterColor = `rgba(140, 140, 140, ${flowerOpacity})`     // Light gray center
+        const flowerOuterColor = `rgba(255, 255, 255, ${flowerOpacity})`      // White petals
+
+        // Draw vine stem
+        ctx.fillStyle = stemColor
+        for (const segment of this.segments) {
+          // Main stem pixel
+          ctx.fillRect(
+            segment.x,
+            segment.y,
+            this.pixelSize,
+            this.pixelSize
+          )
+
+          // Draw leaves with their stored gray tone (more visible than vine)
+          if (segment.hasLeaf) {
+            const g = segment.leafGray
+            const leafOpacity = Math.min(opacity * 2.5, this.fadeOpacity * 0.5)
+            ctx.fillStyle = `rgba(${g}, ${g}, ${g}, ${leafOpacity})`
+            const leafPattern = segment.leafSide === -1 ? PixelVine.leafLeft : PixelVine.leafRight
+            const leafOffsetX = segment.leafSide === -1 ? -this.pixelSize * 4 : this.pixelSize
+
+            for (let row = 0; row < leafPattern.length; row++) {
+              for (let col = 0; col < leafPattern[row].length; col++) {
+                if (leafPattern[row][col] === 1) {
+                  ctx.fillRect(
+                    segment.x + leafOffsetX + col * this.pixelSize,
+                    segment.y - this.pixelSize * 2 + row * this.pixelSize,
+                    this.pixelSize,
+                    this.pixelSize
+                  )
+                }
+              }
+            }
+            ctx.fillStyle = stemColor
+          }
+        }
+
+        // Draw flower if blooming (stages 1-3) or fading (stage 4 shows full bloom)
+        if (this.bloomState >= 1) {
+          const stageIndex = this.bloomState === 4 ? 2 : this.bloomState - 1
+          this.drawFlower(ctx, stageIndex, flowerCenterColor, flowerOuterColor)
+        }
+      }
+
+      private drawFlower(ctx: CanvasRenderingContext2D, stageIndex: number, centerColor: string, outerColor: string) {
+        const flowerPattern = PixelVine.flowerStages[stageIndex]
+        const offsetX = PixelVine.FLOWER_OFFSET_X * this.pixelSize
+        const offsetY = PixelVine.FLOWER_OFFSET_Y * this.pixelSize
+        const flowerX = this.segments.length > 0
+          ? this.segments[this.segments.length - 1].x - offsetX
+          : this.startX - offsetX
+        const flowerY = this.targetY - offsetY
+
+        for (let row = 0; row < flowerPattern.length; row++) {
+          for (let col = 0; col < flowerPattern[row].length; col++) {
+            const pixel = flowerPattern[row][col]
+            if (pixel === 1) {
+              ctx.fillStyle = centerColor
+              ctx.fillRect(flowerX + col * this.pixelSize, flowerY + row * this.pixelSize, this.pixelSize, this.pixelSize)
+            } else if (pixel === 2) {
+              ctx.fillStyle = outerColor
+              ctx.fillRect(flowerX + col * this.pixelSize, flowerY + row * this.pixelSize, this.pixelSize, this.pixelSize)
             }
           }
         }
@@ -159,9 +327,10 @@ export default function Stars() {
       particles.push(new Particle())
     }
 
-    // Invader spawn timing
-    let lastInvaderSpawn = Date.now() - 4000 // Offset so first spawns immediately
-    const invaderSpawnInterval = 4000 // New invader every 4 seconds
+    // Vine spawn timing
+    let lastVineSpawn = Date.now() - 8000 // Offset so first spawns quickly
+    const vineSpawnInterval = 6000 // New vine every 6 seconds
+    const maxVines = 2 // Maximum concurrent vines
 
     /**
      * Main animation loop - runs continuously via requestAnimationFrame
@@ -170,28 +339,34 @@ export default function Stars() {
       if (!ctx) return
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-      // Spawn new invader periodically
-      const now = Date.now()
-      if (now - lastInvaderSpawn > invaderSpawnInterval) {
-        invaders.push(new SpaceInvader())
-        lastInvaderSpawn = now
+      // Spawn new vine periodically (max 2 at a time)
+      if (ENABLE_VINES) {
+        const now = Date.now()
+        if (now - lastVineSpawn > vineSpawnInterval && vines.length < maxVines) {
+          vines.push(new PixelVine())
+          lastVineSpawn = now
+        }
       }
 
-      // Update and draw background stars
-      for (const particle of particles) {
-        particle.update()
-        particle.draw()
+      // Draw stars if enabled
+      if (ENABLE_STARS) {
+        for (const particle of particles) {
+          particle.update()
+          particle.draw()
+        }
       }
 
-      // Update and draw invaders (iterate backwards for safe removal)
-      for (let i = invaders.length - 1; i >= 0; i--) {
-        const invader = invaders[i]
-        invader.update()
-        invader.draw()
+      // Draw vines if enabled (iterate backwards for safe removal)
+      if (ENABLE_VINES) {
+        for (let i = vines.length - 1; i >= 0; i--) {
+          const vine = vines[i]
+          vine.update()
+          vine.draw()
 
-        // Remove invaders that have left the screen
-        if (!invader.isAlive) {
-          invaders.splice(i, 1)
+          // Remove vines that have faded out
+          if (!vine.isAlive) {
+            vines.splice(i, 1)
+          }
         }
       }
 
