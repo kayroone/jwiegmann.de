@@ -1,6 +1,6 @@
 ---
 title: "Warum gute Entwickler mit AI besser werden (und schlechte noch schlechter)"
-date: "2025-12-05"
+date: "2026-01-05"
 excerpt: "Ein Praxisguide: Wie präzises Prompting zu sauberem Code führt und warum AI ein Verstärker ist, kein Ersatz"
 tags: ["AI", "Claude Code", "Prompting", "Software Engineering", "Best Practices"]
 ---
