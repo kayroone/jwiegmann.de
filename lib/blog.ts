@@ -83,5 +83,9 @@ export async function markdownToHtml(markdown: string) {
     .use(rehypeHighlight)
     .use(rehypeStringify)
     .process(markdown)
-  return result.toString()
+
+  // Wrap tables in scrollable container for mobile
+  const html = result.toString()
+  return html.replace(/<table>/g, '<div class="table-wrapper"><table>')
+             .replace(/<\/table>/g, '</table></div>')
 }
