@@ -14,7 +14,7 @@ tags: ["AI", "Claude Code", "Prompting", "Software Engineering", "Best Practices
 - [Maximal Agentic Decomposition (MAD)](#maximal-agentic-decomposition-mad)
 - [Die Anatomie eines effektiven Prompts](#die-anatomie-eines-effektiven-prompts)
 - [Mein persönliches Fazit](#mein-persönliches-fazit)
-- [Ressourcen](#ressourcen)
+- [Quellenübersicht](#quellenübersicht)
 - [Anhang: Kurzreferenz & Best Practices](#anhang-kurzreferenz--best-practices)
 
 ## Einleitung
@@ -229,7 +229,7 @@ Damit verabschiede ich mich und wünsche euch ein erfolgreiches Jahr 2026!
 
 Jan
 
-## Ressourcen
+## Quellenübersicht
 
 | # | Ressource | Typ | Link |
 |---|-----------|-----|------|
