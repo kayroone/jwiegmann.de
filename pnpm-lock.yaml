@@ -34,7 +34,7 @@ dependencies:
     version: 2.1.1
   framer-motion:
     specifier: latest
-    version: 12.26.1(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.3)(react@19.2.3)
+    version: 12.26.2(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.3)(react@19.2.3)
   gray-matter:
     specifier: ^4.0.3
     version: 4.0.3
@@ -1795,8 +1795,8 @@ packages:
     resolution: {integrity: sha512-1X1NTtiJphryn/uLQz3whtY6jK3fTqoE3ohKs0tT+Ujr1W59oopxmoEh7Lu5p6vBaPbgoM0bzveAW4Qi5RyWDQ==}
     dev: false
 
-  /framer-motion@12.26.1(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.3)(react@19.2.3):
-    resolution: {integrity: sha512-Uzc8wGldU4FpmGotthjjcj0SZhigcODjqvKT7lzVZHsmYkzQMFfMIv0vHQoXCeoe/Ahxqp4by4A6QbzFA/lblw==}
+  /framer-motion@12.26.2(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.3)(react@19.2.3):
+    resolution: {integrity: sha512-lflOQEdjquUi9sCg5Y1LrsZDlsjrHw7m0T9Yedvnk7Bnhqfkc89/Uha10J3CFhkL+TCZVCRw9eUGyM/lyYhXQA==}
     peerDependencies:
       '@emotion/is-prop-valid': '*'
       react: ^18.0.0 || ^19.0.0
@@ -1810,7 +1810,7 @@ packages:
         optional: true
     dependencies:
       '@emotion/is-prop-valid': 1.4.0
-      motion-dom: 12.24.11
+      motion-dom: 12.26.2
       motion-utils: 12.24.10
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
@@ -2570,8 +2570,8 @@ packages:
       ufo: 1.6.1
     dev: false
 
-  /motion-dom@12.24.11:
-    resolution: {integrity: sha512-DlWOmsXMJrV8lzZyd+LKjG2CXULUs++bkq8GZ2Sr0R0RRhs30K2wtY+LKiTjhmJU3W61HK+rB0GLz6XmPvTA1A==}
+  /motion-dom@12.26.2:
+    resolution: {integrity: sha512-KLMT1BroY8oKNeliA3JMNJ+nbCIsTKg6hJpDb4jtRAJ7nCKnnpg/LTq/NGqG90Limitz3kdAnAVXecdFVGlWTw==}
     dependencies:
       motion-utils: 12.24.10
     dev: false
