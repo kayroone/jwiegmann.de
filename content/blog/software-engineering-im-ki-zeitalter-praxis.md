@@ -5,8 +5,6 @@ excerpt: "Praxisguide Teil 2: Templates, Commands, Agents und das Autonomie-Spek
 tags: ["AI", "Claude Code", "Workflow", "Autonomie", "Best Practices"]
 ---
 
-# Software Engineering im KI-Zeitalter (Teil 2: Praxis)
-
 _Dies ist Teil 2 einer dreiteiligen Serie._
 _[Teil 1: Theorie](./warum-gute-entwickler-mit-ai-besser-werden) | Teil 3: Zukunft (coming soon)_
 
@@ -220,7 +218,7 @@ Das Zusammenspiel aus Plugins, Built-in Agents und einer gut gepflegten **CLAUDE
 >
 > Der Inhalt ist reines Markdown – eine Prompt-Vorlage, die Claude beim Aufruf als Anweisung erhält:
 >
-> ```markdown
+> ```
 > Führe die Tests aus und gib nur eine Zusammenfassung zurück:
 > Anzahl bestanden, fehlgeschlagen, und die Fehlermeldungen.
 >
@@ -349,4 +347,4 @@ Was als Experiment mit MAD begann, ist inzwischen mein normaler Workflow für Ho
 
 Wenn ich eine Sache herausgreifen müsste, ist es die, die ich im ersten Teil meiner Trilogie zu KI-Agenten bereits erkennen konnte: **Die Qualität der Planung bestimmt alles.** Je autonomer man arbeiten will, desto wasserdichter muss der Plan sein. Ralph ohne soliden Plan ist wie Autofahren ohne Lenkrad – es geht schnell, aber nicht in die richtige Richtung.
 
-In Teil 3 schauen wir dann über den eigenen Workflow hinaus: Was passiert, wenn diese Patterns industriell skaliert werden? Das SASE-Paper liefert einen wissenschaftlichen Rahmen dafür – und zeigt, wohin die Reise für unser Berufsfeld geht.
+In Teil 3 schauen wir dann über den eigenen Workflow hinaus: Was passiert, wenn diese Patterns industriell skaliert werden? Das [SASE-Paper](https://arxiv.org/html/2509.06216v2) liefert einen wissenschaftlichen Rahmen dafür – und zeigt, wohin die Reise für unser Berufsfeld geht.
