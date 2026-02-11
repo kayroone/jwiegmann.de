@@ -22,15 +22,11 @@ _Dies ist Teil 2 einer dreiteiligen Serie._
 - [Wie viel Autonomie ist sinnvoll? MAD vs. Ralph erklärt](#wie-viel-autonomie-ist-sinnvoll-mad-vs-ralph-erklärt)
 - [Fazit: Lessons Learned](#fazit-lessons-learned)
 
----
-
 ## Einleitung
 
 Aus dem ursprünglich geplanten Follow-up zu meinem ersten Artikel ist eine Trilogie geworden. Das Thema war einfach zu groß für einen einzigen Nachfolger: [Teil 1](./warum-gute-entwickler-mit-ai-besser-werden) behandelt die Theorie – warum Zerlegung wichtig ist und wie Fehlerraten funktionieren. Dieser zweite Teil hier zeigt mein konkretes Praxis-Setup. Und in Teil 3 wird es um die Zukunft gehen – was passiert, wenn diese Patterns industriell skaliert werden.
 
 Für PoCs und Prototyping bin ich in den letzten Wochen komplett auf Maximal Agentic Decomposition (MAD) aus Teil 1 umgestiegen. Mit der Zeit haben sich Workflows, Tools und kleinere Kniffe ergeben – manche verbessern nur die Quality of Life, andere die konkreten Ergebnisse erheblich. Inzwischen fühlt sich mein Setup effizient und ausgereift an. Hier stelle ich es euch vor: konkrete Templates, Tools und Entscheidungshilfen.
-
----
 
 ## Prompt-Templates
 
@@ -174,8 +170,6 @@ Der Vorteil ist nicht nur Zeitersparnis. Templates sorgen für:
 - **Wiederholbare Qualität**: Die Ergebnisse schwanken weniger, weil der Prozess gleich bleibt
 - **Lerneffekt**: Mit der Zeit optimiere ich die Templates basierend auf Erfahrungen
 
----
-
 ## Context-Isolation
 
 In [Teil 1](./warum-gute-entwickler-mit-ai-besser-werden) haben wir gesehen, dass sich Fehlerwahrscheinlichkeiten pro Reasoning-Schritt multiplizieren. MAD senkt die Anzahl der Schritte – aber es gibt einen zweiten Hebel: die Fehlerrate _pro_ Schritt. Und die steigt, wenn der Context mit irrelevantem Rauschen gefüllt ist. 10.000 Zeilen Test-Output im Context zwingen das Modell, relevante Information aus einer Wand von Noise zu filtern. Das Ergebnis: ungenauere Antworten, vergessene Entscheidungen, inkonsistente Ergebnisse.
@@ -194,8 +188,6 @@ Hauptkonversation
 ```
 
 Du zahlst nur für das Ergebnis, nicht für den Prozess. Statt 10.000 Zeilen Test-Output landen drei Zeilen Zusammenfassung im Context. MAD senkt die Schrittzahl, Context-Isolation senkt die Fehlerrate pro Schritt – beides zusammen ist der Hebel. Welche Agents dieses Prinzip in Claude Code umsetzen, dazu mehr im nächsten Kapitel.
-
----
 
 ## Agents & Plugins
 
@@ -236,8 +228,6 @@ Das Zusammenspiel aus Plugins, Built-in Agents und einer gut gepflegten **CLAUDE
 > **Abgrenzung zu Plugins:**
 >
 > Für komplexere Workflows – mit eigenen Subagents, Tool-Einschränkungen oder isoliertem Context – gibt es das Plugin-System mit installierbaren Skills (z.B. `/feature-dev`, `/code-review`). Custom Commands sind die leichtgewichtige Variante für den Alltag.
-
----
 
 ## Session-Management
 
@@ -280,8 +270,6 @@ Dieses Übergabe-Prompt jedes Mal von Hand zu schreiben ist mühsam – und gena
 ```
 
 Der Vorteil: Die neue Session startet mit einem sauberen, fokussierten Context statt mit hunderten Zeilen alter Konversation – und man vergisst keine wichtigen Entscheidungen bei der Übergabe. Gerade bei langen Feature-Entwicklungen über mehrere Tage ist das oft effektiver als `--resume`, weil man bewusst entscheidet, welcher Kontext noch relevant ist.
-
----
 
 ## Wie viel Autonomie ist sinnvoll? MAD vs. Ralph erklärt
 
@@ -344,8 +332,6 @@ Boilerplate generieren
 Ich selbst nutze Ralph bewusst nicht. Der Effizienzgewinn durch einen KI-Agenten ist bereits so hoch, dass ich mir die Kontrolle über jeden Schritt leisten kann – und will. Meine Zeit investiere ich lieber in die Planungsphase und in das Review des generierten Codes, statt Claude autonom iterieren zu lassen und das Ergebnis hinterher aufzuräumen.
 
 Das heißt nicht, dass Ralph schlecht ist – für gut verstandene Patterns und Boilerplate kann autonome Iteration der richtige Ansatz sein. Aber für mich überwiegt das Risiko: Wer den Code nicht Schritt für Schritt begleitet, verliert das Verständnis dafür. Und Code, den man nicht versteht, wird zum Wartungsrisiko.
-
----
 
 ## Fazit: Lessons Learned
 
