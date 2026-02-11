@@ -1,8 +1,14 @@
 ---
-title: "Warum gute Entwickler mit AI besser werden (und schlechte noch schlechter)"
+title: "Software Engineering im KI-Zeitalter (Teil 1: Theorie)"
 date: "2026-01-05"
 excerpt: "Ein Praxisguide: Wie präzises Prompting zu sauberem Code führt und warum AI ein Verstärker ist, kein Ersatz"
-tags: ["AI", "Claude Code", "Prompting", "Software Engineering", "Best Practices"]
+tags:
+  ["AI", "Claude Code", "Prompting", "Software Engineering", "Best Practices"]
+---
+
+_Dies ist Teil 1 einer dreiteiligen Serie._
+_[Teil 2: Praxis](./software-engineering-im-ki-zeitalter-praxis) | Teil 3: Zukunft (coming soon)_
+
 ---
 
 > **TL;DR:** KI ist ein Verstärker, kein Ersatz. Komplexe Prompts scheitern mathematisch (~99,99% Fehlerrate bei 1.000 internen Schritten). Die Lösung: Maximal Agentic Decomposition (MAD) – Aufgaben in 5-15 minimale Einzelschritte zerlegen. Context Engineering und systematische Verifikation sind entscheidend. Blindes Vertrauen ist gefährlich.
@@ -33,9 +39,9 @@ KI wird kein vorübergehender Trend sein, sondern unseren Arbeitsalltag - nicht 
 
 ## Warum komplexe Prompts scheitern
 
-Starten wir mit einem simplen Beispiel: Du bist Softwareentwickler und hast die Arbeit mit Large Language Models (LLM) für dich entdeckt. Du sollst einen neuen Spring Boot Service schreiben, der Service soll einen Authentifizierungs-Layer besitzen, fachliche Validierungsregeln anwenden und CRUD-Operationen auf der Datenbank ausführen. Du startest dein LLM und schreibst ihm genau das: "Baue mir einen Spring Boot Service mit funktionierender Authentifizierung, Validierung für die Input-Daten und einem Service, der in der Lage ist, CRUD-Operationen auf der Datenbank auszuführen". 
+Starten wir mit einem simplen Beispiel: Du bist Softwareentwickler und hast die Arbeit mit Large Language Models (LLM) für dich entdeckt. Du sollst einen neuen Spring Boot Service schreiben, der Service soll einen Authentifizierungs-Layer besitzen, fachliche Validierungsregeln anwenden und CRUD-Operationen auf der Datenbank ausführen. Du startest dein LLM und schreibst ihm genau das: "Baue mir einen Spring Boot Service mit funktionierender Authentifizierung, Validierung für die Input-Daten und einem Service, der in der Lage ist, CRUD-Operationen auf der Datenbank auszuführen".
 
-Das LLM beginnt zu arbeiten und generiert das, was aus seiner Sicht am wahrscheinlichsten passt. Es wählt Framework X für die Authentifizierung, bindet eigenständig Frameworks zur Validierung ein, nutzt unter Umständen keine Bean-Validation, obwohl du diese in allen anderen Services verwendest. Auch die Datenbank-Engine wurde anders gewählt: Ihr verwendet im Projekt MySQL, implementiert wurde PostgreSQL. 
+Das LLM beginnt zu arbeiten und generiert das, was aus seiner Sicht am wahrscheinlichsten passt. Es wählt Framework X für die Authentifizierung, bindet eigenständig Frameworks zur Validierung ein, nutzt unter Umständen keine Bean-Validation, obwohl du diese in allen anderen Services verwendest. Auch die Datenbank-Engine wurde anders gewählt: Ihr verwendet im Projekt MySQL, implementiert wurde PostgreSQL.
 
 Das Ergebnis ist also fundamental anders als das, was du eigentlich wolltest. Obwohl es irgendwie in die richtige Richtung geht, kannst du damit trotzdem nichts anfangen. Oder noch schlimmer: Es wurden veraltete Libraries eingebunden, die mittlerweile als unsicher eingestuft werden. Das LLM hat also aktiv Sicherheitslücken in deinen Service eingebaut. Aber warum?
 
@@ -48,17 +54,17 @@ Eine Antwort darauf liefert uns das [MAKER-Paper](#quellenübersicht): Selbst be
 ### Info-Box: MAKER Paper - Persistente Fehlerraten
 
 > **📊 Forschung: MAKER Paper (November 2025)**
-> *Cognizant AI Lab & UT Austin* • [arxiv.org/abs/2511.09030](https://arxiv.org/abs/2511.09030)
+> _Cognizant AI Lab & UT Austin_ • [arxiv.org/abs/2511.09030](https://arxiv.org/abs/2511.09030)
 >
 > LLMs haben eine **persistente Fehlerrate** pro Reasoning-Schritt. Die Konsequenzen bei komplexen Prompts:
 >
-> | Fehlerrate pro Schritt | Bei 100 Schritten | Bei 1.000 Schritten |
-> |------------------------|-------------------|---------------------|
-> | **1%** | ~63% Gesamtfehler | ~99,99% Gesamtfehler |
-> | **0,1%** | ~10% Gesamtfehler | ~63% Gesamtfehler |
+> | Fehlerrate pro Schritt | Bei 100 Schritten | Bei 1.000 Schritten  |
+> | ---------------------- | ----------------- | -------------------- |
+> | **1%**                 | ~63% Gesamtfehler | ~99,99% Gesamtfehler |
+> | **0,1%**               | ~10% Gesamtfehler | ~63% Gesamtfehler    |
 >
 > **Warum steigt die Fehlerrate exponentiell?**
-> 
+>
 > Die Erfolgswahrscheinlichkeiten multiplizieren sich: Bei 1% Fehlerrate pro Schritt bedeutet das (0,99)^100 = 36,6% Erfolg → 63,4% Fehler. Jeder weitere Schritt verschlechtert die Gesamtwahrscheinlichkeit überproportional. Das erklärt, warum komplexe Aufgaben in einem Rutsch oft scheitern: Die Fehlerrate explodiert mit der Anzahl interner Entscheidungen.
 
 ### Die Konsequenz
@@ -75,7 +81,7 @@ Statt "Baue mir eine komplette REST-API mit Authentication, CRUD-Operationen und
 
 Wann ist ein Schritt klein genug? Das [MAKER-Paper](#quellenübersicht) gibt eine klare Antwort: Alles, was über 50 Zeilen Code hinausgeht, ist zu groß. Meiner persönlichen Erfahrung nach sind selbst 50 Zeilen zu groß, besser wären 10. Zudem gilt: Wenn du das Ergebnis in Sekunden prüfen kannst, wenn Fehler sofort auffallen, und wenn du bei einem falschen Ergebnis nicht raten musst, was schiefgelaufen ist, dann hast du die richtige Größe gewählt. Wer mit JIRA oder ähnlichen Tools arbeitet, kennt das Prinzip: Ein gutes Ticket hat eine klare Beschreibung, messbare Akzeptanzkriterien und ist unabhängig abarbeitbar. MAD überträgt genau das auf Prompts. Ein Prompt = ein Ticket. Klarer Input, definierter Output, verifizierbare Akzeptanzkriterien. Ein Fehler in Schritt 7 kompromittiert nicht die Schritte 1-6.
 
-Das Paper zeigt zudem etwas Kontraintuitives: Bei gut zerlegten Aufgaben schneiden kleinere, günstigere Modelle genauso gut ab wie große Reasoning-Modelle. Im Experiment war gpt-4.1-mini ausreichend – nicht weil es "schlauer" ist, sondern weil jeder Einzelschritt einfach genug war. Die Intelligenz steckt in der Zerlegung, nicht nur im Modell. 
+Das Paper zeigt zudem etwas Kontraintuitives: Bei gut zerlegten Aufgaben schneiden kleinere, günstigere Modelle genauso gut ab wie große Reasoning-Modelle. Im Experiment war gpt-4.1-mini ausreichend – nicht weil es "schlauer" ist, sondern weil jeder Einzelschritt einfach genug war. Die Intelligenz steckt in der Zerlegung, nicht nur im Modell.
 
 Aber wie geht man jetzt konkret vor? Gibt es ein Pattern für effektive Prompts? Im nächsten Kapitel beleuchte ich dazu meine persönlichen Erfahrungen mit dem LLM Claude Code.
 
@@ -85,7 +91,7 @@ Basierend auf den [Anthropic Best Practices](#quellenübersicht) (2024), den Gui
 
 ### 1. Context Engineering - Den Rahmen schaffen
 
-Claude weiß nicht, dass wir im Team Spring Boot 3.2 mit Java 21 verwenden, dass unsere Services dem ECB-Pattern folgen, oder dass wir Bean Validation statt manueller Checks einsetzen. Ohne diesen Kontext rät das Modell – und rät oft falsch. 
+Claude weiß nicht, dass wir im Team Spring Boot 3.2 mit Java 21 verwenden, dass unsere Services dem ECB-Pattern folgen, oder dass wir Bean Validation statt manueller Checks einsetzen. Ohne diesen Kontext rät das Modell – und rät oft falsch.
 
 Der erste Schritt ist daher ein Markdown-File mit dem Projektkontext: Tech-Stack, Architektur-Entscheidungen, Constraints, bestehende Conventions. Das ist die "Single Source of Truth", auf die sich alle weiteren Prompts beziehen. Bereits hier gilt, je genauer du wirst, umso genauer sind später die Ergebnisse, die das LLM liefert. Im besten Fall kann hier bereits auf ein Referenz-Projekt verwiesen werden, das bereits den Ziel-Context implementiert. Ein exemplarisches Project-Context Markdown-File könnte daher wie folgt aussehen:
 
@@ -93,23 +99,27 @@ Der erste Schritt ist daher ein Markdown-File mit dem Projektkontext: Tech-Stack
 # Projektkontext: User-Service
 
 ## Tech-Stack
+
 - Java 21, Spring Boot 3.2
 - MySQL 8.0, Spring Data JPA
 - Bean Validation (jakarta.validation)
 - Lombok für Boilerplate-Reduktion
 
 ## Architektur
+
 - Package-Struktur: ECB-Pattern (Entity, Control, Boundary)
 - REST-Controller in `boundary/`, Services in `control/`, Entities in `entity/`
 - DTOs für API-Kommunikation, Entities für Persistenz
 
 ## Constraints
+
 - Keine Records verwenden (Lombok @Data stattdessen)
 - Constructor Injection mit @RequiredArgsConstructor
 - Fehlerbehandlung zentral via @ControllerAdvice
 - API-First: OpenAPI-Spec existiert bereits
 
 ## Bestehende Referenz
+
 - Siehe `order-service/` für identische Struktur
 ```
 
@@ -125,11 +135,13 @@ Der Vergleich zur Sprint-Planung liegt nahe: Bevor das Team loslegt, werden alle
 ### Phase 1: Datenschicht
 
 #### 1.1 User Entity erstellen
+
 - **Input:** Projektkontext (siehe oben), Felder: id, email, firstName, lastName, createdAt
 - **Output:** `entity/User.java` mit JPA-Annotations, Lombok @Data
 - **Edge Cases:** email muss unique sein (DB-Constraint)
 
 #### 1.2 UserRepository erstellen
+
 - **Input:** User Entity aus 1.1
 - **Output:** `entity/UserRepository.java` als Spring Data JPA Interface
 - **Edge Cases:** keine
@@ -137,11 +149,13 @@ Der Vergleich zur Sprint-Planung liegt nahe: Bevor das Team loslegt, werden alle
 ### Phase 2: Service Layer
 
 #### 2.1 UserService Interface definieren
+
 - **Input:** CRUD-Operationen: create, findById, findAll, update, delete
 - **Output:** `control/UserService.java` Interface mit Methodensignaturen
 - **Edge Cases:** keine
 
 #### 2.2 UserService Implementation
+
 - **Input:** UserService Interface, UserRepository
 - **Output:** `control/UserServiceImpl.java` mit @Service
 - **Edge Cases:** findById → Optional.empty bei nicht gefundenem User
@@ -149,11 +163,13 @@ Der Vergleich zur Sprint-Planung liegt nahe: Bevor das Team loslegt, werden alle
 ### Phase 3: API Layer
 
 #### 3.1 UserDTO erstellen
+
 - **Input:** User Entity Felder (ohne createdAt für Request)
 - **Output:** `boundary/UserDTO.java` mit Lombok @Data
 - **Edge Cases:** keine
 
 #### 3.2 UserController erstellen
+
 - **Input:** UserService, UserDTO, REST-Konventionen
 - **Output:** `boundary/UserController.java` mit GET/POST/PUT/DELETE
 - **Edge Cases:** 404 bei nicht gefundenem User, 400 bei Validierungsfehler
@@ -185,21 +201,21 @@ Hier verfeinere ich den bereits definierten Output der Arbeitspakete mit explizi
 
 Wir haben bereits gelernt, dass nicht jede Antwort von Claude brauchbar ist – das gilt auch für präzise ausformulierte Prompts. Das [MAKER-Paper](#quellenübersicht) identifiziert klare Warnsignale, die auf fehlerhafte Reasoning-Ketten hindeuten. Wichtig: Diese Antworten nicht reparieren, sondern neu generieren. Meine Erfahrungen sind hier die folgenden:
 
-| Signal | Bedeutung | Aktion                                      |
-|--------|-----------|---------------------------------------------|
-| **Überlange Antworten** (>50-100 Zeilen) | Das Modell ist "verwirrt" und overanalysiert | Stoppen, Prompt neu formulieren             |
-| **Formatierungsfehler** | Zeichen für fehlerhafte Reasoning-Kette | Stoppen, Prompt neu formulieren             |
-| **Wirre Struktur** | Inkonsistente oder unlogische Gliederung | Schritt zu groß, granularer zerlegen |
+| Signal                                   | Bedeutung                                    | Aktion                               |
+| ---------------------------------------- | -------------------------------------------- | ------------------------------------ |
+| **Überlange Antworten** (>50-100 Zeilen) | Das Modell ist "verwirrt" und overanalysiert | Stoppen, Prompt neu formulieren      |
+| **Formatierungsfehler**                  | Zeichen für fehlerhafte Reasoning-Kette      | Stoppen, Prompt neu formulieren      |
+| **Wirre Struktur**                       | Inkonsistente oder unlogische Gliederung     | Schritt zu groß, granularer zerlegen |
 
 ### 5. Voting für kritische Entscheidungen
 
 Bei Architektur-Entscheidungen oder sicherheitskritischem Code reicht eine einzelne Antwort nicht aus. Das [MAKER-Paper](#quellenübersicht) (2025) empfiehlt Voting: Dieselbe Frage mehrfach stellen, mit leicht variiertem Wording, und die Antworten vergleichen. Konsistente Antworten bedeuten hohe Konfidenz. Inkonsistenz zeigt: Hier braucht es tiefere Analyse.
 
-| Ergebnis | Bedeutung | Aktion |
-|----------|-----------|--------|
-| **3/3 gleich** | Hohe Konfidenz | Entscheidung übernehmen |
-| **2/3 gleich** | Moderate Konfidenz | Manuelle Prüfung empfohlen |
-| **Alle unterschiedlich** | Frage zu unklar | Anforderungen präzisieren |
+| Ergebnis                 | Bedeutung          | Aktion                     |
+| ------------------------ | ------------------ | -------------------------- |
+| **3/3 gleich**           | Hohe Konfidenz     | Entscheidung übernehmen    |
+| **2/3 gleich**           | Moderate Konfidenz | Manuelle Prüfung empfohlen |
+| **Alle unterschiedlich** | Frage zu unklar    | Anforderungen präzisieren  |
 
 **Wichtig:** Bei sicherheitskritischem Code (Authentifizierung, Autorisierung, Kryptographie) oder zentraler Business-Logik (Core Domain) solltest du auch bei 3/3 Konsistenz das Ruder selbst in die Hand nehmen. Voting liefert Konfidenz, keine Garantie. Diese Bereiche sind zu kritisch, um sie vollständig an ein LLM zu delegieren – hier bleibt manuelle Implementierung und Review unverzichtbar.
 
@@ -231,15 +247,15 @@ Jan
 
 ## Quellenübersicht
 
-| # | Ressource | Typ | Link |
-|---|-----------|-----|------|
-| 1 | Anthropic Prompt Engineering | Dokumentation | [docs.anthropic.com](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering) |
-| 2 | Fabric Framework | Framework | [github.com/danielmiessler/fabric](https://github.com/danielmiessler/fabric) |
-| 3 | MAKER Paper | Paper | [arxiv.org/abs/2511.09030](https://arxiv.org/abs/2511.09030) |
-| 4 | MAKER Video | Video | [youtube.com](https://www.youtube.com/watch?v=gLkehsQy4H4) |
-| 5 | LLM-as-Judge Paper | Paper | [arxiv.org/abs/2511.21140](https://arxiv.org/abs/2511.21140) |
-| 6 | LLM-as-Judge Code | Code | [github.com/UW-Madison-Lee-Lab](https://github.com/UW-Madison-Lee-Lab/LLM-judge-reporting) |
-| 7 | Prompt Engineering Guide | Guide | [promptingguide.ai](https://www.promptingguide.ai/) |
+| #   | Ressource                    | Typ           | Link                                                                                          |
+| --- | ---------------------------- | ------------- | --------------------------------------------------------------------------------------------- |
+| 1   | Anthropic Prompt Engineering | Dokumentation | [docs.anthropic.com](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering) |
+| 2   | Fabric Framework             | Framework     | [github.com/danielmiessler/fabric](https://github.com/danielmiessler/fabric)                  |
+| 3   | MAKER Paper                  | Paper         | [arxiv.org/abs/2511.09030](https://arxiv.org/abs/2511.09030)                                  |
+| 4   | MAKER Video                  | Video         | [youtube.com](https://www.youtube.com/watch?v=gLkehsQy4H4)                                    |
+| 5   | LLM-as-Judge Paper           | Paper         | [arxiv.org/abs/2511.21140](https://arxiv.org/abs/2511.21140)                                  |
+| 6   | LLM-as-Judge Code            | Code          | [github.com/UW-Madison-Lee-Lab](https://github.com/UW-Madison-Lee-Lab/LLM-judge-reporting)    |
+| 7   | Prompt Engineering Guide     | Guide         | [promptingguide.ai](https://www.promptingguide.ai/)                                           |
 
 ## Anhang: Kurzreferenz & Best Practices
 
@@ -269,10 +285,9 @@ Jan
 
 ### Fehlerrate und Schrittgröße
 
-| Prompt-Komplexität        | Interne Schritte | Fehlerrate (bei 1% pro Schritt) | Empfehlung              |
-|---------------------------|------------------|---------------------------------|-------------------------|
-| "Baue Feature X komplett" | ~1.000           | ~99,99%                         | Niemals so!            |
-| "Implementiere Modul Y"   | ~100             | ~63%                            | Zu groß, zerteilen      |
-| "Erstelle Funktion Z"     | ~10              | ~10%                            | Gut, wenn spezifisch    |
-| "Schreibe Getter für X"   | ~3               | ~3%                             | Optimal                |
-
+| Prompt-Komplexität        | Interne Schritte | Fehlerrate (bei 1% pro Schritt) | Empfehlung           |
+| ------------------------- | ---------------- | ------------------------------- | -------------------- |
+| "Baue Feature X komplett" | ~1.000           | ~99,99%                         | Niemals so!          |
+| "Implementiere Modul Y"   | ~100             | ~63%                            | Zu groß, zerteilen   |
+| "Erstelle Funktion Z"     | ~10              | ~10%                            | Gut, wenn spezifisch |
+| "Schreibe Getter für X"   | ~3               | ~3%                             | Optimal              |
