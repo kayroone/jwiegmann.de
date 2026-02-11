@@ -115,3 +115,6 @@ article blockquote p {
   margin: 0;
 }
 
+article blockquote > * + * {
+  margin-top: 1rem !important;
+}

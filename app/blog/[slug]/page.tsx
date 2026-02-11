@@ -1,59 +1,61 @@
-import Link from "next/link"
-import { ArrowLeft, Calendar, Tag } from "lucide-react"
-import Footer from "../../components/footer"
-import { getPostBySlug, markdownToHtml, getAllPosts } from "../../../lib/blog"
-import { notFound } from "next/navigation"
-import MermaidRenderer from "../../../components/mermaid-renderer"
-import MermaidZoom from "../../../components/mermaid-zoom"
-import StaticVine from "../../../components/static-vine"
+import Link from "next/link";
+import { ArrowLeft, Calendar, Tag } from "lucide-react";
+import Footer from "../../components/footer";
+import { getPostBySlug, markdownToHtml, getAllPosts } from "../../../lib/blog";
+import { notFound } from "next/navigation";
+import MermaidRenderer from "../../../components/mermaid-renderer";
+import MermaidZoom from "../../../components/mermaid-zoom";
+import StaticVine from "../../../components/static-vine";
 
 interface BlogPostParams {
   params: Promise<{
-    slug: string
-  }>
+    slug: string;
+  }>;
 }
 
 export async function generateMetadata({ params }: BlogPostParams) {
   try {
-    const { slug } = await params
-    const post = getPostBySlug(slug)
+    const { slug } = await params;
+    const post = getPostBySlug(slug);
     return {
       title: `${post.title} | Jan Wiegmann`,
-      description: post.excerpt || "Technischer Artikel zu Softwarearchitektur und -entwicklung",
+      description:
+        post.excerpt ||
+        "Technischer Artikel zu Softwarearchitektur und -entwicklung",
       openGraph: {
         title: post.title,
         description: post.excerpt,
-        type: 'article',
+        type: "article",
         publishedTime: post.date,
-        authors: ['Jan Wiegmann'],
+        authors: ["Jan Wiegmann"],
         tags: post.tags,
       },
-    }
+    };
   } catch {
     return {
       title: "Artikel nicht gefunden | Jan Wiegmann",
       description: "Der angeforderte Artikel konnte nicht gefunden werden",
-    }
+    };
   }
 }
 
 export async function generateStaticParams() {
-  const posts = getAllPosts()
+  const posts = getAllPosts();
   return posts.map((post) => ({
     slug: post.slug,
-  }))
+  }));
 }
 
 export default async function BlogPost({ params }: BlogPostParams) {
-  let post
+  let post;
   try {
-    const { slug } = await params
-    post = getPostBySlug(slug)
+    const { slug } = await params;
+    post = getPostBySlug(slug);
   } catch {
-    notFound()
+    notFound();
   }
 
-  const content = await markdownToHtml(post.content)
+  const content = await markdownToHtml(post.content);
 
   return (
     <main className="min-h-screen bg-black text-white relative">
@@ -73,11 +75,13 @@ export default async function BlogPost({ params }: BlogPostParams) {
 
         <div className="max-w-3xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tighter mb-4">{post.title}</h1>
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tighter mb-4">
+              {post.title}
+            </h1>
             <div className="flex items-center gap-4 text-gray-400 mb-4">
               <div className="flex items-center gap-1">
                 <Calendar size={16} />
-                <span>{new Date(post.date).toLocaleDateString('de-DE')}</span>
+                <span>{new Date(post.date).toLocaleDateString("de-DE")}</span>
               </div>
               {post.tags && post.tags.length > 0 && (
                 <div className="flex items-center gap-2 min-w-0 overflow-x-auto">
@@ -116,6 +120,5 @@ export default async function BlogPost({ params }: BlogPostParams) {
       </article>
       <Footer />
     </main>
-  )
+  );
 }
-

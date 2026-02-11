@@ -213,12 +213,8 @@ Das Zusammenspiel aus Plugins, Built-in Agents und einer gut gepflegten **CLAUDE
 >
 > Wer wiederkehrende Workflows hat, die kein bestehendes Plugin abdeckt, kann eigene Custom Slash Commands schreiben. Ein Command ist eine einfache Markdown-Datei im `commands`-Verzeichnis:
 >
-> ```
-> .claude/commands/mein-command.md
-> ~/.claude/commands/mein-command.md
-> ```
->
-> Der erste Pfad ist **projekt-spezifisch** (`/project:mein-command`), der zweite **global** für alle Projekte (`/user:mein-command`).
+> - `.claude/commands/mein-command.md` — **projekt-spezifisch**
+> - `~/.claude/commands/mein-command.md` — **global**
 >
 > Der Inhalt ist reines Markdown – eine Prompt-Vorlage, die Claude beim Aufruf als Anweisung erhält:
 >
@@ -229,11 +225,17 @@ Das Zusammenspiel aus Plugins, Built-in Agents und einer gut gepflegten **CLAUDE
 > Wenn $ARGUMENTS angegeben: Führe nur die Tests für dieses Modul aus.
 > ```
 >
-> `$ARGUMENTS` ist ein Platzhalter, der beim Aufruf durch den Text nach dem Command-Namen ersetzt wird: `/user:test-runner auth-module` setzt `$ARGUMENTS` auf `auth-module`.
+> `$ARGUMENTS` ist ein Platzhalter, der beim Aufruf durch den Text nach dem Command-Namen ersetzt wird:
 >
-> **Wann lohnt sich ein eigener Command?** Wenn du denselben Prompt-Workflow mindestens 3x pro Woche nutzt und er immer gleich abläuft – zum Beispiel ein Session-Handover, der den aktuellen Stand zusammenfasst, oder ein Test-Runner mit festem Output-Format.
+> `/user:test-runner auth-module` setzt `$ARGUMENTS` auf `auth-module`.
 >
-> **Abgrenzung zu Plugins:** Für komplexere Workflows – mit eigenen Subagents, Tool-Einschränkungen oder isoliertem Context – gibt es das Plugin-System mit installierbaren Skills (z.B. `/feature-dev`, `/code-review`). Custom Commands sind die leichtgewichtige Variante für den Alltag.
+> **Wann lohnt sich ein eigener Command?**
+>
+> Wenn du denselben Prompt-Workflow mindestens 3x pro Woche nutzt und er immer gleich abläuft – zum Beispiel ein Session-Handover, der den aktuellen Stand zusammenfasst, oder ein Test-Runner mit festem Output-Format.
+>
+> **Abgrenzung zu Plugins:**
+>
+> Für komplexere Workflows – mit eigenen Subagents, Tool-Einschränkungen oder isoliertem Context – gibt es das Plugin-System mit installierbaren Skills (z.B. `/feature-dev`, `/code-review`). Custom Commands sind die leichtgewichtige Variante für den Alltag.
 
 ---
 
