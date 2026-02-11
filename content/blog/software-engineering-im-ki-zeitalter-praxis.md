@@ -6,7 +6,9 @@ tags: ["AI", "Claude Code", "Workflow", "Autonomie", "Best Practices"]
 ---
 
 _Dies ist Teil 2 einer dreiteiligen Serie._
-_[Teil 1: Theorie](./warum-gute-entwickler-mit-ai-besser-werden) | Teil 3: Zukunft (coming soon)_
+
+- _[Teil 1: Theorie](./warum-gute-entwickler-mit-ai-besser-werden)_
+- _Teil 3: Zukunft (coming soon)_
 
 ---
 
@@ -212,9 +214,11 @@ Das Zusammenspiel aus Plugins, Built-in Agents und einer gut gepflegten **CLAUDE
 > Wer wiederkehrende Workflows hat, die kein bestehendes Plugin abdeckt, kann eigene Custom Slash Commands schreiben. Ein Command ist eine einfache Markdown-Datei im `commands`-Verzeichnis:
 >
 > ```
-> .claude/commands/mein-command.md    # Projekt-spezifisch (/project:mein-command)
-> ~/.claude/commands/mein-command.md  # Global für alle Projekte (/user:mein-command)
+> .claude/commands/mein-command.md
+> ~/.claude/commands/mein-command.md
 > ```
+>
+> Der erste Pfad ist **projekt-spezifisch** (`/project:mein-command`), der zweite **global** für alle Projekte (`/user:mein-command`).
 >
 > Der Inhalt ist reines Markdown – eine Prompt-Vorlage, die Claude beim Aufruf als Anweisung erhält:
 >
