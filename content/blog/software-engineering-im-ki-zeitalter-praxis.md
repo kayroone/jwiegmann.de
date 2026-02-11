@@ -191,7 +191,7 @@ Du zahlst nur für das Ergebnis, nicht für den Prozess. Statt 10.000 Zeilen Tes
 
 ## Agents & Plugins
 
-Wer mit Claude Code arbeitet, nutzt Agents und Plugins oft, ohne es bewusst zu merken. Im Hintergrund delegiert Claude Code Teilaufgaben an spezialisierte **Built-in Agents**: Der Explore-Agent recherchiert die Codebase (günstig, weil er auf dem kleineren Haiku-Modell läuft), der Plan-Agent entwirft Architekturen im Read-only-Modus, und der general-purpose Agent übernimmt komplexe Multi-Step-Tasks. Der Clou: Claude Code entscheidet selbst, wann ein Subagent sinnvoll ist. Man merkt es an der Statuszeile – und daran, dass der Context nicht mit tausenden Zeilen Test-Output zugemüllt wird.
+Wer mit Claude Code arbeitet, nutzt Agents und Plugins oft, ohne es bewusst zu merken. Im Hintergrund delegiert Claude Code Teilaufgaben an spezialisierte **Built-in Agents**: Der Explore-Agent recherchiert die Codebase (günstig, weil er auf dem kleineren Haiku-Modell läuft), der Plan-Agent entwirft Architekturen im Read-only-Modus, und der general-purpose Agent übernimmt komplexe Multi-Step-Tasks. Claude Code entscheidet dabei selbst, wann ein Subagent sinnvoll ist. Man merkt es an der Statuszeile – und daran, dass der Context nicht mit tausenden Zeilen Test-Output zugemüllt wird.
 
 Daneben gibt es **Community-Plugins**, die sich über den Plugin-Marketplace installieren lassen. In meinem Setup nutze ich unter anderem:
 
@@ -223,11 +223,11 @@ Das Zusammenspiel aus Plugins, Built-in Agents und einer gut gepflegten **CLAUDE
 >
 > **Wann lohnt sich ein eigener Command?**
 >
-> Wenn du denselben Prompt-Workflow mindestens 3x pro Woche nutzt und er immer gleich abläuft – zum Beispiel ein Session-Handover, der den aktuellen Stand zusammenfasst, oder ein Test-Runner mit festem Output-Format.
+> Wenn du denselben Prompt-Workflow mindestens 3x (chosen by fair dice role) pro Woche nutzt und er immer gleich abläuft – zum Beispiel ein Session-Handover, der den aktuellen Stand zusammenfasst, oder ein Test-Runner mit festem Output-Format.
 >
 > **Abgrenzung zu Plugins:**
 >
-> Für komplexere Workflows – mit eigenen Subagents, Tool-Einschränkungen oder isoliertem Context – gibt es das Plugin-System mit installierbaren Skills (z.B. `/feature-dev`, `/code-review`). Custom Commands sind die leichtgewichtige Variante für den Alltag.
+> Für komplexere Workflows – mit eigenen Subagents, Tool-Einschränkungen oder isoliertem Context – gibt es das Plugin-System mit installierbaren Skills (z.B. `/feature-dev`, `/code-review`). Custom Commands sind die leichtgewichtige Variante.
 
 ## Session-Management
 
@@ -292,7 +292,7 @@ Das klingt verlockend – und für bestimmte Aufgaben funktioniert es hervorrage
 
 ### Was aber, wenn der Plan Lücken hat?
 
-"Garbage In, Garbage Out" kennt jeder. Mit autonomen Workflows wird daraus "Garbage In, Garbage Out – aber jetzt mit Turbo". Claude implementiert _genau das_, was im Plan steht – nicht mehr, nicht weniger. Fehlende Edge Cases im Plan bedeuten fehlende Edge Cases im Code. Und das erkennt man oft erst spät.
+"Garbage In, Garbage Out" kennt jeder. Mit autonomen Workflows wird daraus "Garbage In, Garbage Out – but the garbage comes out a lot faster than it went in". Claude implementiert _genau das_, was im Plan steht – nicht mehr, nicht weniger. Fehlende Edge Cases im Plan bedeuten fehlende Edge Cases im Code. Und das erkennt man oft erst spät.
 
 ```
 Plan: "Implementiere User-Login mit Email/Passwort"
