@@ -7,7 +7,9 @@ tags:
 ---
 
 _Dies ist Teil 1 einer dreiteiligen Serie._
-_[Teil 2: Praxis](./software-engineering-im-ki-zeitalter-praxis) | Teil 3: Zukunft (coming soon)_
+
+- _[Teil 2: Praxis](./software-engineering-im-ki-zeitalter-praxis)_
+- _[Teil 3: Zukunft](./software-engineering-im-ki-zeitalter-zukunft)_
 
 ---
 
