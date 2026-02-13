@@ -8,7 +8,7 @@ tags: ["AI", "Claude Code", "Workflow", "Autonomie", "Best Practices"]
 _Dies ist Teil 2 einer dreiteiligen Serie._
 
 - _[Teil 1: Theorie](./warum-gute-entwickler-mit-ai-besser-werden)_
-- _[Teil 3: Zukunft](./software-engineering-im-ki-zeitalter-zukunft)_
+- Teil 3: Zukunft (comming soon)
 
 ---
 
