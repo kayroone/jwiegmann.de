@@ -54,7 +54,7 @@ export default function BlogPreview() {
                 <Link href={`/blog/${post.slug}`} className="block h-full">
                   <div className="p-6 flex flex-col h-full">
                     <h3 className="text-xl font-semibold mb-3">{post.title}</h3>
-                    <p className="text-gray-400 mb-6 flex-grow">
+                    <p className="text-gray-400 mb-6 grow">
                       {post.excerpt}
                     </p>
                     <div className="flex items-center justify-between text-sm text-gray-500 mt-auto">
@@ -79,7 +79,7 @@ export default function BlogPreview() {
                 <Link href={`/blog`} className="block h-full">
                   <div className="p-6 flex flex-col h-full">
                     <h3 className="text-xl font-semibold mb-3">Coming soon...</h3>
-                    <p className="text-gray-400 mb-6 flex-grow">
+                    <p className="text-gray-400 mb-6 grow">
                       Technical articles and insights on software architecture and development will be published here soon.
                     </p>
                     <div className="flex items-center justify-between text-sm text-gray-500 mt-auto">
