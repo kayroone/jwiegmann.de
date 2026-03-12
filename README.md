@@ -82,7 +82,7 @@ This is how I publish my blog-posts. From markdown to HTML:
 AST: { type: 'root', children: [heading, paragraph] }
     ↓ remarkBreaks
 AST + Zeilenumbrüche als <br>
-    ↓ remarkRehype  
+    ↓ remarkRehype
 HTML AST: { type: 'element', tagName: 'h1' }
     ↓ rehypeHighlight
 HTML AST + <span class="hljs-keyword">
@@ -94,20 +94,22 @@ HTML AST + <span class="hljs-keyword">
 
 ## Background Animation
 
-The landing page (`app/components/stars.tsx`) supports two animated themes that can be toggled independently:
+The landing page (`app/components/hero-animation.tsx`) supports two animated themes that can be toggled independently:
 
-| Theme | Description |
-|-------|-------------|
-| **Stars** | Floating white particles drifting across the screen |
-| **Vines** | Pixel art vines growing from bottom to top with blooming flowers |
+| Theme      | Description                                                                                                                                                                  |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Stars**  | Floating white particles drifting across the screen                                                                                                                          |
+| **Vines**  | Pixel art vines growing from bottom to top with blooming flowers                                                                                                             |
+| **Spring** | Pixel art sun (orange→yellow gradient, animated rays) above the heading + green grass blades with wind animation at the bottom. Activating Spring implicitly disables Vines. |
 
 ### Configuration
 
-Toggle themes at the top of `stars.tsx`:
+Toggle themes at the top of `hero-animation.tsx`:
 
 ```typescript
-const ENABLE_STARS = false  // Floating particles
-const ENABLE_VINES = true   // Growing pixel vines
+const ENABLE_STARS = false; // Floating particles
+const ENABLE_VINES = false; // Growing pixel vines (disabled when Spring is on)
+const ENABLE_SPRING_THEME = true; // Pixel sun + animated grass
 ```
 
 ### How Vines Work
@@ -119,16 +121,35 @@ Each vine goes through a lifecycle:
 3. **Bloom** - Reaches target height and flower opens in 3 stages (bud → petals → full bloom)
 4. **Fade** - Gradually disappears, then a new vine spawns
 
+### How the Sun Works
+
+A pixel art sun centered above the heading (at 22% screen height):
+
+1. **Body** - Circle of 4px pixels with a radial gradient: orange (255,140,0) at center → yellow (255,255,0) at edge
+2. **Rays** - 12 rays extend outward at equal angles, each 25px long with fading opacity toward the tip
+3. **Glow Pulse** - Each ray pulses independently between dim and bright (color shifts orange↔yellow, opacity 0.25→1.0) using offset sine waves
+
+### How the Grass Works
+
+Pixel art grass blades anchored at the screen bottom with wind animation:
+
+1. **Generation** - Blades are distributed evenly across the canvas width (max 20px gap), each with random height (20–80px) and width (4px or 8px)
+2. **Color** - Each blade has a vertical gradient: dark green at the base → lighter green at the tip
+3. **Wind** - A sine wave with a leftward bias (`sin(t) - 0.3`) displaces each blade. The displacement increases quadratically from base to tip, so roots stay fixed while tips sway
+4. **Phase** - Each blade gets a random phase offset, so they don't all sway in sync
+
 ### Code Structure
 
 The animation uses the HTML Canvas API with `requestAnimationFrame` for smooth 60fps rendering.
 
 **Classes:**
 
-| Class | Purpose |
-|-------|---------|
-| `Particle` | Single floating star with position, size, and velocity |
-| `PixelVine` | Growing vine with segments, leaves, bloom state, and fade logic |
+| Class        | Purpose                                                                        |
+| ------------ | ------------------------------------------------------------------------------ |
+| `Particle`   | Single floating star with position, size, and velocity                         |
+| `PixelVine`  | Growing vine with segments, leaves, bloom state, and fade logic                |
+| `PixelSun`   | Pixel art sun with radial orange→yellow gradient and 12 sine-animated rays     |
+| `PixelGrass` | Grass blades (mixed 4px/8px widths) with sine-based wind animation biased left |
 
 **PixelVine Properties:**
 

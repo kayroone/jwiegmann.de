@@ -5,7 +5,7 @@ import { getPostBySlug, markdownToHtml, getAllPosts } from "../../../lib/blog";
 import { notFound } from "next/navigation";
 import MermaidRenderer from "../../../components/mermaid-renderer";
 import MermaidZoom from "../../../components/mermaid-zoom";
-import StaticVine from "../../../components/static-vine";
+import StaticGrass from "../../../components/static-grass";
 
 interface BlogPostParams {
   params: Promise<{
@@ -59,7 +59,7 @@ export default async function BlogPost({ params }: BlogPostParams) {
 
   return (
     <main className="min-h-screen bg-black text-white relative">
-      <StaticVine />
+      <StaticGrass />
       <MermaidRenderer />
       <MermaidZoom />
       <article className="container mx-auto px-4 py-12 relative z-10">
@@ -118,7 +118,9 @@ export default async function BlogPost({ params }: BlogPostParams) {
           />
         </div>
       </article>
-      <Footer />
+      <div className="pb-16">
+        <Footer />
+      </div>
     </main>
   );
 }
