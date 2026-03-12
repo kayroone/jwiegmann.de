@@ -19,6 +19,7 @@ _Dies ist Teil 2 einer dreiteiligen Serie._
 - [Context-Isolation](#context-isolation)
 - [Agents & Plugins](#agents--plugins)
 - [Session-Management](#session-management)
+- [Die Spielregeln: Mensch und Agent als Team](#die-spielregeln-mensch-und-agent-als-team)
 - [Wie viel Autonomie ist sinnvoll? MAD vs. Ralph erklärt](#wie-viel-autonomie-ist-sinnvoll-mad-vs-ralph-erklärt)
 - [Fazit: Lessons Learned](#fazit-lessons-learned)
 
@@ -36,40 +37,51 @@ Mittlerweile habe ich für die wichtigsten Phasen meiner Arbeit standardisierte 
 
 ### MAD-Kickoff
 
-Der wichtigste Prompt: Hier startet jedes größere Vorhaben. Das Template zerlegt das Feature in testbare Arbeitspakete und definiert gleich die Tests dazu (TDD-Ansatz).
+Der wichtigste Prompt: Hier startet jedes größere Vorhaben. Das Template zerlegt das Feature in testbare Arbeitspakete und definiert gleich die Tests dazu (TDD-Ansatz). Wichtig: MAD lohnt sich erst ab einer gewissen Komplexität – wenn mehr als eine Datei betroffen ist oder mehr als eine Verantwortlichkeit im Spiel ist. Für kleine, isolierte Änderungen ist der Overhead unnötig.
 
 ```markdown
 Wende MAD (Maximal Agentic Decomposition) auf folgendes Feature an:
 
 [VORHABEN HIER EINFÜGEN]
 
+Schwellenwert: Nur anwenden wenn >1 Datei betroffen ODER >1 Verantwortlichkeit.
+Für kleine Features direkt umsetzen.
+
 Gehe dabei wie folgt vor:
 
 1. **Analyse & Zerlegung**
    - Zerlege das Vorhaben in die kleinstmöglichen, unabhängigen Arbeitspakete
-   - Jedes Arbeitspaket muss durch mindestens einen automatisierten Test verifizierbar sein
-   - Definiere klare Eingaben, Ausgaben und Akzeptanzkriterien pro Paket
+   - Kriterien pro Arbeitspaket:
+     - Max 1 Verantwortlichkeit (eine Sache tun, die gut tun)
+     - Max ~50 Zeilen Produktivcode
+     - In <30 Min umsetzbar
+     - Durch mindestens einen automatisierten Test verifizierbar
+   - Pro Paket definieren: Input-Typ, Output-Typ, Seiteneffekte, Akzeptanzkriterien
+   - Abhängigkeits-Graph erstellen: Welches Paket hängt von welchem ab? Reihenfolge ableiten.
 
 2. **Test-First Definition (TDD)**
    - Schreibe für jedes Arbeitspaket zuerst den/die Test(s)
    - Führe jeden Test einmal aus, um zu verifizieren, dass er erwartungsgemäß fehlschlägt (Red)
-   - Dokumentiere das erwartete Fehlverhalten
-
-3. **Implementierungsplan**
-   - Erstelle eine priorisierte Reihenfolge der Arbeitspakete (Abhängigkeiten beachten)
-   - Pro Paket: Implementiere nur so viel Code, bis der Test grün wird (Green)
    - Tests dürfen während der Implementierungsphase NICHT geändert werden
 
-4. **Fortschritts-Tracking**
-   - Nach jedem abgeschlossenen Arbeitspaket: Dokumentiere Status, Erkenntnisse, ggf. Anpassungen
-   - Format: [ ] Paket X: [Beschreibung] - Status: Red/Green/Done
+3. **Implementierungsplan**
+   - Priorisierte Reihenfolge basierend auf Abhängigkeits-Graph
+   - Pro Paket: Implementiere nur so viel Code, bis der Test grün wird (Green)
+   - Fortschritts-Tracking: [ ] Paket X: [Beschreibung] - Status: Red/Green/Done
+
+4. **Scope-Guard**
+   - Während der Implementierung KEINE neuen Pakete hinzufügen ohne Rücksprache
+   - Abbruchkriterium: Wenn der Plan nicht passt → STOPP, Plan anpassen, nicht weiterbauen
 
 5. **Output-Format**
    Erstelle den Plan als Markdown mit folgender Struktur:
    - Übersicht des Vorhabens
-   - Liste aller Arbeitspakete mit: ID, Beschreibung, Test-Kriterien, Abhängigkeiten
+   - Liste aller Arbeitspakete mit: ID, Beschreibung, Input/Output/Seiteneffekte, Test-Kriterien, Abhängigkeiten
+   - Abhängigkeits-Graph (welches Paket blockiert welches)
    - Implementierungsreihenfolge
    - Fortschritts-Tracker (Checkbox-Liste)
+
+Starte noch nicht mit der Implementierung. Der Plan wird erst von mir gereviewet und explizit freigegeben.
 ```
 
 ### Plan-Review & Interview
@@ -77,20 +89,21 @@ Gehe dabei wie folgt vor:
 Bevor ich mit der Implementierung starte, lasse ich den Plan nochmal prüfen. Das Template stellt sicher, dass keine Lücken übersehen werden – und fragt aktiv nach, wenn etwas unklar ist.
 
 ```markdown
-Führe jetzt einen dreistufigen Review-Prozess durch:
+Führe einen dreistufigen Review-Prozess des Plans durch:
 
-**Stufe 1: Autonomie-Check**
-Lies den erstellten Plan mit allen Arbeitspaketen und prüfe:
+**Stufe 1: Autonomie- & Qualitäts-Check**
+Prüfe jedes Arbeitspaket gegen die MAD-Kriterien:
 
-- Kann jedes Arbeitspaket unabhängig von den anderen umgesetzt werden?
-- Ist jedes Arbeitspaket durch einen automatisierten Test verifizierbar?
-- Sind alle Abhängigkeiten zwischen Paketen explizit dokumentiert?
+- Max 1 Verantwortlichkeit? Max ~50 Zeilen? In <30 Min umsetzbar?
+- Input-Typ, Output-Typ und Seiteneffekte klar definiert?
+- Durch mindestens einen automatisierten Test verifizierbar?
+- Abhängigkeits-Graph korrekt? Keine zirkulären Abhängigkeiten?
 - Gibt es versteckte Annahmen oder unklare Anforderungen?
 
-Dokumentiere gefundene Probleme und schlage Anpassungen vor.
+Wenn ein Paket die Kriterien nicht erfüllt → weiter zerlegen oder begründen warum nicht.
 
-**Stufe 2: Detailliertes Interview**
-Nutze das AskUserQuestion-Tool, um mich zu folgenden Aspekten zu befragen:
+**Stufe 2: Interview**
+Nutze AskUserQuestion, um gezielt nachzufragen:
 
 - Technische Implementierung: Frameworks, Libraries, Architekturentscheidungen
 - UI/UX: Benutzerinteraktion, Darstellung, Flows (falls relevant)
@@ -99,11 +112,13 @@ Nutze das AskUserQuestion-Tool, um mich zu folgenden Aspekten zu befragen:
 - Tradeoffs: Bekannte Kompromisse, akzeptable Einschränkungen
 - Priorisierung: Must-have vs. Nice-to-have Features
 
-Frage gezielt nach - stelle lieber eine Frage zu viel als eine zu wenig.
+Wichtig: Lieber eine Frage zu viel als eine zu wenig.
 
 **Stufe 3: Finalisierung**
-Aktualisiere den Plan mit allen Erkenntnissen aus dem Interview.
-Markiere den Plan als "Bereit zur Implementierung".
+
+- Plan mit Erkenntnissen aus dem Interview aktualisieren
+- Scope-Guard bestätigen: "Das ist der Scope. Keine Erweiterungen ohne Rücksprache."
+- Plan als "Bereit zur Implementierung" markieren → erst nach explizitem OK starten
 ```
 
 ### Implementierungs-Kickoff
@@ -126,40 +141,118 @@ Nach jedem 3. Arbeitspaket: Kurzer Zwischen-Checkpoint mit Statusbericht.
 
 ### Code-Review
 
-Nach der Implementierung oder bei Pull Requests nutze ich dieses Template für strukturierte Reviews. Der Fokus liegt auf dem "5-Sekunden-Test" – ist der Code sofort verständlich?
+Nach der Implementierung oder bei Pull Requests nutze ich dieses Template für strukturierte Reviews. Der Fokus liegt auf dem "5-Sekunden-Test" – ist der Code sofort verständlich? Neu dazu gekommen ist ein dreistufiges Severity-System: MUSS blockiert den Merge, SOLLTE wird vorher gefixt, VORSCHLAG ist optional. Das verhindert endlose Diskussionen über Stilfragen.
 
 ```markdown
-Führe ein Code-Review der letzten Änderungen durch. Fokussiere auf:
+Führe ein Code-Review der letzten Änderungen durch.
 
-1. **Korrektheit**: Erfüllt der Code die Anforderungen aus dem Plan?
-2. **Lesbarkeit**: Ist der Code in 5 Sekunden verständlich?
-3. **Einfachheit**: Gibt es unnötige Abstraktionen oder Overengineering?
-4. **Tests**: Sind alle Edge Cases abgedeckt?
-5. **Sicherheit**: OWASP Top 10 Prüfung
-6. **Konsistenz**: Passt der Code zum bestehenden Stil der Codebase?
+**1. Plan-Abgleich** (falls MAD-Arbeitspaket vorhanden):
 
-Gib konkretes Feedback mit Datei:Zeile Referenzen.
-Unterscheide zwischen: Muss geändert werden / Sollte geändert werden / Vorschlag
+- Erfüllt der Code die Akzeptanzkriterien des Arbeitspakets?
+- Stimmen Input/Output/Seiteneffekte mit der Paket-Definition überein?
+- Scope-Guard: Wurde nur das implementiert, was im Paket steht? Kein Scope-Creep?
+
+**2. Lesbarkeit & Namensqualität**:
+
+- Ist der Code in 5 Sekunden verständlich?
+- Aussagekräftige Namen? Keine Abkürzungen (tmp, val, x)?
+- Klare Struktur? Oder muss man scrollen/springen um den Flow zu verstehen?
+
+**3. YAGNI & Einfachheit**:
+
+- Gibt es unnötige Abstraktionen oder Overengineering?
+- Wurde Code für hypothetische Zukunfts-Anforderungen geschrieben?
+- Könnte man es einfacher lösen ohne Funktionalität zu verlieren?
+
+**4. Tests**:
+
+- Sind alle Akzeptanzkriterien durch Tests abgedeckt?
+- Edge Cases: Grenzwerte, leere Eingaben, Fehlerfälle?
+- Sind die Tests selbst lesbar und wartbar?
+
+**5. Sicherheit** (OWASP Top 10):
+
+- Input-Validierung an System-Grenzen?
+- Injection-Risiken (SQL, Command, XSS)?
+- Secrets im Code?
+
+**6. Konsistenz**:
+
+- Passt der Code zum bestehenden Stil der Codebase?
+- Fehlerbehandlung konsistent mit dem Rest des Projekts?
+
+**Feedback-Format**:
+
+- Referenzen mit Datei:Zeile
+- Severity pro Finding:
+  - MUSS: Bugs, Sicherheitslücken, Plan-Abweichungen → blockiert Merge
+  - SOLLTE: Lesbarkeit, Naming, fehlende Tests → sollte vor Merge gefixt werden
+  - VORSCHLAG: Stilfragen, alternative Ansätze → kann ignoriert werden
 ```
 
 ### Debugging-Session
 
-Bei Bugs starte ich mit diesem Template eine systematische Fehlersuche. Wichtig: Erst einen Test schreiben, der den Bug reproduziert, dann fixen.
+Bei Bugs starte ich mit diesem Template eine systematische Fehlersuche. Wichtig: Erst Hypothesen bilden und priorisieren, dann einen Test schreiben, der den Bug reproduziert, dann fixen -- und am Ende sicherstellen, dass nichts anderes kaputtgegangen ist.
 
 ```markdown
 Ich habe ein Problem: [PROBLEMBESCHREIBUNG]
 
 Gehe systematisch vor:
 
-1. Reproduziere das Problem (verstehe den Fehler genau)
-2. Formuliere eine Hypothese zur Ursache
-3. Sammle Beweise (Logs, Stacktraces, Testfälle)
-4. Identifiziere die Root Cause
-5. Schlage eine Lösung vor - erkläre das "Warum"
-6. Schreibe erst einen Test, der den Bug reproduziert
-7. Implementiere den Fix
-8. Verifiziere, dass der Test jetzt grün ist
+**1. Eingrenzung**
+
+- Welche Komponente ist betroffen?
+- Seit wann tritt das Problem auf? Was hat sich zuletzt geändert?
+- Ist das Problem reproduzierbar? Unter welchen Bedingungen?
+- Symptome sammeln: Fehlermeldungen, Logs, Stacktraces, Screenshots
+
+**2. Hypothesen bilden & priorisieren**
+
+- Mindestens 2-3 Hypothesen zur Ursache formulieren
+- Nach Wahrscheinlichkeit priorisieren (häufigste Ursache zuerst)
+- Pro Hypothese: Wie kann ich sie bestätigen oder widerlegen?
+
+**3. Root Cause identifizieren**
+
+- Hypothesen systematisch prüfen (eine nach der anderen)
+- Unterscheide Symptom vs. Ursache: "Warum?" bis zur eigentlichen Ursache
+- Root Cause mit Datei:Zeile dokumentieren
+
+**4. Bug-reproduzierender Test**
+
+- Test schreiben, der das Fehlverhalten reproduziert
+- Test ausführen → muss fehlschlagen (Red)
+- STOPP: Test und Hypothese zeigen, Fix-Strategie besprechen
+
+**5. Fix implementieren**
+
+- Minimal-invasiv: Nur die Root Cause beheben, kein Refactoring nebenbei
+- Scope-Guard: Wenn der Fix andere Stellen berührt → Rücksprache
+- Bug-Test ausführen → muss grün werden (Green)
+
+**6. Regression prüfen**
+
+- ALLE bestehenden Tests ausführen → müssen weiterhin grün sein
+- Wenn andere Tests brechen: Nicht blind fixen, sondern verstehen warum
+- Erst nach grüner Test-Suite → "Fix fertig" melden
 ```
+
+### Von Templates zu Custom Commands
+
+Die Templates oben sind die Grundlage – aber jedes Mal den Prompt rauskopieren und einfügen ist unnötig. Deshalb habe ich für die wichtigsten Templates eigene [Custom Slash Commands](https://docs.anthropic.com/en/docs/claude-code/tutorials/slash-commands) angelegt:
+
+| Command           | Template                | Aufruf-Beispiel                             |
+| ----------------- | ----------------------- | ------------------------------------------- |
+| `/my-mad`         | MAD-Kickoff             | `/my-mad User-Authentifizierung mit OAuth2` |
+| `/my-plan-review` | Plan-Review & Interview | `/my-plan-review`                           |
+| `/my-review`      | Code-Review             | `/my-review`                                |
+| `/my-debug`       | Debugging-Session       | `/my-debug Login schlägt nach Timeout fehl` |
+
+Jeder Command ist eine Markdown-Datei unter `~/.claude/commands/` (global) oder `.claude/commands/` (projektspezifisch), die das jeweilige Template enthält. `$ARGUMENTS` wird beim Aufruf durch den Text nach dem Command-Namen ersetzt – bei `/my-mad User-Auth mit OAuth2` landet "User-Auth mit OAuth2" direkt im Prompt.
+
+**Warum das `my-`Prefix?** Community-Plugins bringen oft eigene Slash Commands mit – `/review`, `/debug` und ähnliche Namen sind schnell vergeben. Das `my-`Prefix verhindert Namenskollisionen und macht sofort klar, welche Commands meine eigenen sind und welche von Plugins kommen. Wenn ich `/my-review` tippe, weiß ich, dass mein Template läuft – nicht das eines Plugins mit anderem Verhalten.
+
+Der Vorteil gegenüber Copy-Paste ist nicht nur Bequemlichkeit. Custom Commands sind versionierbar, teilbar und projektspezifisch anpassbar. Ein Team kann sich auf gemeinsame Commands einigen und sie ins Repository committen – jeder arbeitet dann mit denselben Workflows.
 
 ### Warum Templates besser sind
 
@@ -191,7 +284,7 @@ Du zahlst nur für das Ergebnis, nicht für den Prozess. Statt 10.000 Zeilen Tes
 
 ## Agents & Plugins
 
-Wer mit Claude Code arbeitet, nutzt Agents und Plugins oft, ohne es bewusst zu merken. Im Hintergrund delegiert Claude Code Teilaufgaben an spezialisierte **Built-in Agents**: Der Explore-Agent recherchiert die Codebase (günstig, weil er auf dem kleineren Haiku-Modell läuft), der Plan-Agent entwirft Architekturen im Read-only-Modus, und der general-purpose Agent übernimmt komplexe Multi-Step-Tasks. Claude Code entscheidet dabei selbst, wann ein Subagent sinnvoll ist. Man merkt es an der Statuszeile – und daran, dass der Context nicht mit tausenden Zeilen Test-Output zugemüllt wird.
+Wer mit Claude Code arbeitet, nutzt Agents und Plugins oft, ohne es bewusst zu merken. Im Hintergrund delegiert Claude Code Teilaufgaben an spezialisierte **Built-in Agents**: Der Explore-Agent recherchiert die Codebase im Read-only-Modus, der Plan-Agent entwirft Architekturen, und der general-purpose Agent übernimmt komplexe Multi-Step-Tasks. Alle drei laufen in isoliertem Context – Claude Code entscheidet dabei selbst, wann ein Subagent sinnvoll ist. Man merkt es an der Statuszeile – und daran, dass der Context nicht mit tausenden Zeilen Test-Output zugemüllt wird.
 
 Daneben gibt es **Community-Plugins**, die sich über den Plugin-Marketplace installieren lassen. In meinem Setup nutze ich unter anderem:
 
@@ -201,37 +294,31 @@ Daneben gibt es **Community-Plugins**, die sich über den Plugin-Marketplace ins
 
 Das Zusammenspiel aus Plugins, Built-in Agents und einer gut gepflegten **CLAUDE.md** ergibt ein Setup, das im Hintergrund mitdenkt. Die CLAUDE.md fungiert dabei als eine Art stille Konfiguration: Workflow-Trigger erkennen automatisch, ob ich gerade debugge oder ein Feature plane, und die Review-Checkliste wird nach jeder Änderung angewandt – ohne dass ich sie jedes Mal explizit anfordern muss.
 
-> **Info-Box: Eigene Commands erstellen**
+> **Info-Box: Skills, Plugins und eigene Commands**
 >
-> Wer wiederkehrende Workflows hat, die kein bestehendes Plugin abdeckt, kann eigene Custom Slash Commands schreiben. Ein Command ist eine einfache Markdown-Datei im `commands`-Verzeichnis:
+> Claude Code hat ein wachsendes Ökosystem an **Community-Plugins**, die sich über den Plugin-Marketplace installieren lassen. Skills sind dabei vorgefertigte Workflows, die automatisch erkannt und getriggert werden – oder manuell via `/skill-name` aufrufbar sind:
+>
+> | Skill               | Zweck                                                    |
+> | ------------------- | -------------------------------------------------------- |
+> | `/commit`           | Strukturierte Git-Commits                                |
+> | `/code-review`      | PR-Reviews auf Knopfdruck                                |
+> | `/session-handover` | Strukturierte Session-Übergabe                           |
+> | `/feature-dev`      | Geführte Feature-Entwicklung mit spezialisierten Agenten |
+>
+> Alle verfügbaren Skills zeigt `/skills` an.
+>
+> **Für einfachere, eigene Workflows** gibt es Custom Slash Commands – eine Markdown-Datei im `commands`-Verzeichnis:
 >
 > - `.claude/commands/mein-command.md` — **projekt-spezifisch**
 > - `~/.claude/commands/mein-command.md` — **global**
 >
-> Der Inhalt ist reines Markdown – eine Prompt-Vorlage, die Claude beim Aufruf als Anweisung erhält:
+> Der Inhalt ist reines Markdown – eine Prompt-Vorlage, die Claude beim Aufruf als Anweisung erhält. `$ARGUMENTS` wird beim Aufruf durch den Text nach dem Command-Namen ersetzt.
 >
-> ```
-> Führe die Tests aus und gib nur eine Zusammenfassung zurück:
-> Anzahl bestanden, fehlgeschlagen, und die Fehlermeldungen.
->
-> Wenn $ARGUMENTS angegeben: Führe nur die Tests für dieses Modul aus.
-> ```
->
-> `$ARGUMENTS` ist ein Platzhalter, der beim Aufruf durch den Text nach dem Command-Namen ersetzt wird:
->
-> `/user:test-runner auth-module` setzt `$ARGUMENTS` auf `auth-module`.
->
-> **Wann lohnt sich ein eigener Command?**
->
-> Wenn du denselben Prompt-Workflow mindestens 3x (chosen by fair dice role) pro Woche nutzt und er immer gleich abläuft – zum Beispiel ein Session-Handover, der den aktuellen Stand zusammenfasst, oder ein Test-Runner mit festem Output-Format.
->
-> **Abgrenzung zu Plugins:**
->
-> Für komplexere Workflows – mit eigenen Subagents, Tool-Einschränkungen oder isoliertem Context – gibt es das Plugin-System mit installierbaren Skills (z.B. `/feature-dev`, `/code-review`). Custom Commands sind die leichtgewichtige Variante.
+> **Abgrenzung:** Skills/Plugins für komplexe Workflows mit eigenen Subagents, Tool-Einschränkungen oder isoliertem Context. Custom Commands für leichtgewichtige, projektspezifische Prompts.
 
 ## Session-Management
 
-Context-Isolation hilft gegen Rauschen innerhalb einer Konversation. Aber es gibt noch ein zweites Problem: Der Context füllt sich über die Dauer einer Session auch mit _relevantem_ Inhalt – und irgendwann wird es zu viel. Die Statuszeile in Claude Code zeigt die Context-Auslastung in Prozent. Ab etwa **60-70%** merkt man, dass Antworten ungenauer werden – Claude "vergisst" Entscheidungen von früher in der Session oder ignoriert Teile der CLAUDE.md. Spätestens bei **80%** sollte man wechseln, nicht erst wenn der Context voll ist. Wer bis 95% wartet, arbeitet die letzten 20% mit spürbar schlechterer Qualität.
+Context-Isolation hilft gegen Rauschen innerhalb einer Konversation. Aber es gibt noch ein zweites Problem: Der Context füllt sich über die Dauer einer Session auch mit _relevantem_ Inhalt – und irgendwann wird es zu viel. Die Statuszeile in Claude Code zeigt die Context-Auslastung in Prozent. Ab etwa **50%** merkt man, dass Antworten ungenauer werden – Claude "vergisst" Entscheidungen von früher in der Session oder ignoriert Teile der CLAUDE.md. Ein guter Zeitpunkt zum Wechseln ist bei **30-40%** verbleibendem Context, nicht erst wenn es eng wird. Wer bis 90%+ wartet, arbeitet die letzten Prozente mit spürbar schlechterer Qualität.
 
 **Option 1: Context komprimieren (ohne Session-Wechsel)**
 
@@ -271,9 +358,65 @@ Dieses Übergabe-Prompt jedes Mal von Hand zu schreiben ist mühsam – und gena
 
 Der Vorteil: Die neue Session startet mit einem sauberen, fokussierten Context statt mit hunderten Zeilen alter Konversation – und man vergisst keine wichtigen Entscheidungen bei der Übergabe. Gerade bei langen Feature-Entwicklungen über mehrere Tage ist das oft effektiver als `--resume`, weil man bewusst entscheidet, welcher Kontext noch relevant ist.
 
+## Die Spielregeln: Mensch und Agent als Team
+
+Bisher ging es um Werkzeuge – Templates, Agents, Session-Management. Aber Werkzeuge allein reichen nicht. Was mindestens genauso wichtig ist: klare Regeln für die Zusammenarbeit zwischen Mensch und Agent. Ohne diese Regeln passiert, was bei jedem Pair-Programming ohne Absprachen passiert – einer rast voraus, der andere verliert den Überblick.
+
+### Funktion für Funktion
+
+Die wichtigste Regel in meinem Setup: **Der Agent implementiert nie autonom mehrere Funktionen am Stück.** Der Ablauf ist immer gleich:
+
+1. Eine Funktion/Komponente schreiben
+2. Stopp – zeigen und erklären: Was macht sie? Warum diese Lösung? Welche Alternativen gab es?
+3. Feedback einarbeiten
+4. Erst nach OK → nächste Funktion
+
+**Faustregel:** Sobald eine zweite Datei angefasst wird → STOPP und zeigen.
+
+Das klingt langsam, ist es aber nicht. Die meisten Fehler entstehen nicht beim Schreiben, sondern beim Übersehen – und die Kosten für einen übersehenen Fehler steigen exponentiell, je mehr Code bereits darauf aufbaut. Lieber nach jeder Funktion 30 Sekunden investieren als nach 500 Zeilen eine Stunde debuggen.
+
+### Planung: Arbeitspaket für Arbeitspaket
+
+Dasselbe Prinzip gilt für die Planungsphase: Nicht den gesamten Plan auf einmal entwerfen lassen, sondern iterativ – erstes Arbeitspaket entwerfen, Feedback geben, finalisieren, dann das nächste. Das verhindert, dass man am Ende einen 20-Pakete-Plan reviewt und dabei die Hälfte der Probleme übersieht.
+
+### Post-Implementation Review
+
+Nach Abschluss eines Arbeitspakets gehe ich jede Funktion nochmals durch:
+
+- Was macht sie?
+- Warum so und nicht anders?
+- Welche Edge Cases gibt es?
+
+Das Ziel: Ich muss jede Funktion in eigenen Worten erklären können. Code, den ich nicht erklären kann, ist Code, den ich nicht warten kann.
+
+### Rollenverteilung nach Kontext
+
+Nicht jede Aufgabe braucht dasselbe Maß an Kontrolle. In meinem Setup variiert die Rollenverteilung je nach Kontext:
+
+| Kontext                | Meine Rolle          | Agent-Rolle                                               |
+| ---------------------- | -------------------- | --------------------------------------------------------- |
+| Kernlogik              | Schreibe selbst      | Pair-Partner: Review, Fragen, Alternativen                |
+| Neue Sprache/Framework | Schreibe mit Support | Co-Pilot: Mehr Vorschläge, erklärt Idiome                 |
+| Frontend               | Lerne aktiv          | Schreibt + erklärt WARUM bei jedem Schritt                |
+| Boilerplate            | Reviewe              | Schreibt (Config, Types, Setup-Code)                      |
+| Scaffolding            | Gebe Vorgaben        | Erstellt autonom (Build-Config, Ordnerstruktur, CI-Setup) |
+
+**Der entscheidende Punkt:** Sobald es an Business-Logik geht – auch wenn es repetitiv aussieht – wird gemeinsam gearbeitet. Scaffolding (Projektstruktur, Build-Dateien, Config) darf der Agent autonom erstellen. Aber Klassen, Funktionen und Logik? Zurück in den Pair-Modus.
+
+### Verification: Evidenz vor Behauptung
+
+Eine letzte Regel, die sich als unverzichtbar herausgestellt hat: **Keine Completion-Claims ohne Verifikation.** Bevor etwas als "fertig" gilt:
+
+1. Build prüfen – kompiliert/baut das Projekt fehlerfrei?
+2. Tests laufen lassen – alle grün?
+3. Lint prüfen – keine neuen Warnings?
+4. Manuell verifizieren – Ergebnis tatsächlich im Browser/Terminal prüfen
+
+Erst dann ist es fertig. Klingt offensichtlich, aber ohne diese explizite Regel neigen Agents dazu, nach dem letzten Code-Edit "fertig" zu melden – ohne den Build überhaupt ausgeführt zu haben.
+
 ## Wie viel Autonomie ist sinnvoll? MAD vs. Ralph erklärt
 
-Bisher ging es darum, _wie_ man mit Claude Code arbeitet: Templates, Context-Isolation, Session-Management. Aber eine Frage haben wir noch nicht beantwortet: Wie viel Kontrolle brauche ich eigentlich?
+Mit den Spielregeln im Hinterkopf stellt sich die nächste Frage: Wie viel Kontrolle brauche ich eigentlich?
 
 | Aspekt          | MAD (manuell)           | Ralph (autonom)             |
 | --------------- | ----------------------- | --------------------------- |

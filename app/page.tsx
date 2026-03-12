@@ -1,6 +1,6 @@
-import Stars from "./components/stars"
-import BlogPreview from "./components/blog-preview"
-import Footer from "./components/footer"
+import Stars from "./components/hero-animation";
+import BlogPreview from "./components/blog-preview";
+import Footer from "./components/footer";
 
 export default function Page() {
   return (
@@ -9,6 +9,5 @@ export default function Page() {
       <BlogPreview />
       <Footer />
     </main>
-  )
+  );
 }
-
