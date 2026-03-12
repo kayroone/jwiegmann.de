@@ -8,7 +8,9 @@ tags: ["AI", "Claude Code", "Workflow", "Autonomie", "Best Practices"]
 _Dies ist Teil 2 einer dreiteiligen Serie._
 
 - _[Teil 1: Theorie](./warum-gute-entwickler-mit-ai-besser-werden)_
-- Teil 3: Zukunft (comming soon)
+- _[Teil 3: Zukunft](./software-engineering-im-ki-zeitalter-zukunft)_
+
+_**Update 12.03.2026:** Update auf Grund der rasanten Entwicklung -- neuer Abschnitt zur orchestrierten `/my-feature`-Pipeline, die die einzelnen Templates zu einem durchgängigen Workflow verbindet._
 
 ---
 
@@ -16,10 +18,10 @@ _Dies ist Teil 2 einer dreiteiligen Serie._
 
 - [Einleitung](#einleitung)
 - [Prompt-Templates](#prompt-templates)
+  - [Von einzelnen Commands zur orchestrierten Pipeline: `/my-feature`](#von-einzelnen-commands-zur-orchestrierten-pipeline-my-feature)
 - [Context-Isolation](#context-isolation)
 - [Agents & Plugins](#agents--plugins)
 - [Session-Management](#session-management)
-- [Die Spielregeln: Mensch und Agent als Team](#die-spielregeln-mensch-und-agent-als-team)
 - [Wie viel Autonomie ist sinnvoll? MAD vs. Ralph erklärt](#wie-viel-autonomie-ist-sinnvoll-mad-vs-ralph-erklärt)
 - [Fazit: Lessons Learned](#fazit-lessons-learned)
 
@@ -250,18 +252,32 @@ Die Templates oben sind die Grundlage – aber jedes Mal den Prompt rauskopieren
 
 Jeder Command ist eine Markdown-Datei unter `~/.claude/commands/` (global) oder `.claude/commands/` (projektspezifisch), die das jeweilige Template enthält. `$ARGUMENTS` wird beim Aufruf durch den Text nach dem Command-Namen ersetzt – bei `/my-mad User-Auth mit OAuth2` landet "User-Auth mit OAuth2" direkt im Prompt.
 
-**Warum das `my-`Prefix?** Community-Plugins bringen oft eigene Slash Commands mit – `/review`, `/debug` und ähnliche Namen sind schnell vergeben. Das `my-`Prefix verhindert Namenskollisionen und macht sofort klar, welche Commands meine eigenen sind und welche von Plugins kommen. Wenn ich `/my-review` tippe, weiß ich, dass mein Template läuft – nicht das eines Plugins mit anderem Verhalten.
+**Warum das `my-`Prefix?** Community-Plugins bringen oft eigene Slash Commands mit – `/review`, `/debug` und ähnliche Namen sind schnell vergeben. Das `my-`Prefix verhindert Namenskollisionen und macht sofort klar, welche Commands meine eigenen sind und welche von Plugins kommen. Wenn ich `/my-review` tippe, weiß ich, dass mein Template läuft – nicht das eines Plugins.
 
-Der Vorteil gegenüber Copy-Paste ist nicht nur Bequemlichkeit. Custom Commands sind versionierbar, teilbar und projektspezifisch anpassbar. Ein Team kann sich auf gemeinsame Commands einigen und sie ins Repository committen – jeder arbeitet dann mit denselben Workflows.
+Custom Commands sind versionierbar, teilbar und projektspezifisch anpassbar. Ein Team kann sich auf gemeinsame Commands einigen und sie ins Repository committen – jeder arbeitet dann mit denselben Workflows.
 
-### Warum Templates besser sind
+### Von einzelnen Commands zur orchestrierten Pipeline: `/my-feature`
 
-Der Vorteil ist nicht nur Zeitersparnis. Templates sorgen für:
+Die Commands oben -- `/my-mad`, `/my-plan-review`, `/my-review`, `/my-debug` -- sind Einzelwerkzeuge. Für größere Features rufe ich sie nicht nacheinander manuell auf, sondern nutze `/my-feature` als Orchestrator: Ein Ring sie alle zu knechten.. oder so ähnlich: Hier ist es ein Custom Command, der die Subagents orchestriert -- jeder in isoliertem Context, jeder mit einem klar definierten Job.
 
-- **Konsistenz**: Jedes Feature durchläuft denselben strukturierten Prozess
-- **Weniger kognitive Last**: Ich überlege nicht "wie formuliere ich das?", sondern nur "was will ich?"
-- **Wiederholbare Qualität**: Die Ergebnisse schwanken weniger, weil der Prozess gleich bleibt
-- **Lerneffekt**: Mit der Zeit optimiere ich die Templates basierend auf Erfahrungen
+```
+/my-feature "Login mit OAuth2"
+│
+├─ 1. Codebase-Scan       → Bestehende Architektur analysieren (read-only)
+│   └─ STOPP → Mein OK
+├─ 2. Gherkin-Agent        → Feature Files erstellen + KI-Self-Review
+│   └─ STOPP → Mein OK
+├─ 3. Clarify-Check        → Mehrdeutigkeiten & Widersprüche prüfen
+│   └─ STOPP → Mein OK (bei Konflikten: zurück zu Schritt 2)
+├─ 4. MAD-Agent            → Arbeitspakete + TDD-Plan
+│   └─ STOPP → Mein OK
+└─ 5. Review + Checklist   → Qualitätsprüfung + Scope-Abgleich
+    └─ STOPP → Mein OK → "Plan bereit"
+```
+
+`/my-feature` ist kein neues Template, sondern eine Art Dach über den bestehenden. Der MAD-Agent in Schritt 4 nutzt dieselbe Zerlegungslogik wie `/my-mad`, der Review in Schritt 5 dieselben Kriterien wie `/my-review`. Was `/my-feature` hinzufügt, ist die Orchestrierung: die richtige Reihenfolge, die STOPP-Punkte nach jedem Schritt, und die Weitergabe des Codebase-Kontexts aus Schritt 1 an alle folgenden Agents.
+
+Nochmal zusammen: Technisch ist `/my-feature` ein Custom Command (`~/.claude/commands/my-feature.md`), der pro Schritt eine Agent-Definition aus `~/.claude/agents/` lädt und als Subagent startet. Jeder Agent läuft in eigenem Context-Fenster -- die Codebase-Analyse aus Schritt 1 nimmt so keinen Platz in meiner Hauptkonversation weg, sondern kommt als kompakter Report zurück. Damit verbindet `/my-feature` die drei Konzepte, die diesen Artikel durchziehen: Templates als Bausteine, Context-Isolation für sauberen Context, und Agents als Ausführungsebene.
 
 ## Context-Isolation
 
@@ -292,7 +308,7 @@ Daneben gibt es **Community-Plugins**, die sich über den Plugin-Marketplace ins
 - `/feature-dev` – Geführte Feature-Entwicklung mit spezialisierten Agenten (code-architect, code-explorer, code-reviewer)
 - `/code-review` – PR-Reviews auf Knopfdruck
 
-Das Zusammenspiel aus Plugins, Built-in Agents und einer gut gepflegten **CLAUDE.md** ergibt ein Setup, das im Hintergrund mitdenkt. Die CLAUDE.md fungiert dabei als eine Art stille Konfiguration: Workflow-Trigger erkennen automatisch, ob ich gerade debugge oder ein Feature plane, und die Review-Checkliste wird nach jeder Änderung angewandt – ohne dass ich sie jedes Mal explizit anfordern muss.
+Zusammen mit den eigenen `my-*` Custom Commands aus dem vorherigen Kapitel -- `/my-mad` für MAD-Zerlegung, `/my-review` für Code-Reviews, `/my-feature` als orchestrierte Pipeline -- ergibt sich ein dreischichtiges Setup: Built-in Agents für die Infrastruktur, Community-Plugins für standardisierte Workflows, und eigene Commands für projektspezifische Prozesse. Verbunden wird das Ganze durch eine **CLAUDE.md**, die als stille Konfiguration fungiert: Workflow-Trigger erkennen automatisch, ob ich gerade debugge oder ein Feature plane, und die Review-Checkliste wird nach jeder Änderung angewandt, ohne dass ich sie jedes Mal explizit anfordern muss.
 
 > **Info-Box: Skills, Plugins und eigene Commands**
 >
@@ -357,62 +373,6 @@ Dieses Übergabe-Prompt jedes Mal von Hand zu schreiben ist mühsam – und gena
 ```
 
 Der Vorteil: Die neue Session startet mit einem sauberen, fokussierten Context statt mit hunderten Zeilen alter Konversation – und man vergisst keine wichtigen Entscheidungen bei der Übergabe. Gerade bei langen Feature-Entwicklungen über mehrere Tage ist das oft effektiver als `--resume`, weil man bewusst entscheidet, welcher Kontext noch relevant ist.
-
-## Die Spielregeln: Mensch und Agent als Team
-
-Bisher ging es um Werkzeuge – Templates, Agents, Session-Management. Aber Werkzeuge allein reichen nicht. Was mindestens genauso wichtig ist: klare Regeln für die Zusammenarbeit zwischen Mensch und Agent. Ohne diese Regeln passiert, was bei jedem Pair-Programming ohne Absprachen passiert – einer rast voraus, der andere verliert den Überblick.
-
-### Funktion für Funktion
-
-Die wichtigste Regel in meinem Setup: **Der Agent implementiert nie autonom mehrere Funktionen am Stück.** Der Ablauf ist immer gleich:
-
-1. Eine Funktion/Komponente schreiben
-2. Stopp – zeigen und erklären: Was macht sie? Warum diese Lösung? Welche Alternativen gab es?
-3. Feedback einarbeiten
-4. Erst nach OK → nächste Funktion
-
-**Faustregel:** Sobald eine zweite Datei angefasst wird → STOPP und zeigen.
-
-Das klingt langsam, ist es aber nicht. Die meisten Fehler entstehen nicht beim Schreiben, sondern beim Übersehen – und die Kosten für einen übersehenen Fehler steigen exponentiell, je mehr Code bereits darauf aufbaut. Lieber nach jeder Funktion 30 Sekunden investieren als nach 500 Zeilen eine Stunde debuggen.
-
-### Planung: Arbeitspaket für Arbeitspaket
-
-Dasselbe Prinzip gilt für die Planungsphase: Nicht den gesamten Plan auf einmal entwerfen lassen, sondern iterativ – erstes Arbeitspaket entwerfen, Feedback geben, finalisieren, dann das nächste. Das verhindert, dass man am Ende einen 20-Pakete-Plan reviewt und dabei die Hälfte der Probleme übersieht.
-
-### Post-Implementation Review
-
-Nach Abschluss eines Arbeitspakets gehe ich jede Funktion nochmals durch:
-
-- Was macht sie?
-- Warum so und nicht anders?
-- Welche Edge Cases gibt es?
-
-Das Ziel: Ich muss jede Funktion in eigenen Worten erklären können. Code, den ich nicht erklären kann, ist Code, den ich nicht warten kann.
-
-### Rollenverteilung nach Kontext
-
-Nicht jede Aufgabe braucht dasselbe Maß an Kontrolle. In meinem Setup variiert die Rollenverteilung je nach Kontext:
-
-| Kontext                | Meine Rolle          | Agent-Rolle                                               |
-| ---------------------- | -------------------- | --------------------------------------------------------- |
-| Kernlogik              | Schreibe selbst      | Pair-Partner: Review, Fragen, Alternativen                |
-| Neue Sprache/Framework | Schreibe mit Support | Co-Pilot: Mehr Vorschläge, erklärt Idiome                 |
-| Frontend               | Lerne aktiv          | Schreibt + erklärt WARUM bei jedem Schritt                |
-| Boilerplate            | Reviewe              | Schreibt (Config, Types, Setup-Code)                      |
-| Scaffolding            | Gebe Vorgaben        | Erstellt autonom (Build-Config, Ordnerstruktur, CI-Setup) |
-
-**Der entscheidende Punkt:** Sobald es an Business-Logik geht – auch wenn es repetitiv aussieht – wird gemeinsam gearbeitet. Scaffolding (Projektstruktur, Build-Dateien, Config) darf der Agent autonom erstellen. Aber Klassen, Funktionen und Logik? Zurück in den Pair-Modus.
-
-### Verification: Evidenz vor Behauptung
-
-Eine letzte Regel, die sich als unverzichtbar herausgestellt hat: **Keine Completion-Claims ohne Verifikation.** Bevor etwas als "fertig" gilt:
-
-1. Build prüfen – kompiliert/baut das Projekt fehlerfrei?
-2. Tests laufen lassen – alle grün?
-3. Lint prüfen – keine neuen Warnings?
-4. Manuell verifizieren – Ergebnis tatsächlich im Browser/Terminal prüfen
-
-Erst dann ist es fertig. Klingt offensichtlich, aber ohne diese explizite Regel neigen Agents dazu, nach dem letzten Code-Edit "fertig" zu melden – ohne den Build überhaupt ausgeführt zu haben.
 
 ## Wie viel Autonomie ist sinnvoll? MAD vs. Ralph erklärt
 
