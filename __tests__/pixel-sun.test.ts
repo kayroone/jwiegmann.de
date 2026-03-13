@@ -3,10 +3,10 @@ import { PixelSun, PIXEL_SIZE } from "@/app/components/hero-animation";
 
 describe("PixelSun", () => {
   describe("constructor", () => {
-    it("positions sun at canvas.height * 0.22 vertically and centered horizontally", () => {
+    it("positions sun at canvas.height * 0.18 vertically and centered horizontally", () => {
       const sun = new PixelSun(800, 600);
       expect(sun.centerX).toBe(400); // 800 / 2
-      expect(sun.centerY).toBeCloseTo(132); // 600 * 0.22
+      expect(sun.centerY).toBeCloseTo(108); // 600 * 0.18
     });
 
     it("has a fixed body radius of approximately 40px", () => {
