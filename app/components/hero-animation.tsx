@@ -15,7 +15,7 @@ export const PIXEL_SIZE = 4;
 
 /**
  * PixelSun - pixel art sun with radial color gradient and animated rays
- * Positioned above the heading at canvas.height * 0.22
+ * Positioned above the heading at canvas.height * 0.18
  */
 export class PixelSun {
   centerX: number;
@@ -24,13 +24,13 @@ export class PixelSun {
 
   constructor(canvasWidth: number, canvasHeight: number) {
     this.centerX = canvasWidth / 2;
-    this.centerY = canvasHeight * 0.22;
+    this.centerY = canvasHeight * 0.18;
     this.bodyRadius = 40;
   }
 
   reposition(canvasWidth: number, canvasHeight: number) {
     this.centerX = canvasWidth / 2;
-    this.centerY = canvasHeight * 0.22;
+    this.centerY = canvasHeight * 0.18;
   }
 
   getBodyPixels(): { x: number; y: number; dist: number }[] {
