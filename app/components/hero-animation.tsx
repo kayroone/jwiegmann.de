@@ -250,9 +250,10 @@ export default function Stars() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Set canvas to full window size
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    // Set canvas to match the actual container size (dvh-aware)
+    const container = canvas.parentElement;
+    canvas.width = container?.clientWidth ?? window.innerWidth;
+    canvas.height = container?.clientHeight ?? window.innerHeight;
 
     const particles: Particle[] = [];
     const particleCount = 100;
@@ -637,16 +638,18 @@ export default function Stars() {
     // Handle window resize
     const handleResize = () => {
       if (!canvasRef.current) return;
-      canvasRef.current.width = window.innerWidth;
-      canvasRef.current.height = window.innerHeight;
+      const c = canvasRef.current;
+      const parent = c.parentElement;
+      c.width = parent?.clientWidth ?? window.innerWidth;
+      c.height = parent?.clientHeight ?? window.innerHeight;
 
       // Reposition/regenerate spring elements
       if (ENABLE_SPRING_THEME) {
         if (sun) {
-          sun.reposition(window.innerWidth, window.innerHeight);
+          sun.reposition(c.width, c.height);
         }
         if (grass) {
-          grass.regenerate(window.innerWidth, window.innerHeight);
+          grass.regenerate(c.width, c.height);
         }
       }
     };
@@ -663,7 +666,7 @@ export default function Stars() {
   const iconBg = "bg-zinc-800 text-white hover:bg-zinc-700";
 
   return (
-    <div className="relative h-screen w-full overflow-hidden">
+    <div className="relative h-dvh w-full overflow-hidden">
       <canvas
         ref={canvasRef}
         className="absolute inset-0 h-full w-full bg-black"
