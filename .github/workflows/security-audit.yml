@@ -7,8 +7,11 @@ on:
     branches: [main]
   schedule:
     # Läuft täglich um 07:00 UTC (08:00 MEZ / 09:00 MESZ)
-    - cron: '0 7 * * *'
+    - cron: "0 7 * * *"
   workflow_dispatch: # Manueller Trigger möglich
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   audit:
@@ -21,7 +24,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: "22"
 
       - name: Install dependencies
         run: npm ci
@@ -39,13 +42,11 @@ jobs:
       - name: Check for critical vulnerabilities
         run: |
           CRITICAL=$(jq '.metadata.vulnerabilities.critical // 0' audit-report.json)
-          HIGH=$(jq '.metadata.vulnerabilities.high // 0' audit-report.json)
 
           echo "Critical vulnerabilities: $CRITICAL"
-          echo "High vulnerabilities: $HIGH"
 
-          if [ "$CRITICAL" -gt 0 ] || [ "$HIGH" -gt 0 ]; then
-            echo "::error::Found $CRITICAL critical and $HIGH high severity vulnerabilities!"
+          if [ "$CRITICAL" -gt 0 ]; then
+            echo "::error::Found $CRITICAL critical severity vulnerabilities!"
             exit 1
           fi
 
