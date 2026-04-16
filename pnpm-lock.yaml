@@ -28,7 +28,7 @@ dependencies:
     version: 4.2.2
   autoprefixer:
     specifier: ^10.5.0
-    version: 10.5.0(postcss@8.5.9)
+    version: 10.5.0(postcss@8.5.10)
   class-variance-authority:
     specifier: ^0.7.1
     version: 0.7.1
@@ -108,7 +108,7 @@ devDependencies:
     version: 19.2.3(@types/react@19.2.14)
   postcss:
     specifier: ^8
-    version: 8.5.9
+    version: 8.5.10
   tailwindcss:
     specifier: ~4.2.2
     version: 4.2.2
@@ -1263,7 +1263,7 @@ packages:
       '@alloc/quick-lru': 5.2.0
       '@tailwindcss/node': 4.2.2
       '@tailwindcss/oxide': 4.2.2
-      postcss: 8.5.9
+      postcss: 8.5.10
       tailwindcss: 4.2.2
     dev: false
 
@@ -1620,7 +1620,7 @@ packages:
     engines: {node: '>=12'}
     dev: true
 
-  /autoprefixer@10.5.0(postcss@8.5.9):
+  /autoprefixer@10.5.0(postcss@8.5.10):
     resolution: {integrity: sha512-FMhOoZV4+qR6aTUALKX2rEqGG+oyATvwBt9IIzVR5rMa2HRWPkxf+P+PAJLD1I/H5/II+HuZcBJYEFBpq39ong==}
     engines: {node: ^10 || ^12 || >=14}
     hasBin: true
@@ -1631,7 +1631,7 @@ packages:
       caniuse-lite: 1.0.30001787
       fraction.js: 5.3.4
       picocolors: 1.1.1
-      postcss: 8.5.9
+      postcss: 8.5.10
       postcss-value-parser: 4.2.0
     dev: false
 
