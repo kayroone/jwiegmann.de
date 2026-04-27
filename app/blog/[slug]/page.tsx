@@ -6,6 +6,19 @@ import { notFound } from "next/navigation";
 import MermaidRenderer from "../../../components/mermaid-renderer";
 import MermaidZoom from "../../../components/mermaid-zoom";
 import StaticGrass from "../../../components/static-grass";
+import StaticStars from "../../../components/static-stars";
+import { ACTIVE_THEME } from "../../components/theme";
+
+function ThemeBackground() {
+  switch (ACTIVE_THEME) {
+    case "stars":
+      return <StaticStars />;
+    case "spring":
+      return <StaticGrass />;
+    case "vines":
+      return null;
+  }
+}
 
 interface BlogPostParams {
   params: Promise<{
@@ -59,7 +72,7 @@ export default async function BlogPost({ params }: BlogPostParams) {
 
   return (
     <main className="min-h-screen bg-black text-white relative">
-      <StaticGrass />
+      <ThemeBackground />
       <MermaidRenderer />
       <MermaidZoom />
       <article className="container mx-auto px-4 py-12 relative z-10">
