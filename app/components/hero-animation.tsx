@@ -4,11 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, User, Rss } from "lucide-react";
 import Link from "next/link";
-
-// Feature toggles - set to true/false to enable/disable
-const ENABLE_STARS = false;
-const ENABLE_VINES = false;
-const ENABLE_SPRING_THEME = true;
+import { ACTIVE_THEME } from "./theme";
 
 // Shared pixel art configuration
 export const PIXEL_SIZE = 4;
@@ -262,7 +258,7 @@ export default function Stars() {
     // Spring theme elements
     let sun: PixelSun | null = null;
     let grass: PixelGrass | null = null;
-    if (ENABLE_SPRING_THEME) {
+    if (ACTIVE_THEME === "spring") {
       sun = new PixelSun(canvas.width, canvas.height);
       grass = new PixelGrass(canvas.width, canvas.height);
     }
@@ -588,7 +584,7 @@ export default function Stars() {
       const time = performance.now() * 0.0008;
 
       // Spawn new vine periodically (only if vines enabled AND spring theme is off)
-      if (ENABLE_VINES && !ENABLE_SPRING_THEME) {
+      if (ACTIVE_THEME === "vines") {
         const now = Date.now();
         if (
           now - lastVineSpawn > vineSpawnInterval &&
@@ -600,15 +596,14 @@ export default function Stars() {
       }
 
       // Draw stars if enabled
-      if (ENABLE_STARS) {
+      if (ACTIVE_THEME === "stars") {
         for (const particle of particles) {
           particle.update();
           particle.draw();
         }
       }
 
-      // Draw vines if enabled (and spring theme is off)
-      if (ENABLE_VINES && !ENABLE_SPRING_THEME) {
+      if (ACTIVE_THEME === "vines") {
         for (let i = vines.length - 1; i >= 0; i--) {
           const vine = vines[i];
           vine.update();
@@ -621,7 +616,7 @@ export default function Stars() {
       }
 
       // Draw spring theme elements: grass first, then sun on top
-      if (ENABLE_SPRING_THEME) {
+      if (ACTIVE_THEME === "spring") {
         if (grass) {
           grass.draw(ctx, time);
         }
@@ -644,7 +639,7 @@ export default function Stars() {
       c.height = parent?.clientHeight ?? window.innerHeight;
 
       // Reposition/regenerate spring elements
-      if (ENABLE_SPRING_THEME) {
+      if (ACTIVE_THEME === "spring") {
         if (sun) {
           sun.reposition(c.width, c.height);
         }
