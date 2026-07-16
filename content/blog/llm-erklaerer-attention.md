@@ -1,6 +1,6 @@
 ---
 title: "LLM-Erklärer (Teil 2): Attention - Wie ein LLM versteht"
-date: "2026-05-08"
+date: "2026-07-16"
 excerpt: "Query, Key, Value, Multi-Head und O(n²): Wie aus statischen Embeddings kontextabhängige Bedeutung wird."
 tags: ["AI", "LLM", "Transformer", "Attention", "Erklärer"]
 ---
@@ -127,7 +127,12 @@ Dieses Ergebnis wurde - wie in dem Buch [LLM & Transformer Interview Essentials 
 3. Diese Mischung wird zurück in den ursprünglichen Embedding-Raum geführt.
 4. Das Ergebnis wird per "Residual Connection" auf das Original-Embedding addiert. Die ursprüngliche Bedeutung des Wortes geht nicht verloren, nur die "Metadaten" zu den anderen Wörtern kommen obendrauf.
 
-Bleibt noch die Frage aus Teil 1: _Warum werden längere Eingaben überproportional viel teurer?_ X. Fang beantwortet dies in dem oben vereinfacht dargestellten Schritt 2: Jedes Wort spricht dort ja mit jedem anderen Wort. Bei _n_ Tokens sind das _n · n_ Paare - der Rechenaufwand wächst also **quadratisch** mit der Länge der Eingabe (in Fachsprache: **O(n²)**). Doppelt so viele Tokens bedeuten viermal so viel Attention-Arbeit. Das ist der Grund, warum lange Kontexte in LLMs so teuer sind. Eine der größten Herausforderungen der aktuellen Forschung der Big-Tech-Firmen ist somit, diese Quadrat-Grenze zu umgehen. Die Ersten, die das schaffen, werden die Nase im KI-Rennen wieder eine lange Zeit vorne haben. Bis letztlich der nächste große Durchbruch kommt. Was auch immer das sein wird.
+Bleibt noch die Frage aus Teil 1: _Warum werden längere Eingaben überproportional viel teurer?_ 
+
+X. Fang beantwortet dies in dem oben vereinfacht dargestellten Schritt 2: Jedes Wort spricht dort ja mit jedem anderen Wort. Bei _n_ Tokens sind das _n · n_ Paare - der Rechenaufwand wächst also **quadratisch** mit der Länge der Eingabe (in Fachsprache: **O(n²)**). Doppelt so viele Tokens bedeuten viermal so viel Attention-Arbeit. Das ist der Grund, warum lange Kontexte in LLMs so teuer sind. Eine der größten Herausforderungen der aktuellen Forschung der Big-Tech-Firmen ist somit, diese Quadrat-Grenze zu umgehen. Die Ersten, die das schaffen, werden die Nase im KI-Rennen wieder eine lange Zeit vorne haben. Bis letztlich der nächste große Durchbruch kommt. Was auch immer das sein wird.
+
+Vielen Dank mal wieder fürs Lesen
+Jan <3
 
 ## Quellenübersicht
 
