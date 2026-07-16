@@ -64,7 +64,7 @@ Gehen wir jetzt zurück zu unserem Beispielsatz: Alle Wörter des Satzes können
 
 Das gemeinsame Interesse ist hier also gefunden. Unterhalten sich jedoch "Geld" und "Bank" miteinander, so wird es nicht bei Sitzgelegenheit im Freien "klick" machen, sondern eher bei "Geld auszahlen". Die Wörter unterhalten sich also untereinander und erkennen dabei ihre gemeinsamen Interessen - oder eben auch nicht. Auf Basis der Ergebnisse jeder einzelnen Befragung wissen die Wörter in ihrem Satz immer mehr, in welcher Beziehung sie zu den anderen Wörtern stehen. Schritt für Schritt kristallisiert sich so die Bedeutung jedes einzelnen Wortes in dem Satz heraus.
 
-Damit ist die Grundidee von Attention gesetzt. Offen bleibt das _Wie_: Was bringt ein Wort konkret in so ein Gespräch mit? Wonach fragt es, woran erkennt es, worum es geht, und was hat es selbst zu erzählen? Die Antwort sind drei Vektoren, die jedes Wort sich gleichzeitig zulegt. Genau darum geht es in Schritt 1, dem niedrigdimensionalen "Konzeptraum".
+Damit ist die Grundidee von Attention hoffentlich klar. Offen bleibt das _Wie_: Was bringt ein Wort konkret in so ein Gespräch mit? Wonach fragt es, woran erkennt es, worum es geht, und was hat es selbst zu erzählen? Die Antwort sind drei Vektoren, die jedes Wort sich gleichzeitig zulegt. Genau darum geht es in Schritt 1, dem niedrigdimensionalen "Konzeptraum".
 
 ## Schritt 1 - Projektion in den Konzeptraum
 
