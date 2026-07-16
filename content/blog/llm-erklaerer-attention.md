@@ -11,7 +11,7 @@ _Dies ist Teil 2 einer zweiteiligen Serie._
 
 ---
 
-> **TL;DR:** Attention ist der Mechanismus, der aus statischen Embeddings kontextabhängige Bedeutung macht. In vier Schritten projiziert das LLM jedes Token in einen niedrigdimensionalen "Konzeptraum", lässt die Tokens sich dort gegenseitig befragen, projiziert das Ergebnis zurück und addiert es auf das ursprüngliche Embedding. Am Ende weiß das LLM, _welche_ "Bank" gemeint ist -- und wir verstehen nebenbei, warum längere Eingaben überproportional viel teurer werden.
+> **TL;DR:** Attention ist der Mechanismus, der aus statischen Embeddings kontextabhängige Bedeutung macht. In vier Schritten projiziert das LLM jedes Token in einen niedrigdimensionalen "Konzeptraum", lässt die Tokens sich dort gegenseitig befragen, projiziert das Ergebnis zurück und addiert es auf das ursprüngliche Embedding. Am Ende weiß das LLM, _welche_ "Bank" gemeint ist.
 
 ## Inhaltsverzeichnis
 
