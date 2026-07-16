@@ -43,7 +43,7 @@ Die Struktur, an der wir uns entlanghangeln, stammt aus X. Fangs Buch [LLM & Tra
 1. Jedes Token wird in einen niedrigdimensionalen "Konzeptraum" projiziert.
 2. In diesem Raum befragen sich die Tokens gegenseitig und werden gewichtet.
 3. Das Ergebnis wird zurück in den ursprünglichen Embedding-Raum projiziert.
-4. Diese Mischung wird auf das ursprüngliche Embedding addiert.
+4. Diese Informationen werden wie eine Art "Metadaten" auf das ursprüngliche Embedding addiert.
 
 Und ja, es ist im Detail viel Mathematik. Die ich hier aber bewusst außen vor lasse und versuche diese abstrakten Vorgänge anhand einfacher Metaphern und Bilder verständlich zu machen. On top beantworten wir so auch direkt eine Frage aus Teil 1: _warum mehr Tokens überproportional viel mehr Rechenaufwand bedeuten._
 
