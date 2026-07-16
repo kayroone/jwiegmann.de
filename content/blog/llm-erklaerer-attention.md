@@ -41,7 +41,7 @@ Die Antwort ist der **Attention-Mechanismus**, vorgestellt im Paper [Attention I
 Die Struktur, an der wir uns entlanghangeln, stammt aus X. Fangs Buch [LLM & Transformer Interview Essentials A-Z](https://www.amazon.com/LLM-Transformer-Interview-Essentials-Z-ebook/dp/B0DNTJ4ZNG) und besteht aus vier Schritten:
 
 1. Jedes Token wird in einen niedrigdimensionalen "Konzeptraum" projiziert.
-2. In diesem Raum befragen sich die Tokens gegenseitig und werden gewichtet vermischtBibliotheks-Metapher".
+2. In diesem Raum befragen sich die Tokens gegenseitig und werden gewichtet.
 3. Das Ergebnis wird zurück in den ursprünglichen Embedding-Raum projiziert.
 4. Diese Mischung wird auf das ursprüngliche Embedding addiert.
 
