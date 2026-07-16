@@ -36,12 +36,12 @@ In [Teil 1](./llm-erklaerer-von-text-zu-zahlen) haben wir einen Satz auf seinem 
 
 Das war unser Cliffhanger im ersten Teil. Die beiden "Bank"-Tokens haben durch das Positional Encoding zwar leicht unterschiedliche Vektoren bekommen, aber ihre eigentliche Bedeutung steckte immer noch im selben Embedding. Das LLM weiß, _wo_ jede "Bank" im Satz steht, aber noch nicht, _welche_ gemeint ist - die konkrete Bedeutung des Wortes fehlt also noch. Wie kommt das LLM jetzt darauf, dass die erste eine Sitzbank im Park ist und die zweite ein Geldinstitut ist?
 
-Die Antwort ist der **Attention-Mechanismus**, vorgestellt im Paper [Attention Is All You Need](https://arxiv.org/abs/1706.03762) von Google aus dem Jahr 2017. Um das Ganze anschaulich zu halten, fahren wir zweigleisig: Wir nehmen weiter unseren Bank-Beispielsatz aus Teil 1 **und** legen darüber eine **Bibliotheks-Metapher**, die den Mechanismus von Attention greifbar macht. Der Beispielsatz zeigt, _was_ das LLM lernen muss und die Bibliotheks-Metapher zeigt, _wie_ es das tut.
+Die Antwort ist der **Attention-Mechanismus**, vorgestellt im Paper [Attention Is All You Need](https://arxiv.org/abs/1706.03762) von Google aus dem Jahr 2017. Um das Ganze anschaulich zu halten, bleiben wir bei unserem Bank-Beispielsatz aus Teil 1. Mit ein paar einfachen Metaphern werde ich versuchen den Attention-Mechanismus greifbar zu machen.
 
 Die Struktur, an der wir uns entlanghangeln, stammt aus X. Fangs Buch [LLM & Transformer Interview Essentials A-Z](https://www.amazon.com/LLM-Transformer-Interview-Essentials-Z-ebook/dp/B0DNTJ4ZNG) und besteht aus vier Schritten:
 
 1. Jedes Token wird in einen niedrigdimensionalen "Konzeptraum" projiziert.
-2. In diesem Raum befragen sich die Tokens gegenseitig und werden gewichtet vermischt.
+2. In diesem Raum befragen sich die Tokens gegenseitig und werden gewichtet vermischtBibliotheks-Metapher".
 3. Das Ergebnis wird zurück in den ursprünglichen Embedding-Raum projiziert.
 4. Diese Mischung wird auf das ursprüngliche Embedding addiert.
 
