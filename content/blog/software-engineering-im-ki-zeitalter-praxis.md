@@ -10,7 +10,7 @@ _Dies ist Teil 2 einer dreiteiligen Serie._
 - _[Teil 1: Theorie](./warum-gute-entwickler-mit-ai-besser-werden)_
 - _[Teil 3: Zukunft](./software-engineering-im-ki-zeitalter-zukunft)_
 
-_**Update 12.03.2026:** Update auf Grund der rasanten Entwicklung -- neuer Abschnitt zur orchestrierten `/my-feature`-Pipeline, die die einzelnen Templates zu einem durchgängigen Workflow verbindet._
+_**Update 12.03.2026:** Update auf Grund der rasanten Entwicklung: neuer Abschnitt zur orchestrierten `/my-feature`-Pipeline, die die einzelnen Templates zu einem durchgängigen Workflow verbindet._
 
 ---
 
@@ -27,19 +27,19 @@ _**Update 12.03.2026:** Update auf Grund der rasanten Entwicklung -- neuer Absch
 
 ## Einleitung
 
-Aus dem ursprünglich geplanten Follow-up zu meinem ersten Artikel ist eine Trilogie geworden. Das Thema war einfach zu groß für einen einzigen Nachfolger: [Teil 1](./warum-gute-entwickler-mit-ai-besser-werden) behandelt die Theorie – warum Zerlegung wichtig ist und wie Fehlerraten funktionieren. Dieser zweite Teil hier zeigt mein konkretes Praxis-Setup. Und in Teil 3 wird es um die Zukunft gehen – was passiert, wenn diese Patterns industriell skaliert werden.
+Aus dem ursprünglich geplanten Follow-up zu meinem ersten Artikel ist eine Trilogie geworden. Das Thema war einfach zu groß für einen einzigen Nachfolger: [Teil 1](./warum-gute-entwickler-mit-ai-besser-werden) behandelt die Theorie: warum Zerlegung wichtig ist und wie Fehlerraten funktionieren. Dieser zweite Teil hier zeigt mein konkretes Praxis-Setup. Und in Teil 3 wird es um die Zukunft gehen: was passiert, wenn diese Patterns industriell skaliert werden.
 
-Für PoCs und Prototyping bin ich in den letzten Wochen komplett auf Maximal Agentic Decomposition (MAD) aus Teil 1 umgestiegen. Mit der Zeit haben sich Workflows, Tools und kleinere Kniffe ergeben – manche verbessern nur die Quality of Life, andere die konkreten Ergebnisse erheblich. Inzwischen fühlt sich mein Setup effizient und ausgereift an. Hier stelle ich es euch vor: konkrete Templates, Tools und Entscheidungshilfen.
+Für PoCs und Prototyping bin ich in den letzten Wochen komplett auf Maximal Agentic Decomposition (MAD) aus Teil 1 umgestiegen. Mit der Zeit haben sich Workflows, Tools und kleinere Kniffe ergeben. Manche verbessern nur die Quality of Life, andere die konkreten Ergebnisse erheblich. Inzwischen fühlt sich mein Setup effizient und ausgereift an. Hier stelle ich es euch vor: konkrete Templates, Tools und Entscheidungshilfen.
 
 ## Prompt-Templates
 
 Während der Nutzung von MAD und dem Erstellen von granularen Arbeitspaketen ist mir zunächst eines aufgefallen: Der Flow für die Planung und das Schneiden der Arbeitspakete ist immer gleich. Mir kam also die Idee, zumindest dafür schon mal eine Art Template zu nutzen.
 
-Mittlerweile habe ich für die wichtigsten Phasen meiner Arbeit standardisierte Prompts, die ich nur noch mit dem konkreten Vorhaben befülle. Das spart Zeit, sorgt für konsistente Ergebnisse und reduziert die kognitive Last – ich muss nicht jedes Mal neu überlegen, wie ich die Anfrage formuliere.
+Mittlerweile habe ich für die wichtigsten Phasen meiner Arbeit standardisierte Prompts, die ich nur noch mit dem konkreten Vorhaben befülle. Das spart Zeit, sorgt für konsistente Ergebnisse und reduziert die kognitive Last. Ich muss nicht jedes Mal neu überlegen, wie ich die Anfrage formuliere.
 
 ### MAD-Kickoff
 
-Der wichtigste Prompt: Hier startet jedes größere Vorhaben. Das Template zerlegt das Feature in testbare Arbeitspakete und definiert gleich die Tests dazu (TDD-Ansatz). Wichtig: MAD lohnt sich erst ab einer gewissen Komplexität – wenn mehr als eine Datei betroffen ist oder mehr als eine Verantwortlichkeit im Spiel ist. Für kleine, isolierte Änderungen ist der Overhead unnötig.
+Der wichtigste Prompt: Hier startet jedes größere Vorhaben. Das Template zerlegt das Feature in testbare Arbeitspakete und definiert gleich die Tests dazu (TDD-Ansatz). Wichtig: MAD lohnt sich erst ab einer gewissen Komplexität, nämlich wenn mehr als eine Datei betroffen ist oder mehr als eine Verantwortlichkeit im Spiel ist. Für kleine, isolierte Änderungen ist der Overhead unnötig.
 
 ```markdown
 Wende MAD (Maximal Agentic Decomposition) auf folgendes Feature an:
@@ -88,7 +88,7 @@ Starte noch nicht mit der Implementierung. Der Plan wird erst von mir gereviewet
 
 ### Plan-Review & Interview
 
-Bevor ich mit der Implementierung starte, lasse ich den Plan nochmal prüfen. Das Template stellt sicher, dass keine Lücken übersehen werden – und fragt aktiv nach, wenn etwas unklar ist.
+Bevor ich mit der Implementierung starte, lasse ich den Plan nochmal prüfen. Das Template stellt sicher, dass keine Lücken übersehen werden, und fragt aktiv nach, wenn etwas unklar ist.
 
 ```markdown
 Führe einen dreistufigen Review-Prozess des Plans durch:
@@ -143,7 +143,7 @@ Nach jedem 3. Arbeitspaket: Kurzer Zwischen-Checkpoint mit Statusbericht.
 
 ### Code-Review
 
-Nach der Implementierung oder bei Pull Requests nutze ich dieses Template für strukturierte Reviews. Der Fokus liegt auf dem "5-Sekunden-Test" – ist der Code sofort verständlich? Neu dazu gekommen ist ein dreistufiges Severity-System: MUSS blockiert den Merge, SOLLTE wird vorher gefixt, VORSCHLAG ist optional. Das verhindert endlose Diskussionen über Stilfragen.
+Nach der Implementierung oder bei Pull Requests nutze ich dieses Template für strukturierte Reviews. Der Fokus liegt auf dem "5-Sekunden-Test": Ist der Code sofort verständlich? Neu dazu gekommen ist ein dreistufiges Severity-System: MUSS blockiert den Merge, SOLLTE wird vorher gefixt, VORSCHLAG ist optional. Das verhindert endlose Diskussionen über Stilfragen.
 
 ```markdown
 Führe ein Code-Review der letzten Änderungen durch.
@@ -194,7 +194,7 @@ Führe ein Code-Review der letzten Änderungen durch.
 
 ### Debugging-Session
 
-Bei Bugs starte ich mit diesem Template eine systematische Fehlersuche. Wichtig: Erst Hypothesen bilden und priorisieren, dann einen Test schreiben, der den Bug reproduziert, dann fixen -- und am Ende sicherstellen, dass nichts anderes kaputtgegangen ist.
+Bei Bugs starte ich mit diesem Template eine systematische Fehlersuche. Wichtig: Erst Hypothesen bilden und priorisieren, dann einen Test schreiben, der den Bug reproduziert, dann fixen und am Ende sicherstellen, dass nichts anderes kaputtgegangen ist.
 
 ```markdown
 Ich habe ein Problem: [PROBLEMBESCHREIBUNG]
@@ -241,7 +241,7 @@ Gehe systematisch vor:
 
 ### Von Templates zu Custom Commands
 
-Die Templates oben sind die Grundlage – aber jedes Mal den Prompt rauskopieren und einfügen ist unnötig. Deshalb habe ich für die wichtigsten Templates eigene [Custom Slash Commands](https://docs.anthropic.com/en/docs/claude-code/tutorials/slash-commands) angelegt:
+Die Templates oben sind die Grundlage. Aber jedes Mal den Prompt rauskopieren und einfügen ist unnötig. Deshalb habe ich für die wichtigsten Templates eigene [Custom Slash Commands](https://docs.anthropic.com/en/docs/claude-code/tutorials/slash-commands) angelegt:
 
 | Command           | Template                | Aufruf-Beispiel                             |
 | ----------------- | ----------------------- | ------------------------------------------- |
@@ -250,15 +250,15 @@ Die Templates oben sind die Grundlage – aber jedes Mal den Prompt rauskopieren
 | `/my-review`      | Code-Review             | `/my-review`                                |
 | `/my-debug`       | Debugging-Session       | `/my-debug Login schlägt nach Timeout fehl` |
 
-Jeder Command ist eine Markdown-Datei unter `~/.claude/commands/` (global) oder `.claude/commands/` (projektspezifisch), die das jeweilige Template enthält. `$ARGUMENTS` wird beim Aufruf durch den Text nach dem Command-Namen ersetzt – bei `/my-mad User-Auth mit OAuth2` landet "User-Auth mit OAuth2" direkt im Prompt.
+Jeder Command ist eine Markdown-Datei unter `~/.claude/commands/` (global) oder `.claude/commands/` (projektspezifisch), die das jeweilige Template enthält. `$ARGUMENTS` wird beim Aufruf durch den Text nach dem Command-Namen ersetzt. Bei `/my-mad User-Auth mit OAuth2` landet "User-Auth mit OAuth2" direkt im Prompt.
 
-**Warum das `my-`Prefix?** Community-Plugins bringen oft eigene Slash Commands mit – `/review`, `/debug` und ähnliche Namen sind schnell vergeben. Das `my-`Prefix verhindert Namenskollisionen und macht sofort klar, welche Commands meine eigenen sind und welche von Plugins kommen. Wenn ich `/my-review` tippe, weiß ich, dass mein Template läuft – nicht das eines Plugins.
+**Warum das `my-`Prefix?** Community-Plugins bringen oft eigene Slash Commands mit: `/review`, `/debug` und ähnliche Namen sind schnell vergeben. Das `my-`Prefix verhindert Namenskollisionen und macht sofort klar, welche Commands meine eigenen sind und welche von Plugins kommen. Wenn ich `/my-review` tippe, weiß ich, dass mein Template läuft, nicht das eines Plugins.
 
-Custom Commands sind versionierbar, teilbar und projektspezifisch anpassbar. Ein Team kann sich auf gemeinsame Commands einigen und sie ins Repository committen – jeder arbeitet dann mit denselben Workflows.
+Custom Commands sind versionierbar, teilbar und projektspezifisch anpassbar. Ein Team kann sich auf gemeinsame Commands einigen und sie ins Repository committen. Jeder arbeitet dann mit denselben Workflows.
 
 ### Von einzelnen Commands zur orchestrierten Pipeline: `/my-feature`
 
-Die Commands oben -- `/my-mad`, `/my-plan-review`, `/my-review`, `/my-debug` -- sind Einzelwerkzeuge. Für größere Features rufe ich sie nicht nacheinander manuell auf, sondern nutze `/my-feature` als Orchestrator: Ein Ring sie alle zu knechten.. oder so ähnlich: Hier ist es ein Custom Command, der die Subagents orchestriert -- jeder in isoliertem Context, jeder mit einem klar definierten Job.
+Die Commands oben (`/my-mad`, `/my-plan-review`, `/my-review`, `/my-debug`) sind Einzelwerkzeuge. Für größere Features rufe ich sie nicht nacheinander manuell auf, sondern nutze `/my-feature` als Orchestrator: Ein Ring sie alle zu knechten.. oder so ähnlich: Hier ist es ein Custom Command, der die Subagents orchestriert: jeder in isoliertem Context, jeder mit einem klar definierten Job.
 
 ```
 /my-feature "Login mit OAuth2"
@@ -277,13 +277,13 @@ Die Commands oben -- `/my-mad`, `/my-plan-review`, `/my-review`, `/my-debug` -- 
 
 `/my-feature` ist kein neues Template, sondern eine Art Dach über den bestehenden. Der MAD-Agent in Schritt 4 nutzt dieselbe Zerlegungslogik wie `/my-mad`, der Review in Schritt 5 dieselben Kriterien wie `/my-review`. Was `/my-feature` hinzufügt, ist die Orchestrierung: die richtige Reihenfolge, die STOPP-Punkte nach jedem Schritt, und die Weitergabe des Codebase-Kontexts aus Schritt 1 an alle folgenden Agents.
 
-Nochmal zusammen: Technisch ist `/my-feature` ein Custom Command (`~/.claude/commands/my-feature.md`), der pro Schritt eine Agent-Definition aus `~/.claude/agents/` lädt und als Subagent startet. Jeder Agent läuft in eigenem Context-Fenster -- die Codebase-Analyse aus Schritt 1 nimmt so keinen Platz in meiner Hauptkonversation weg, sondern kommt als kompakter Report zurück. Damit verbindet `/my-feature` die drei Konzepte, die diesen Artikel durchziehen: Templates als Bausteine, Context-Isolation für sauberen Context, und Agents als Ausführungsebene.
+Nochmal zusammen: Technisch ist `/my-feature` ein Custom Command (`~/.claude/commands/my-feature.md`), der pro Schritt eine Agent-Definition aus `~/.claude/agents/` lädt und als Subagent startet. Jeder Agent läuft in eigenem Context-Fenster. Die Codebase-Analyse aus Schritt 1 nimmt so keinen Platz in meiner Hauptkonversation weg, sondern kommt als kompakter Report zurück. Damit verbindet `/my-feature` die drei Konzepte, die diesen Artikel durchziehen: Templates als Bausteine, Context-Isolation für sauberen Context, und Agents als Ausführungsebene.
 
 ## Context-Isolation
 
-In [Teil 1](./warum-gute-entwickler-mit-ai-besser-werden) haben wir gesehen, dass sich Fehlerwahrscheinlichkeiten pro Reasoning-Schritt multiplizieren. MAD senkt die Anzahl der Schritte – aber es gibt einen zweiten Hebel: die Fehlerrate _pro_ Schritt. Und die steigt, wenn der Context mit irrelevantem Rauschen gefüllt ist. 10.000 Zeilen Test-Output im Context zwingen das Modell, relevante Information aus einer Wand von Noise zu filtern. Das Ergebnis: ungenauere Antworten, vergessene Entscheidungen, inkonsistente Ergebnisse.
+In [Teil 1](./warum-gute-entwickler-mit-ai-besser-werden) haben wir gesehen, dass sich Fehlerwahrscheinlichkeiten pro Reasoning-Schritt multiplizieren. MAD senkt die Anzahl der Schritte, aber es gibt einen zweiten Hebel: die Fehlerrate _pro_ Schritt. Und die steigt, wenn der Context mit irrelevantem Rauschen gefüllt ist. 10.000 Zeilen Test-Output im Context zwingen das Modell, relevante Information aus einer Wand von Noise zu filtern. Das Ergebnis: ungenauere Antworten, vergessene Entscheidungen, inkonsistente Ergebnisse.
 
-Die Lösung: Verbose Operationen – Tests ausführen, Logs analysieren, dutzende Dateien durchsuchen – laufen in einem isolierten Context-Fenster ab. Nur das Ergebnis kommt zurück.
+Die Lösung: Verbose Operationen (Tests ausführen, Logs analysieren, dutzende Dateien durchsuchen) laufen in einem isolierten Context-Fenster ab. Nur das Ergebnis kommt zurück.
 
 ```
 Hauptkonversation
@@ -296,23 +296,23 @@ Hauptkonversation
 └─◄ Zurück: "3 Tests fehlgeschlagen: X, Y, Z"
 ```
 
-Du zahlst nur für das Ergebnis, nicht für den Prozess. Statt 10.000 Zeilen Test-Output landen drei Zeilen Zusammenfassung im Context. MAD senkt die Schrittzahl, Context-Isolation senkt die Fehlerrate pro Schritt – beides zusammen ist der Hebel. Welche Agents dieses Prinzip in Claude Code umsetzen, dazu mehr im nächsten Kapitel.
+Du zahlst nur für das Ergebnis, nicht für den Prozess. Statt 10.000 Zeilen Test-Output landen drei Zeilen Zusammenfassung im Context. MAD senkt die Schrittzahl, Context-Isolation senkt die Fehlerrate pro Schritt. Beides zusammen ist der Hebel. Welche Agents dieses Prinzip in Claude Code umsetzen, dazu mehr im nächsten Kapitel.
 
 ## Agents & Plugins
 
-Wer mit Claude Code arbeitet, nutzt Agents und Plugins oft, ohne es bewusst zu merken. Im Hintergrund delegiert Claude Code Teilaufgaben an spezialisierte **Built-in Agents**: Der Explore-Agent recherchiert die Codebase im Read-only-Modus, der Plan-Agent entwirft Architekturen, und der general-purpose Agent übernimmt komplexe Multi-Step-Tasks. Alle drei laufen in isoliertem Context – Claude Code entscheidet dabei selbst, wann ein Subagent sinnvoll ist. Man merkt es an der Statuszeile – und daran, dass der Context nicht mit tausenden Zeilen Test-Output zugemüllt wird.
+Wer mit Claude Code arbeitet, nutzt Agents und Plugins oft, ohne es bewusst zu merken. Im Hintergrund delegiert Claude Code Teilaufgaben an spezialisierte **Built-in Agents**: Der Explore-Agent recherchiert die Codebase im Read-only-Modus, der Plan-Agent entwirft Architekturen, und der general-purpose Agent übernimmt komplexe Multi-Step-Tasks. Alle drei laufen in isoliertem Context. Claude Code entscheidet dabei selbst, wann ein Subagent sinnvoll ist. Man merkt es an der Statuszeile, und daran, dass der Context nicht mit tausenden Zeilen Test-Output zugemüllt wird.
 
 Daneben gibt es **Community-Plugins**, die sich über den Plugin-Marketplace installieren lassen. In meinem Setup nutze ich unter anderem:
 
-- `/commit` und `/commit-push-pr` – Strukturierte Commits und PRs, ohne manuell `git add` und Commit-Messages formulieren zu müssen
-- `/feature-dev` – Geführte Feature-Entwicklung mit spezialisierten Agenten (code-architect, code-explorer, code-reviewer)
-- `/code-review` – PR-Reviews auf Knopfdruck
+- `/commit` und `/commit-push-pr`: Strukturierte Commits und PRs, ohne manuell `git add` und Commit-Messages formulieren zu müssen
+- `/feature-dev`: Geführte Feature-Entwicklung mit spezialisierten Agenten (code-architect, code-explorer, code-reviewer)
+- `/code-review`: PR-Reviews auf Knopfdruck
 
-Zusammen mit den eigenen `my-*` Custom Commands aus dem vorherigen Kapitel -- `/my-mad` für MAD-Zerlegung, `/my-review` für Code-Reviews, `/my-feature` als orchestrierte Pipeline -- ergibt sich ein dreischichtiges Setup: Built-in Agents für die Infrastruktur, Community-Plugins für standardisierte Workflows, und eigene Commands für projektspezifische Prozesse. Verbunden wird das Ganze durch eine **CLAUDE.md**, die als stille Konfiguration fungiert: Workflow-Trigger erkennen automatisch, ob ich gerade debugge oder ein Feature plane, und die Review-Checkliste wird nach jeder Änderung angewandt, ohne dass ich sie jedes Mal explizit anfordern muss.
+Zusammen mit den eigenen `my-*` Custom Commands aus dem vorherigen Kapitel (`/my-mad` für MAD-Zerlegung, `/my-review` für Code-Reviews, `/my-feature` als orchestrierte Pipeline) ergibt sich ein dreischichtiges Setup: Built-in Agents für die Infrastruktur, Community-Plugins für standardisierte Workflows, und eigene Commands für projektspezifische Prozesse. Verbunden wird das Ganze durch eine **CLAUDE.md**, die als stille Konfiguration fungiert: Workflow-Trigger erkennen automatisch, ob ich gerade debugge oder ein Feature plane, und die Review-Checkliste wird nach jeder Änderung angewandt, ohne dass ich sie jedes Mal explizit anfordern muss.
 
 > **Info-Box: Skills, Plugins und eigene Commands**
 >
-> Claude Code hat ein wachsendes Ökosystem an **Community-Plugins**, die sich über den Plugin-Marketplace installieren lassen. Skills sind dabei vorgefertigte Workflows, die automatisch erkannt und getriggert werden – oder manuell via `/skill-name` aufrufbar sind:
+> Claude Code hat ein wachsendes Ökosystem an **Community-Plugins**, die sich über den Plugin-Marketplace installieren lassen. Skills sind dabei vorgefertigte Workflows, die automatisch erkannt und getriggert werden oder manuell via `/skill-name` aufrufbar sind:
 >
 > | Skill               | Zweck                                                    |
 > | ------------------- | -------------------------------------------------------- |
@@ -323,18 +323,18 @@ Zusammen mit den eigenen `my-*` Custom Commands aus dem vorherigen Kapitel -- `/
 >
 > Alle verfügbaren Skills zeigt `/skills` an.
 >
-> **Für einfachere, eigene Workflows** gibt es Custom Slash Commands – eine Markdown-Datei im `commands`-Verzeichnis:
+> **Für einfachere, eigene Workflows** gibt es Custom Slash Commands: eine Markdown-Datei im `commands`-Verzeichnis:
 >
-> - `.claude/commands/mein-command.md` — **projekt-spezifisch**
-> - `~/.claude/commands/mein-command.md` — **global**
+> - `.claude/commands/mein-command.md`: **projekt-spezifisch**
+> - `~/.claude/commands/mein-command.md`: **global**
 >
-> Der Inhalt ist reines Markdown – eine Prompt-Vorlage, die Claude beim Aufruf als Anweisung erhält. `$ARGUMENTS` wird beim Aufruf durch den Text nach dem Command-Namen ersetzt.
+> Der Inhalt ist reines Markdown, eine Prompt-Vorlage, die Claude beim Aufruf als Anweisung erhält. `$ARGUMENTS` wird beim Aufruf durch den Text nach dem Command-Namen ersetzt.
 >
 > **Abgrenzung:** Skills/Plugins für komplexe Workflows mit eigenen Subagents, Tool-Einschränkungen oder isoliertem Context. Custom Commands für leichtgewichtige, projektspezifische Prompts.
 
 ## Session-Management
 
-Context-Isolation hilft gegen Rauschen innerhalb einer Konversation. Aber es gibt noch ein zweites Problem: Der Context füllt sich über die Dauer einer Session auch mit _relevantem_ Inhalt – und irgendwann wird es zu viel. Die Statuszeile in Claude Code zeigt die Context-Auslastung in Prozent. Ab etwa **50%** merkt man, dass Antworten ungenauer werden – Claude "vergisst" Entscheidungen von früher in der Session oder ignoriert Teile der CLAUDE.md. Ein guter Zeitpunkt zum Wechseln ist bei **30-40%** verbleibendem Context, nicht erst wenn es eng wird. Wer bis 90%+ wartet, arbeitet die letzten Prozente mit spürbar schlechterer Qualität.
+Context-Isolation hilft gegen Rauschen innerhalb einer Konversation. Aber es gibt noch ein zweites Problem: Der Context füllt sich über die Dauer einer Session auch mit _relevantem_ Inhalt, und irgendwann wird es zu viel. Die Statuszeile in Claude Code zeigt die Context-Auslastung in Prozent. Ab etwa **50%** merkt man, dass Antworten ungenauer werden. Claude "vergisst" Entscheidungen von früher in der Session oder ignoriert Teile der CLAUDE.md. Ein guter Zeitpunkt zum Wechseln ist bei **30-40%** verbleibendem Context, nicht erst wenn es eng wird. Wer bis 90%+ wartet, arbeitet die letzten Prozente mit spürbar schlechterer Qualität.
 
 **Option 1: Context komprimieren (ohne Session-Wechsel)**
 
@@ -345,7 +345,7 @@ Bevor man die Session wechselt, lohnt sich ein Versuch mit `/compact`. Das kompr
 /compact focus on auth-logic  # Mit Fokus: behält nur Relevantes
 ```
 
-`/compact` mit Fokus ist besonders effektiv – statt alles gleichmäßig zu komprimieren, behält Claude gezielt den Kontext zu einem Thema und verwirft den Rest.
+`/compact` mit Fokus ist besonders effektiv. Statt alles gleichmäßig zu komprimieren, behält Claude gezielt den Kontext zu einem Thema und verwirft den Rest.
 
 **Option 2: Session wechseln**
 
@@ -357,13 +357,13 @@ Wenn `/compact` nicht mehr reicht oder die Session thematisch abgeschlossen ist:
 claude --resume feature-xyz   # Später nahtlos fortsetzen
 ```
 
-Bei `--resume` bleibt die volle Conversation-History erhalten – inklusive Code-Änderungen, Architektur-Entscheidungen und CLAUDE.md. Nur Tool-Permissions müssen neu bestätigt werden.
+Bei `--resume` bleibt die volle Conversation-History erhalten, inklusive Code-Änderungen, Architektur-Entscheidungen und CLAUDE.md. Nur Tool-Permissions müssen neu bestätigt werden.
 
 **Option 3: Frische Session mit Übergabe**
 
-Manchmal will man bewusst eine frische Session starten – zum Beispiel wenn der bisherige Kontext mehr Ballast als Hilfe ist. Das Problem: Die neue Session weiß nichts von der alten. Die Lösung ist ein kurzes Übergabe-Prompt, das den Stand zusammenfasst: Was wurde erledigt, welche Entscheidungen stehen noch offen, was ist der nächste Schritt, welche Dateien sind relevant.
+Manchmal will man bewusst eine frische Session starten, zum Beispiel wenn der bisherige Kontext mehr Ballast als Hilfe ist. Das Problem: Die neue Session weiß nichts von der alten. Die Lösung ist ein kurzes Übergabe-Prompt, das den Stand zusammenfasst: Was wurde erledigt, welche Entscheidungen stehen noch offen, was ist der nächste Schritt, welche Dateien sind relevant.
 
-Dieses Übergabe-Prompt jedes Mal von Hand zu schreiben ist mühsam – und genau hier zeigt sich ein praktischer Anwendungsfall für eigene Commands (siehe [Agents & Plugins](#agents--plugins)). Ein `/session-handover` Command kann die aktuelle Konversation analysieren und automatisch eine strukturierte Übergabe generieren:
+Dieses Übergabe-Prompt jedes Mal von Hand zu schreiben ist mühsam. Und genau hier zeigt sich ein praktischer Anwendungsfall für eigene Commands (siehe [Agents & Plugins](#agents--plugins)). Ein `/session-handover` Command kann die aktuelle Konversation analysieren und automatisch eine strukturierte Übergabe generieren:
 
 ```bash
 /session-handover    # Generiert Übergabe-Zusammenfassung
@@ -372,7 +372,7 @@ Dieses Übergabe-Prompt jedes Mal von Hand zu schreiben ist mühsam – und gena
 # → Output als Startprompt einfügen
 ```
 
-Der Vorteil: Die neue Session startet mit einem sauberen, fokussierten Context statt mit hunderten Zeilen alter Konversation – und man vergisst keine wichtigen Entscheidungen bei der Übergabe. Gerade bei langen Feature-Entwicklungen über mehrere Tage ist das oft effektiver als `--resume`, weil man bewusst entscheidet, welcher Kontext noch relevant ist.
+Der Vorteil: Die neue Session startet mit einem sauberen, fokussierten Context statt mit hunderten Zeilen alter Konversation, und man vergisst keine wichtigen Entscheidungen bei der Übergabe. Gerade bei langen Feature-Entwicklungen über mehrere Tage ist das oft effektiver als `--resume`, weil man bewusst entscheidet, welcher Kontext noch relevant ist.
 
 ## Wie viel Autonomie ist sinnvoll? MAD vs. Ralph erklärt
 
@@ -385,17 +385,17 @@ Mit den Spielregeln im Hinterkopf stellt sich die nächste Frage: Wie viel Kontr
 | Fehler-Feedback | Sofort                  | Verzögert                   |
 | Ideal für       | Kritische Logik, Lernen | Boilerplate, Known Patterns |
 
-MAD kennen wir aus Teil 1: maximale Kontrolle, jeder Schritt einzeln. Auf der anderen Seite des Spektrums steht **Ralph** – ein Workflow, der Claude autonom iterieren lässt.
+MAD kennen wir aus Teil 1: maximale Kontrolle, jeder Schritt einzeln. Auf der anderen Seite des Spektrums steht **Ralph**, ein Workflow, der Claude autonom iterieren lässt.
 
 ### Der Ralph Workflow
 
-[Ralph](https://github.com/frankbria/ralph-claude-code) ist ein Bash-basierter Wrapper um Claude Code, der autonome Iterationsschleifen ermöglicht. Das Prinzip: Du gibst einen Plan vor, Ralph lässt Claude so lange arbeiten, bis alles abgehakt ist – oder ein Sicherheitsmechanismus greift (z.B. zu viele Loops ohne Fortschritt). Details zur Konfiguration und den Exit-Bedingungen finden sich im [Repository](https://github.com/frankbria/ralph-claude-code).
+[Ralph](https://github.com/frankbria/ralph-claude-code) ist ein Bash-basierter Wrapper um Claude Code, der autonome Iterationsschleifen ermöglicht. Das Prinzip: Du gibst einen Plan vor, Ralph lässt Claude so lange arbeiten, bis alles abgehakt ist oder ein Sicherheitsmechanismus greift (z.B. zu viele Loops ohne Fortschritt). Details zur Konfiguration und den Exit-Bedingungen finden sich im [Repository](https://github.com/frankbria/ralph-claude-code).
 
-Das klingt verlockend – und für bestimmte Aufgaben funktioniert es hervorragend. Aber es gibt einen Haken.
+Das klingt verlockend, und für bestimmte Aufgaben funktioniert es hervorragend. Aber es gibt einen Haken.
 
 ### Was aber, wenn der Plan Lücken hat?
 
-"Garbage In, Garbage Out" kennt jeder. Mit autonomen Workflows wird daraus "Garbage In, Garbage Out – but the garbage comes out a lot faster than it went in". Claude implementiert _genau das_, was im Plan steht – nicht mehr, nicht weniger. Fehlende Edge Cases im Plan bedeuten fehlende Edge Cases im Code. Und das erkennt man oft erst spät.
+"Garbage In, Garbage Out" kennt jeder. Mit autonomen Workflows wird daraus "Garbage In, Garbage Out – but the garbage comes out a lot faster than it went in". Claude implementiert _genau das_, was im Plan steht, nicht mehr, nicht weniger. Fehlende Edge Cases im Plan bedeuten fehlende Edge Cases im Code. Und das erkennt man oft erst spät.
 
 ```
 Plan: "Implementiere User-Login mit Email/Passwort"
@@ -432,14 +432,14 @@ Boilerplate generieren
 
 ### Meine 5 Cent dazu: Kontrolle vor Geschwindigkeit
 
-Ich selbst nutze Ralph bewusst nicht. Der Effizienzgewinn durch einen KI-Agenten ist bereits so hoch, dass ich mir die Kontrolle über jeden Schritt leisten kann – und will. Meine Zeit investiere ich lieber in die Planungsphase und in das Review des generierten Codes, statt Claude autonom iterieren zu lassen und das Ergebnis hinterher aufzuräumen.
+Ich selbst nutze Ralph bewusst nicht. Der Effizienzgewinn durch einen KI-Agenten ist bereits so hoch, dass ich mir die Kontrolle über jeden Schritt leisten kann und auch will. Meine Zeit investiere ich lieber in die Planungsphase und in das Review des generierten Codes, statt Claude autonom iterieren zu lassen und das Ergebnis hinterher aufzuräumen.
 
-Das heißt nicht, dass Ralph schlecht ist – für gut verstandene Patterns und Boilerplate kann autonome Iteration der richtige Ansatz sein. Aber für mich überwiegt das Risiko: Wer den Code nicht Schritt für Schritt begleitet, verliert das Verständnis dafür. Und Code, den man nicht versteht, wird zum Wartungsrisiko.
+Das heißt nicht, dass Ralph schlecht ist. Für gut verstandene Patterns und Boilerplate kann autonome Iteration der richtige Ansatz sein. Aber für mich überwiegt das Risiko: Wer den Code nicht Schritt für Schritt begleitet, verliert das Verständnis dafür. Und Code, den man nicht versteht, wird zum Wartungsrisiko.
 
 ## Fazit: Lessons Learned
 
-Was als Experiment mit MAD begann, ist inzwischen mein normaler Workflow für Hobby-Projekte und PoCs. Anpassungen an kritischen Codebases und -stellen übernehme ich jedoch nach wie vor selbst und werde das auch in Zukunft so handhaben. Die wichtigste Erkenntnis: KI-Agenten haben unendlich viel Potenzial und bringen einen bunten Strauß an Tooling mit, den man nutzen kann, aber nicht muss – die Arbeitsweise mit dem LLM unter gewissen Regeln ist ausschlaggebend, alles andere ist der Zucker oben drauf, der den eigenen Workflow verfeinert. Was sich bei mir bewährt hat, sind die hier vorgestellten Flows: Templates sorgen für konsistente Planung, Context-Isolation hält den Kontext sauber, Session-Management verhindert den schleichenden Qualitätsverlust, und das Autonomie-Spektrum gibt mir die Flexibilität, zwischen voller Kontrolle und autonomer Iteration zu wechseln – auch wenn ich letzteres nicht empfehlen kann.
+Was als Experiment mit MAD begann, ist inzwischen mein normaler Workflow für Hobby-Projekte und PoCs. Anpassungen an kritischen Codebases und -stellen übernehme ich jedoch nach wie vor selbst und werde das auch in Zukunft so handhaben. Die wichtigste Erkenntnis: KI-Agenten haben unendlich viel Potenzial und bringen einen bunten Strauß an Tooling mit, den man nutzen kann, aber nicht muss. Die Arbeitsweise mit dem LLM unter gewissen Regeln ist ausschlaggebend, alles andere ist der Zucker oben drauf, der den eigenen Workflow verfeinert. Was sich bei mir bewährt hat, sind die hier vorgestellten Flows: Templates sorgen für konsistente Planung, Context-Isolation hält den Kontext sauber, Session-Management verhindert den schleichenden Qualitätsverlust, und das Autonomie-Spektrum gibt mir die Flexibilität, zwischen voller Kontrolle und autonomer Iteration zu wechseln, auch wenn ich letzteres nicht empfehlen kann.
 
-Wenn ich eine Sache herausgreifen müsste, ist es die, die ich im ersten Teil meiner Trilogie zu KI-Agenten bereits erkennen konnte: **Die Qualität der Planung bestimmt alles.** Je autonomer man arbeiten will, desto wasserdichter muss der Plan sein. Ralph ohne soliden Plan ist wie Autofahren ohne Lenkrad – es geht schnell, aber nicht in die richtige Richtung.
+Wenn ich eine Sache herausgreifen müsste, ist es die, die ich im ersten Teil meiner Trilogie zu KI-Agenten bereits erkennen konnte: **Die Qualität der Planung bestimmt alles.** Je autonomer man arbeiten will, desto wasserdichter muss der Plan sein. Ralph ohne soliden Plan ist wie Autofahren ohne Lenkrad: es geht schnell, aber nicht in die richtige Richtung.
 
-In Teil 3 schauen wir dann über den eigenen Workflow hinaus: Was passiert, wenn diese Patterns industriell skaliert werden? Das [SASE-Paper](https://arxiv.org/html/2509.06216v2) liefert einen wissenschaftlichen Rahmen dafür – und zeigt, wohin die Reise für unser Berufsfeld geht.
+In Teil 3 schauen wir dann über den eigenen Workflow hinaus: Was passiert, wenn diese Patterns industriell skaliert werden? Das [SASE-Paper](https://arxiv.org/html/2509.06216v2) liefert einen wissenschaftlichen Rahmen dafür, und zeigt, wohin die Reise für unser Berufsfeld geht.

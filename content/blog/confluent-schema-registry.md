@@ -47,7 +47,7 @@ Mein GitHub Repo dazu: [kafka-schema-registry-poc](https://github.com/kayroone/k
 
 ## Die Lösung: Confluent Schema Registry
 
-Im Projekt wird bereits die Confluent Platform mit all ihren Komponenten eingesetzt. Die Confluent Platform enthält neben Kafka Brokern, dem Control Center und Client Libraries für Consumer und Producer auch die Schema Registry. Die Schema Registry ist eine zentrale Komponente, die sich nahtlos in den Confluent Stack integriert. Sie dient der zentralen Verwaltung von Schemas und unterstützt neben Avro und Protobuf auch JSON Schema – genau das Format, das wir im Projekt verwenden.
+Im Projekt wird bereits die Confluent Platform mit all ihren Komponenten eingesetzt. Die Confluent Platform enthält neben Kafka Brokern, dem Control Center und Client Libraries für Consumer und Producer auch die Schema Registry. Die Schema Registry ist eine zentrale Komponente, die sich nahtlos in den Confluent Stack integriert. Sie dient der zentralen Verwaltung von Schemas und unterstützt neben Avro und Protobuf auch JSON Schema, also genau das Format, das wir im Projekt verwenden.
 
 In der Schema Registry werden Schemas versioniert unter sogenannten Subjects abgelegt. Ein Subject ist ein logischer Container-Name (z.B. "PaymentEvent"), unter dem mehrere Versionen desselben Schemas verwaltet werden. Jede Schema-Version erhält eine global eindeutige Schema-ID sowie eine Subject-spezifische Versionsnummer. Die Registry speichert dabei nicht nur das Schema selbst, sondern auch Metadaten wie den konfigurierten Compatibility Mode (z.B. BACKWARD oder FULL) auf Subject-Ebene.
 
@@ -78,7 +78,7 @@ Subject: "PaymentEvent"
 
 ## Client-Konfiguration: Anbindung an die Schema Registry
 
-Um die Schema Registry in einer Spring Boot Anwendung zu nutzen, müssen Producer und Consumer über spezifische Konfigurationen mit der Registry verbunden werden – dabei gibt es mehrere Parameter, die das Verhalten der automatischen Schema-Validierung steuern.
+Um die Schema Registry in einer Spring Boot Anwendung zu nutzen, müssen Producer und Consumer über spezifische Konfigurationen mit der Registry verbunden werden. Dabei gibt es mehrere Parameter, die das Verhalten der automatischen Schema-Validierung steuern.
 
 **Producer-Konfiguration:**
 
@@ -137,19 +137,19 @@ Beim Serialisieren einer Kafka-Nachricht im Client muss der Confluent-Serializer
    - Subject-Name = `{topic}-{recordType}`
    - Beispiel: "payments-PaymentEvent"
 
-Im Kundenprojekt werden dieselben JSON-Schema Files bereits für verschiedene Topics verwendet – daher ist die **RecordNameStrategy** die einzig sinnvolle Wahl. Ein Schema wie "PaymentEvent" kann so über mehrere Topics hinweg wiederverwendet werden, ohne dass es für jedes Topic separat registriert werden muss.
+Im Kundenprojekt werden dieselben JSON-Schema Files bereits für verschiedene Topics verwendet. Daher ist die **RecordNameStrategy** die einzig sinnvolle Wahl. Ein Schema wie "PaymentEvent" kann so über mehrere Topics hinweg wiederverwendet werden, ohne dass es für jedes Topic separat registriert werden muss.
 
 > **ℹ️ Info:** Die Parameter `use.latest.version` und `latest.compatibility.strict` stehen in direktem Zusammenhang mit der Schema-Evolution. Wie Schemas kompatibel weiterentwickelt werden können und welche Compatibility Modes es gibt, wird im nächsten Kapitel behandelt.
 
 ## Schema Evolution & Compatibility Modes
 
-Ein zentraler Vorteil der Schema Registry ist die Möglichkeit zur kontrollierten Schema-Evolution. Datenmodelle ändern sich im Laufe der Zeit – neue Felder kommen hinzu, alte werden entfernt oder umbenannt. Die entscheidende Frage ist: Wie können Schemas weiterentwickelt werden, ohne dass bestehende Producer oder Consumer brechen?
+Ein zentraler Vorteil der Schema Registry ist die Möglichkeit zur kontrollierten Schema-Evolution. Datenmodelle ändern sich im Laufe der Zeit: neue Felder kommen hinzu, alte werden entfernt oder umbenannt. Die entscheidende Frage ist: Wie können Schemas weiterentwickelt werden, ohne dass bestehende Producer oder Consumer brechen?
 
 **Das Problem der Schema-Evolution:**
 
-Kurze Anekdote von einem Fall, den wir im Projekt genau so hatten: Ein Producer sendet Nachrichten mit einem Schema, das vom Stakeholderkreis eine Woche zuvor angepasst wurde – zur Veranschaulichung nennen wir es hier Schema XY Version 1. Plötzlich wurde dem Schema XY ein neues required-Feld hinzugefügt (aus Version 1 wurde also Version 2). Das aktualisierte Schema wurde dem Producer eingespielt, dem dazugehörigen Consumer jedoch nicht. Was passiert mit den Consumern, die noch Version 1 erwarten? Sie brechen, weil sie aufgrund des neuen required-Feldes die Version-2-Nachrichten nicht deserialisieren können.
+Kurze Anekdote von einem Fall, den wir im Projekt genau so hatten: Ein Producer sendet Nachrichten mit einem Schema, das vom Stakeholderkreis eine Woche zuvor angepasst wurde. Zur Veranschaulichung nennen wir es hier Schema XY Version 1. Plötzlich wurde dem Schema XY ein neues required-Feld hinzugefügt (aus Version 1 wurde also Version 2). Das aktualisierte Schema wurde dem Producer eingespielt, dem dazugehörigen Consumer jedoch nicht. Was passiert mit den Consumern, die noch Version 1 erwarten? Sie brechen, weil sie aufgrund des neuen required-Feldes die Version-2-Nachrichten nicht deserialisieren können.
 
-Die Schema Registry löst dieses Problem durch **Compatibility Modes** – Regeln, die definieren, welche Schema-Änderungen erlaubt sind.
+Die Schema Registry löst dieses Problem durch **Compatibility Modes**: Regeln, die definieren, welche Schema-Änderungen erlaubt sind.
 
 **Die vier Compatibility Modes:**
 
@@ -174,7 +174,7 @@ Neue Schema-Versionen können von alten Consumern gelesen werden.
 </div>
 
 **Deployment-Reihenfolge:** Consumer zuerst, dann Producer
-**Use Case:** Standard-Fall – Consumer werden typischerweise vor Producern deployed
+**Use Case:** Standard-Fall (Consumer werden typischerweise vor Producern deployed)
 
 **2. FORWARD (Vorwärtskompatibel)**
 
@@ -201,7 +201,7 @@ Alte Schema-Versionen können von neuen Consumern gelesen werden.
 
 **3. FULL (Bidirektional kompatibel)**
 
-Kombination aus BACKWARD und FORWARD – die strengste Variante.
+Kombination aus BACKWARD und FORWARD, die strengste Variante.
 
 <div style="background: #0a1f1a; border-left: 4px solid #059669; padding: 1rem; border-radius: 0.5rem; margin: 1rem 0;">
 
@@ -223,7 +223,7 @@ Kombination aus BACKWARD und FORWARD – die strengste Variante.
 
 **4. NONE (Keine Prüfung)**
 
-Alle Änderungen sind erlaubt – keine Kompatibilitätsprüfung.
+Alle Änderungen sind erlaubt, es gibt keine Kompatibilitätsprüfung.
 
 **Use Case:** Nur für Entwicklung/Tests oder wenn manuelle Kontrolle erfolgt
 
@@ -307,12 +307,12 @@ sequenceDiagram
 
 **Wichtige Details:**
 - Die **Schema-ID im Header** ist der Schlüssel: Consumer braucht weder Subject-Name noch Versionsnummer zu kennen
-- Validierung passiert **automatisch** – kein manueller Code nötig
+- Validierung passiert **automatisch**, kein manueller Code nötig
 - Bei Validierungsfehlern greift der `SchemaValidationErrorHandler`
 
 ## Schema-Management in der Praxis: Kommunikation & Validierung im Team
 
-Die Schema Registry löst viele technische Probleme – aber wie sieht der tägliche Workflow aus, wenn der Stakeholderkreis ein neues Schema deployed? Vertrauen ist gut, Kontrolle ist besser: Wie stellen wir sicher, dass Producer und Consumer auch wirklich kompatibel sind?
+Die Schema Registry löst viele technische Probleme. Aber wie sieht der tägliche Workflow aus, wenn der Stakeholderkreis ein neues Schema deployed? Vertrauen ist gut, Kontrolle ist besser: Wie stellen wir sicher, dass Producer und Consumer auch wirklich kompatibel sind?
 
 **Der Schema-Update-Workflow:**
 
@@ -419,7 +419,7 @@ jsonschema2pojo --source schemas/payment-event.json \
                 --target src/main/java/generated/
 ```
 
-Dieser Ansatz funktioniert jedoch nicht bei komplexen Schema Files mit stark verschachtelten Conditions wie `allOf`, `not`, `if`, `then`, `else` – die Code-Generatoren können diese Konstrukte oft nicht korrekt in Java-DTOs übersetzen.
+Dieser Ansatz funktioniert jedoch nicht bei komplexen Schema Files mit stark verschachtelten Conditions wie `allOf`, `not`, `if`, `then`, `else`. Die Code-Generatoren können diese Konstrukte oft nicht korrekt in Java-DTOs übersetzen.
 
 Im PoC habe ich **manuelle DTOs mit `@JsonSchemaTitle`** gewählt, da unsere Schemas zu komplex für automatische Code-Generierung sind und manuelle DTOs mehr Flexibilität bieten.
 
