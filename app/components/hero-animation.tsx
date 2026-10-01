@@ -143,6 +143,378 @@ export class PixelSun {
   }
 }
 
+export const MOON_PALETTE: readonly { r: number; g: number; b: number }[] = [
+  { r: 34, g: 44, b: 42 },
+  { r: 78, g: 94, b: 90 },
+  { r: 150, g: 164, b: 158 },
+  { r: 222, g: 230, b: 222 },
+];
+
+export const MOON_CRATERS: readonly {
+  offsetX: number;
+  offsetY: number;
+  radius: number;
+}[] = [
+  { offsetX: 0.3, offsetY: -0.33, radius: 0.15 },
+  { offsetX: -0.1, offsetY: 0.13, radius: 0.2 },
+  { offsetX: 0.5, offsetY: 0.23, radius: 0.1 },
+];
+
+const MOON_DITHER_THRESHOLDS = [
+  [0, 8, 2, 10],
+  [12, 4, 14, 6],
+  [3, 11, 1, 9],
+  [15, 7, 13, 5],
+];
+
+export class PixelMoon {
+  static readonly LIGHT_DIRECTION = { x: 0.6, y: -0.36, z: 0.71 };
+  static readonly CRATER_DARKENING = 0.35;
+  static readonly DITHER_SPREAD = 0.5;
+  static readonly MAX_RADIUS = 96;
+  static readonly RADIUS_TO_HEIGHT = 0.12;
+  static readonly CENTER_TO_HEIGHT = 0.18;
+
+  centerX = 0;
+  centerY = 0;
+  bodyRadius = 0;
+
+  constructor(canvasWidth: number, canvasHeight: number) {
+    this.reposition(canvasWidth, canvasHeight);
+  }
+
+  static fitRadius(canvasHeight: number): number {
+    return Math.min(
+      PixelMoon.MAX_RADIUS,
+      canvasHeight * PixelMoon.RADIUS_TO_HEIGHT,
+    );
+  }
+
+  reposition(canvasWidth: number, canvasHeight: number) {
+    this.centerX = canvasWidth / 2;
+    this.centerY = canvasHeight * PixelMoon.CENTER_TO_HEIGHT;
+    this.bodyRadius = PixelMoon.fitRadius(canvasHeight);
+  }
+
+  getGridOrigin(): { x: number; y: number } {
+    return {
+      x: Math.round(this.centerX / PIXEL_SIZE) * PIXEL_SIZE,
+      y: Math.round(this.centerY / PIXEL_SIZE) * PIXEL_SIZE,
+    };
+  }
+
+  getBodyPixels(): { x: number; y: number; dist: number }[] {
+    const pixels: { x: number; y: number; dist: number }[] = [];
+    const gridRadius = Math.ceil(this.bodyRadius / PIXEL_SIZE);
+    const origin = this.getGridOrigin();
+
+    for (let gridX = -gridRadius; gridX <= gridRadius; gridX++) {
+      for (let gridY = -gridRadius; gridY <= gridRadius; gridY++) {
+        const pixelX = origin.x + gridX * PIXEL_SIZE;
+        const pixelY = origin.y + gridY * PIXEL_SIZE;
+        const pixelCenterX = pixelX + PIXEL_SIZE / 2;
+        const pixelCenterY = pixelY + PIXEL_SIZE / 2;
+        const dist = Math.sqrt(
+          (pixelCenterX - this.centerX) ** 2 +
+            (pixelCenterY - this.centerY) ** 2,
+        );
+        if (dist <= this.bodyRadius) {
+          pixels.push({ x: pixelX, y: pixelY, dist });
+        }
+      }
+    }
+
+    return pixels;
+  }
+
+  getSurfaceLightAt(pixel: { x: number; y: number }): number {
+    const normalX = (pixel.x + PIXEL_SIZE / 2 - this.centerX) / this.bodyRadius;
+    const normalY = (pixel.y + PIXEL_SIZE / 2 - this.centerY) / this.bodyRadius;
+    const normalZ = Math.sqrt(Math.max(0, 1 - normalX ** 2 - normalY ** 2));
+    const light = PixelMoon.LIGHT_DIRECTION;
+
+    return Math.max(
+      0,
+      normalX * light.x + normalY * light.y + normalZ * light.z,
+    );
+  }
+
+  getLightAt(pixel: { x: number; y: number }): number {
+    const offsetX = pixel.x + PIXEL_SIZE / 2 - this.centerX;
+    const offsetY = pixel.y + PIXEL_SIZE / 2 - this.centerY;
+    const isInsideCrater = MOON_CRATERS.some(
+      (crater) =>
+        Math.hypot(
+          offsetX - crater.offsetX * this.bodyRadius,
+          offsetY - crater.offsetY * this.bodyRadius,
+        ) <=
+        crater.radius * this.bodyRadius,
+    );
+    const surfaceLight = this.getSurfaceLightAt(pixel);
+
+    if (!isInsideCrater) {
+      return surfaceLight;
+    }
+    return Math.max(0, surfaceLight - PixelMoon.CRATER_DARKENING);
+  }
+
+  getShadeAt(pixel: { x: number; y: number }): number {
+    const origin = this.getGridOrigin();
+    const ditherSize = MOON_DITHER_THRESHOLDS.length;
+    const wrapToDither = (gridOffset: number) =>
+      ((gridOffset % ditherSize) + ditherSize) % ditherSize;
+    const ditherColumn = wrapToDither((pixel.x - origin.x) / PIXEL_SIZE);
+    const ditherRow = wrapToDither((pixel.y - origin.y) / PIXEL_SIZE);
+    const patternValue =
+      (MOON_DITHER_THRESHOLDS[ditherRow][ditherColumn] + 0.5) / ditherSize ** 2;
+    const threshold = 0.5 + (patternValue - 0.5) * PixelMoon.DITHER_SPREAD;
+    const brightestShade = MOON_PALETTE.length - 1;
+
+    return Math.floor(this.getLightAt(pixel) * brightestShade + threshold);
+  }
+
+  draw(ctx: CanvasRenderingContext2D) {
+    for (const pixel of this.getBodyPixels()) {
+      const tone = MOON_PALETTE[this.getShadeAt(pixel)];
+      ctx.fillStyle = `rgb(${tone.r}, ${tone.g}, ${tone.b})`;
+      ctx.fillRect(pixel.x, pixel.y, PIXEL_SIZE, PIXEL_SIZE);
+    }
+  }
+}
+
+export const CLOUD_BANDS: readonly {
+  offsetY: number;
+  thickness: number;
+  speed: number;
+  phase: number;
+}[] = [
+  { offsetY: -0.42, thickness: 0.18, speed: 0.05, phase: 0 },
+  { offsetY: 0.06, thickness: 0.26, speed: 0.035, phase: 2.1 },
+  { offsetY: 0.5, thickness: 0.14, speed: 0.07, phase: 4.3 },
+];
+
+export const CLOUD_FADE_START = 1.2;
+export const CLOUD_GAP_THRESHOLD = -0.3;
+export const CLOUD_TAPER_LENGTH = 0.6;
+
+export const CLOUD_TONES = {
+  core: { r: 56, g: 66, b: 64 },
+  rim: { r: 118, g: 132, b: 126 },
+  sky: { r: 26, g: 31, b: 30 },
+};
+
+export class PixelClouds {
+  moon: PixelMoon;
+
+  constructor(moon: PixelMoon) {
+    this.moon = moon;
+  }
+
+  static isInsideBand(
+    band: (typeof CLOUD_BANDS)[number],
+    offsetX: number,
+    offsetY: number,
+    time: number,
+  ): boolean {
+    const position = offsetX - time * band.speed;
+    const gapWave = Math.sin(position * 0.8 + band.phase);
+    if (gapWave < CLOUD_GAP_THRESHOLD) {
+      return false;
+    }
+
+    const taper = Math.min(
+      1,
+      (gapWave - CLOUD_GAP_THRESHOLD) / CLOUD_TAPER_LENGTH,
+    );
+    const halfHeight =
+      taper *
+      band.thickness *
+      (0.5 +
+        0.3 * Math.sin(position * 2.3 + band.phase) +
+        0.2 * Math.sin(position * 5.1 + band.phase * 1.7));
+    return Math.abs(offsetY - band.offsetY) <= halfHeight;
+  }
+
+  isCloudAt(x: number, y: number, time: number): boolean {
+    const offsetX =
+      (x + PIXEL_SIZE / 2 - this.moon.centerX) / this.moon.bodyRadius;
+    const offsetY =
+      (y + PIXEL_SIZE / 2 - this.moon.centerY) / this.moon.bodyRadius;
+    return CLOUD_BANDS.some((band) =>
+      PixelClouds.isInsideBand(band, offsetX, offsetY, time),
+    );
+  }
+
+  getCloudPixels(time: number): {
+    x: number;
+    y: number;
+    isOverMoon: boolean;
+    isRim: boolean;
+    opacity: number;
+  }[] {
+    const pixels: {
+      x: number;
+      y: number;
+      isOverMoon: boolean;
+      isRim: boolean;
+      opacity: number;
+    }[] = [];
+    const radius = this.moon.bodyRadius;
+    const areaHalfWidth = radius * 2;
+    const fadeStart = radius * CLOUD_FADE_START;
+    const origin = this.moon.getGridOrigin();
+    const gridRangeX = Math.ceil(areaHalfWidth / PIXEL_SIZE);
+    const gridRangeY = Math.ceil(radius / PIXEL_SIZE);
+
+    for (let gridX = -gridRangeX; gridX <= gridRangeX; gridX++) {
+      for (let gridY = -gridRangeY; gridY <= gridRangeY; gridY++) {
+        const pixelX = origin.x + gridX * PIXEL_SIZE;
+        const pixelY = origin.y + gridY * PIXEL_SIZE;
+        const offsetX = pixelX + PIXEL_SIZE / 2 - this.moon.centerX;
+        const offsetY = pixelY + PIXEL_SIZE / 2 - this.moon.centerY;
+        const isInsideArea =
+          Math.abs(offsetX) <= areaHalfWidth && Math.abs(offsetY) <= radius;
+        if (!isInsideArea || !this.isCloudAt(pixelX, pixelY, time)) {
+          continue;
+        }
+
+        const fadeProgress =
+          (Math.abs(offsetX) - fadeStart) / (areaHalfWidth - fadeStart);
+
+        pixels.push({
+          x: pixelX,
+          y: pixelY,
+          isOverMoon: Math.hypot(offsetX, offsetY) <= radius,
+          isRim:
+            !this.isCloudAt(pixelX, pixelY - PIXEL_SIZE, time) ||
+            !this.isCloudAt(pixelX, pixelY + PIXEL_SIZE, time),
+          opacity: Math.min(1, Math.max(0, 1 - fadeProgress)),
+        });
+      }
+    }
+
+    return pixels;
+  }
+
+  draw(ctx: CanvasRenderingContext2D, time: number) {
+    for (const pixel of this.getCloudPixels(time)) {
+      let tone = CLOUD_TONES.sky;
+      if (pixel.isOverMoon) {
+        tone = pixel.isRim ? CLOUD_TONES.rim : CLOUD_TONES.core;
+      }
+      ctx.fillStyle = `rgba(${tone.r}, ${tone.g}, ${tone.b}, ${pixel.opacity})`;
+      ctx.fillRect(pixel.x, pixel.y, PIXEL_SIZE, PIXEL_SIZE);
+    }
+  }
+}
+
+export const BAT_FRAMES: readonly (readonly string[])[] = [
+  [
+    "X.........X",
+    "XX.......XX",
+    "XXX.X.X.XXX",
+    ".XXXXXXXXX.",
+    "...XXXXX...",
+    ".....X.....",
+  ],
+  [
+    "....X.X....",
+    "..XXXXXXX..",
+    ".XXXXXXXXX.",
+    "XX..XXX..XX",
+    "X...XXX...X",
+    "...........",
+  ],
+];
+
+export const BAT_TONE = { r: 8, g: 10, b: 10 };
+
+const BAT_FLIGHT_HEIGHTS = [-0.72, -0.66, -0.78];
+
+export class PixelBat {
+  static readonly FIRST_FLIGHT = 3;
+  static readonly FLIGHT_INTERVAL = 12;
+  static readonly FLIGHT_DURATION = 5;
+  static readonly FLAP_DURATION = 0.12;
+  static readonly FLIGHT_SPAN = 1.6;
+  static readonly BOB_AMPLITUDE = 0.08;
+
+  moon: PixelMoon;
+
+  constructor(moon: PixelMoon) {
+    this.moon = moon;
+  }
+
+  getFlightPosition(time: number): { x: number; y: number } | null {
+    const sinceFirstFlight = time - PixelBat.FIRST_FLIGHT;
+    if (sinceFirstFlight < 0) {
+      return null;
+    }
+
+    const flightNumber = Math.floor(
+      sinceFirstFlight / PixelBat.FLIGHT_INTERVAL,
+    );
+    const timeInFlight =
+      sinceFirstFlight - flightNumber * PixelBat.FLIGHT_INTERVAL;
+    const progress = timeInFlight / PixelBat.FLIGHT_DURATION;
+    if (progress > 1) {
+      return null;
+    }
+
+    const direction = flightNumber % 2 === 0 ? 1 : -1;
+    const offsetX = direction * PixelBat.FLIGHT_SPAN * (progress * 2 - 1);
+    const offsetY =
+      BAT_FLIGHT_HEIGHTS[flightNumber % BAT_FLIGHT_HEIGHTS.length] +
+      PixelBat.BOB_AMPLITUDE * Math.sin(progress * Math.PI * 4);
+
+    return {
+      x: this.moon.centerX + offsetX * this.moon.bodyRadius,
+      y: this.moon.centerY + offsetY * this.moon.bodyRadius,
+    };
+  }
+
+  getBatPixels(time: number): { x: number; y: number }[] {
+    const position = this.getFlightPosition(time);
+    if (!position) {
+      return [];
+    }
+
+    const frame =
+      BAT_FRAMES[Math.floor(time / PixelBat.FLAP_DURATION) % BAT_FRAMES.length];
+    const width = frame[0].length * PIXEL_SIZE;
+    const height = frame.length * PIXEL_SIZE;
+    const left = Math.round((position.x - width / 2) / PIXEL_SIZE) * PIXEL_SIZE;
+    const top = Math.round((position.y - height / 2) / PIXEL_SIZE) * PIXEL_SIZE;
+    const pixels: { x: number; y: number }[] = [];
+
+    frame.forEach((row, rowIndex) => {
+      [...row].forEach((cell, columnIndex) => {
+        if (cell !== "X") {
+          return;
+        }
+        const pixelX = left + columnIndex * PIXEL_SIZE;
+        const pixelY = top + rowIndex * PIXEL_SIZE;
+        const distanceToMoon = Math.hypot(
+          pixelX + PIXEL_SIZE / 2 - this.moon.centerX,
+          pixelY + PIXEL_SIZE / 2 - this.moon.centerY,
+        );
+        if (distanceToMoon <= this.moon.bodyRadius) {
+          pixels.push({ x: pixelX, y: pixelY });
+        }
+      });
+    });
+
+    return pixels;
+  }
+
+  draw(ctx: CanvasRenderingContext2D, time: number) {
+    ctx.fillStyle = `rgb(${BAT_TONE.r}, ${BAT_TONE.g}, ${BAT_TONE.b})`;
+    for (const pixel of this.getBatPixels(time)) {
+      ctx.fillRect(pixel.x, pixel.y, PIXEL_SIZE, PIXEL_SIZE);
+    }
+  }
+}
+
 export interface GrassBlade {
   x: number;
   baseY: number;
@@ -261,6 +633,18 @@ export default function Stars() {
     if (ACTIVE_THEME === "spring") {
       sun = new PixelSun(canvas.width, canvas.height);
       grass = new PixelGrass(canvas.width, canvas.height);
+    }
+
+    let moon: PixelMoon | null = null;
+    let clouds: PixelClouds | null = null;
+    let bat: PixelBat | null = null;
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    if (ACTIVE_THEME === "halloween") {
+      moon = new PixelMoon(canvas.width, canvas.height);
+      clouds = new PixelClouds(moon);
+      bat = new PixelBat(moon);
     }
 
     /**
@@ -625,6 +1009,16 @@ export default function Stars() {
         }
       }
 
+      if (ACTIVE_THEME === "halloween" && moon && clouds && bat) {
+        moon.draw(ctx);
+        if (prefersReducedMotion) {
+          clouds.draw(ctx, 0);
+        } else {
+          clouds.draw(ctx, time);
+          bat.draw(ctx, time);
+        }
+      }
+
       animationId = requestAnimationFrame(animate);
     }
 
@@ -646,6 +1040,10 @@ export default function Stars() {
         if (grass) {
           grass.regenerate(c.width, c.height);
         }
+      }
+
+      if (ACTIVE_THEME === "halloween" && moon) {
+        moon.reposition(c.width, c.height);
       }
     };
 

@@ -16,6 +16,7 @@ function ThemeBackground() {
     case "spring":
       return <StaticGrass />;
     case "vines":
+    case "halloween":
       return null;
   }
 }

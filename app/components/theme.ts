@@ -1,3 +1,3 @@
-export type Theme = "stars" | "spring" | "vines";
+export type Theme = "stars" | "spring" | "vines" | "halloween";
 
-export const ACTIVE_THEME: Theme = "stars";
+export const ACTIVE_THEME: Theme = "halloween";
