@@ -1,7 +1,7 @@
 ---
 title: "Wenn die Datenbank zurückspringt: Kafka-Consumer im Disaster Recovery"
 date: "2026-10-01"
-excerpt: "Was passiert, wenn in einer Kafka-basierten Microservice-Landschaft die Datenbank eines Consumer-Services stirbt und aus einem 15 Minuten alten Backup wiederhergestellt werden muss - und wie das Inbox-Pattern den Zeitversatz zwischen persistiertem State und bereits konsumierten Nachrichten sicher überbrückt."
+excerpt: "Was passiert, wenn in einer Kafka-basierten Microservice-Landschaft die Datenbank eines Consumer-Services stirbt und aus einem 15 Minuten alten Backup wiederhergestellt werden muss? Ein kurzer Ausflug in das Inbox-Pattern, erklärt anhand einer persönlichen Erfahrung aus einem Kundenprojekt."
 tags:
   [
     "kafka",
@@ -93,4 +93,7 @@ Im Restore-Fall birgt das Inbox-Pattern mehrere Fallstricke, die ich hier gerne 
 
 ## Fazit
 
-Auf den ersten Blick hört sich das Inbox- und Outbox-Pattern trivial an, doch je mehr Services man verwaltet, auf desto mehr Hürden stößt man auch. Eine besonders harte Nuss, an der ich gerade zu knacken habe, ist der Faktor Datenschutz und personenbezogene Daten, denn auch diese liegen in den Inbox- und Outbox-Tabellen und müssen auf Anfrage mit ausgegeben und gelöscht werden können. Dazu kann ich ggf. mal einen komplett eigenen Artikel schreiben. Dennoch bin ich der Meinung, dass das Inbox-Pattern unverzichtbar in asynchronen Landschaften ist - je nach Kritikalität der Daten erst recht. Denn niemand möchte vor einem Ausfall stehen und sich sagen: "Ich habe da doch mal einen coolen Blog-Artikel gelesen ... hätte ich mir das mal zu Herzen genommen." Danke fürs Lesen, euer Jan <3
+Auf den ersten Blick hört sich das Inbox- und Outbox-Pattern trivial an, doch je mehr Services man verwaltet, auf desto mehr Hürden stößt man auch. Eine besonders harte Nuss, an der ich gerade zu knacken habe, ist der Faktor Datenschutz und personenbezogene Daten, denn auch diese liegen in den Inbox- und Outbox-Tabellen und müssen auf Anfrage mit ausgegeben und gelöscht werden können. Dazu kann ich ggf. mal einen komplett eigenen Artikel schreiben. Dennoch bin ich der Meinung, dass das Inbox-Pattern unverzichtbar in asynchronen Landschaften ist - je nach Kritikalität der Daten erst recht. Denn niemand möchte vor einem Ausfall stehen und sich sagen: "Ich habe da doch mal einen coolen Blog-Artikel gelesen ... hätte ich mir das mal zu Herzen genommen."
+
+Danke fürs Lesen,
+Euer Jan <3
