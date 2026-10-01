@@ -89,3 +89,10 @@ pnpm-lock.yaml
 # Project-specific
 CLAUDE.md
 docs/
+.claude/
+.github/agents/
+.github/hooks/
+.github/skills/
+.impeccable/
+PRODUCT.md
+DESIGN.md
