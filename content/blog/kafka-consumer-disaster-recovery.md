@@ -1,5 +1,5 @@
 ---
-title: "Wenn die Datenbank zurückspringt: Kafka-Consumer im Disaster Recovery"
+title: "Kafka ist keine Datenbank: Disaster Recovery mit dem Inbox-Pattern"
 date: "2026-10-01"
 excerpt: "Was passiert, wenn in einer Kafka-basierten Microservice-Landschaft die Datenbank eines Consumer-Services stirbt und aus einem 15 Minuten alten Backup wiederhergestellt werden muss? Ein kurzer Ausflug in das Inbox-Pattern, erklärt anhand einer persönlichen Erfahrung aus einem Kundenprojekt."
 tags:
