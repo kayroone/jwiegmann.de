@@ -1,5 +1,5 @@
 ---
-title: "Kafka ist keine Datenbank: Disaster Recovery mit dem Inbox-Pattern"
+title: "Disaster Recovery mit dem Inbox-Pattern: Wenn die DB stirbt, aber Kafka weiterläuft"
 date: "2026-10-01"
 excerpt: "Was passiert, wenn in einer Kafka-basierten Microservice-Landschaft die Datenbank eines Consumer-Services stirbt und aus einem 15 Minuten alten Backup wiederhergestellt werden muss? Ein kurzer Ausflug in das Inbox-Pattern, erklärt anhand einer persönlichen Erfahrung aus einem Kundenprojekt."
 tags:
@@ -17,7 +17,7 @@ tags:
 
 1. [Diskussion im Kundenprojekt](#diskussion-im-kundenprojekt)
 2. [Wie ist die Situation?](#wie-ist-die-situation)
-3. [Kafka ist keine Datenbank](#kafka-ist-keine-datenbank)
+3. [Zwei Systeme, zwei Recovery-Points](#zwei-systeme-zwei-recovery-points)
 4. [Das Inbox-Pattern](#das-inbox-pattern)
 5. [Weitere Trade-offs und Learnings](#weitere-trade-offs-und-learnings)
 6. [Fazit](#fazit)
@@ -39,7 +39,7 @@ Bei uns übernimmt das pgBackRest mit einem Full Backup am Wochenende, einem tä
 
 > **ℹ️ Info:** Ein klassischer pg_dump (logischer Dump) lässt sich nicht mit WAL-Replay kombinieren. pg_dump exportiert die Daten als SQL-Statements, das WAL beschreibt dagegen Änderungen an physischen Datenblöcken. Nach einem logischen Restore passen diese Blöcke nicht mehr zusammen, WAL-Replay funktioniert daher nur auf einem physischen Basisbackup.
 
-## Kafka ist keine Datenbank
+## Zwei Systeme, zwei Recovery-Points
 
 Was passiert nun, wenn die Datenbank wegbricht und mit den oben genannten Backup-Mechanismen wiederhergestellt werden muss? Die DB steht danach auf dem Stand des letzten archivierten WAL-Segments, die Kafka-Consumer setzen aber am zuletzt committeten Offset wieder auf. Alles, was in der Lücke dazwischen verarbeitet wurde, ist damit still verloren. Je nach Error-Handling gilt das sogar für Nachrichten, die während des Ausfalls eintreffen: Spring Kafka überspringt eine Nachricht im Default nach mehreren fehlgeschlagenen Versuchen und committet ihren Offset trotzdem (auto-commit). Da die Offsets nicht in der DB liegen, bekommt davon niemand etwas mit. Das folgende Diagramm zeigt die zeitliche Abfolge bis zum Ausfall der Datenbank und was ab dort schief läuft:
 
@@ -74,6 +74,8 @@ sequenceDiagram
 Eine naheliegende Idee wäre es, die Offsets der Consumer Group für die betroffenen Topics per Timestamp zurückzusetzen. Allein ist das aber riskant, da man den genauen Zeitpunkt nur schwer bestimmen kann: Setzt man zu spät auf, verliert man Nachrichten, setzt man zu früh auf, entstehen Duplikate. Wir brauchen also beides: einen großzügigen Offset-Reset und eine Duplikatprüfung, die automatisiert erkennt, welche Nachrichten bereits verarbeitet wurden.
 
 ## Das Inbox-Pattern
+
+Das Inbox-Pattern ist die Standardantwort auf at-least-once-Delivery. Neu ist hier nur, dass die Duplikate nicht aus einem Retry kommen, sondern aus einem absichtlich zu weit zurückgesetzten Offset.
 
 Die Lösung für das geschilderte Problem ist eine neue Tabelle - die sogenannte Inbox-Tabelle - die den State über die bereits verarbeiteten Kafka-Nachrichten hält. In dieser Inbox steht also alles, was wir bereits erfolgreich aus dem Topic konsumiert und in die fachliche Tabelle geschrieben haben, z.B. in Form einer eindeutigen Message-ID.
 
