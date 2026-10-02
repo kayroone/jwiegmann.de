@@ -21,6 +21,7 @@ tags:
 4. [Das Inbox-Pattern](#das-inbox-pattern)
 5. [Weitere Trade-offs und Learnings](#weitere-trade-offs-und-learnings)
 6. [Fazit](#fazit)
+7. [Quellenübersicht](#quellenübersicht)
 
 ## Diskussion im Kundenprojekt
 
@@ -37,7 +38,7 @@ In PostgreSQL heißt das Transaktionslog WAL (Write-Ahead Log). Das Prinzip: Bev
 
 Bei uns übernimmt das pgBackRest mit einem Full Backup am Wochenende, einem täglichen Delta-Backup und einer WAL-Archivierung alle 15 Minuten. Dieses Intervall ist eine Compliance-Vorgabe und begrenzt den maximalen Datenverlust auf genau diese 15 Minuten.
 
-> **ℹ️ Info:** Ein klassischer pg_dump (logischer Dump) lässt sich nicht mit WAL-Replay kombinieren. pg_dump exportiert die Daten als SQL-Statements, das WAL beschreibt dagegen Änderungen an physischen Datenblöcken. Nach einem logischen Restore passen diese Blöcke nicht mehr zusammen, WAL-Replay funktioniert daher nur auf einem physischen Basisbackup.
+> **ℹ️ Info:** Ein klassischer pg_dump (logischer Dump) lässt sich nicht mit WAL-Replay kombinieren. pg_dump exportiert die Daten als SQL-Statements, das WAL beschreibt dagegen Änderungen an physischen Datenblöcken. Nach einem logischen Restore passen diese Blöcke nicht mehr zusammen, WAL-Replay funktioniert daher nur auf einem physischen Basisbackup. Nachzulesen in der [PostgreSQL-Doku zu Continuous Archiving](https://www.postgresql.org/docs/current/continuous-archiving.html).
 
 ## Zwei Systeme, zwei Recovery-Points
 
@@ -99,3 +100,10 @@ Auf den ersten Blick hört sich das Inbox- und Outbox-Pattern trivial an, doch j
 
 Danke fürs Lesen,
 Euer Jan <3
+
+## Quellenübersicht
+
+| #   | Ressource                                                          | Typ  | Link                                                                                |
+| --- | ------------------------------------------------------------------ | ---- | ----------------------------------------------------------------------------------- |
+| 1   | PostgreSQL: Continuous Archiving and Point-in-Time Recovery (PITR) | Doku | [postgresql.org](https://www.postgresql.org/docs/current/continuous-archiving.html) |
+| 2   | PostgreSQL: Write-Ahead Logging (WAL)                              | Doku | [postgresql.org](https://www.postgresql.org/docs/current/wal-intro.html)            |
