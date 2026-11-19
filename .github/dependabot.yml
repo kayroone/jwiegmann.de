@@ -23,3 +23,8 @@ updates:
           - "patch"
     # Always create separate PRs for security updates
     versioning-strategy: "increase"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
