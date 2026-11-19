@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, User, Rss } from "lucide-react";
 import Link from "next/link";
-import { ACTIVE_THEME } from "./theme";
+import { getThemeForDate } from "./theme";
 
 // Shared pixel art configuration
 export const PIXEL_SIZE = 4;
@@ -618,6 +618,8 @@ export default function Stars() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    const theme = getThemeForDate(new Date());
+
     // Set canvas to match the actual container size (dvh-aware)
     const container = canvas.parentElement;
     canvas.width = container?.clientWidth ?? window.innerWidth;
@@ -630,7 +632,7 @@ export default function Stars() {
     // Spring theme elements
     let sun: PixelSun | null = null;
     let grass: PixelGrass | null = null;
-    if (ACTIVE_THEME === "spring") {
+    if (theme === "spring") {
       sun = new PixelSun(canvas.width, canvas.height);
       grass = new PixelGrass(canvas.width, canvas.height);
     }
@@ -641,7 +643,7 @@ export default function Stars() {
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
-    if (ACTIVE_THEME === "halloween") {
+    if (theme === "halloween") {
       moon = new PixelMoon(canvas.width, canvas.height);
       clouds = new PixelClouds(moon);
       bat = new PixelBat(moon);
@@ -968,7 +970,7 @@ export default function Stars() {
       const time = performance.now() * 0.0008;
 
       // Spawn new vine periodically (only if vines enabled AND spring theme is off)
-      if (ACTIVE_THEME === "vines") {
+      if (theme === "vines") {
         const now = Date.now();
         if (
           now - lastVineSpawn > vineSpawnInterval &&
@@ -980,14 +982,14 @@ export default function Stars() {
       }
 
       // Draw stars if enabled
-      if (ACTIVE_THEME === "stars") {
+      if (theme === "stars") {
         for (const particle of particles) {
           particle.update();
           particle.draw();
         }
       }
 
-      if (ACTIVE_THEME === "vines") {
+      if (theme === "vines") {
         for (let i = vines.length - 1; i >= 0; i--) {
           const vine = vines[i];
           vine.update();
@@ -1000,7 +1002,7 @@ export default function Stars() {
       }
 
       // Draw spring theme elements: grass first, then sun on top
-      if (ACTIVE_THEME === "spring") {
+      if (theme === "spring") {
         if (grass) {
           grass.draw(ctx, time);
         }
@@ -1009,7 +1011,7 @@ export default function Stars() {
         }
       }
 
-      if (ACTIVE_THEME === "halloween" && moon && clouds && bat) {
+      if (theme === "halloween" && moon && clouds && bat) {
         moon.draw(ctx);
         if (prefersReducedMotion) {
           clouds.draw(ctx, 0);
@@ -1033,7 +1035,7 @@ export default function Stars() {
       c.height = parent?.clientHeight ?? window.innerHeight;
 
       // Reposition/regenerate spring elements
-      if (ACTIVE_THEME === "spring") {
+      if (theme === "spring") {
         if (sun) {
           sun.reposition(c.width, c.height);
         }
@@ -1042,7 +1044,7 @@ export default function Stars() {
         }
       }
 
-      if (ACTIVE_THEME === "halloween" && moon) {
+      if (theme === "halloween" && moon) {
         moon.reposition(c.width, c.height);
       }
     };

@@ -5,21 +5,7 @@ import { getPostBySlug, markdownToHtml, getAllPosts } from "../../../lib/blog";
 import { notFound } from "next/navigation";
 import MermaidRenderer from "../../../components/mermaid-renderer";
 import MermaidZoom from "../../../components/mermaid-zoom";
-import StaticGrass from "../../../components/static-grass";
-import StaticStars from "../../../components/static-stars";
-import { ACTIVE_THEME } from "../../components/theme";
-
-function ThemeBackground() {
-  switch (ACTIVE_THEME) {
-    case "stars":
-      return <StaticStars />;
-    case "spring":
-      return <StaticGrass />;
-    case "vines":
-    case "halloween":
-      return null;
-  }
-}
+import ThemeBackground from "../../../components/theme-background";
 
 interface BlogPostParams {
   params: Promise<{
