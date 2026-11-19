@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -euo pipefail
+. "$(dirname "$(readlink -f "$0")")/lib.sh"
+
+if [ $# -gt 0 ]; then
+  target=$1
+  if ! valid_id "$target"; then
+    echo "invalid release id" >&2
+    exit 2
+  fi
+  take_lock
+  if [ ! -f "$RELEASES/$target/server.js" ]; then
+    echo "release $target not found" >&2
+    exit 3
+  fi
+else
+  take_lock
+  current=$(current_id)
+  if [ -z "$current" ]; then
+    echo "current is missing" >&2
+    exit 6
+  fi
+  target=$(list_releases | awk -v current="$current" '$0 < current' | tail -n 1)
+  if [ -z "$target" ]; then
+    echo "no older release than $current" >&2
+    exit 6
+  fi
+fi
+
+switch_current "$RELEASES/$target"
+reload_pm2
+echo "current is now $target" >&2

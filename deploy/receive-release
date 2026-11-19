@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+set -euo pipefail
+. "$(dirname "$(readlink -f "$0")")/lib.sh"
+
+id=${1-${SSH_ORIGINAL_COMMAND-}}
+if ! valid_id "$id"; then
+  echo "invalid release id" >&2
+  exit 2
+fi
+
+take_lock
+
+if [ -e "$RELEASES/$id" ]; then
+  echo "release $id already exists" >&2
+  exit 3
+fi
+
+prev=$(readlink "$CURRENT" 2>/dev/null || true)
+if [ -z "$prev" ] && [ ! -e "$CURRENT" ] && [ -n "$(list_releases)" ]; then
+  echo "current is missing although releases exist" >&2
+  exit 7
+fi
+
+tmp=$(mktemp -d "$RELEASES/.incoming.XXXXXX")
+trap 'rm -rf "$tmp"' EXIT
+
+if ! tar -xzf - -C "$tmp" 9>&-; then
+  echo "artifact could not be unpacked" >&2
+  exit 4
+fi
+if [ ! -f "$tmp/server.js" ]; then
+  echo "artifact has no server.js" >&2
+  exit 4
+fi
+
+mv -T "$tmp" "$RELEASES/$id"
+trap - EXIT
+
+switch_current "$RELEASES/$id"
+
+if [ -z "$prev" ]; then
+  echo "first release, PM2 not touched" >&2
+  exit 0
+fi
+
+if reload_pm2 && health_ok "$id"; then
+  prune_releases "${prev##*/}"
+  echo "release $id is live" >&2
+  exit 0
+fi
+
+echo "health check failed for $id, switching back" >&2
+switch_current "$prev"
+reload_pm2 || true
+exit 5
